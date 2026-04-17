@@ -375,7 +375,30 @@ body {
 
 @media (hover: none) {
   .opt-btn:hover { transform: none; box-shadow: none; }
+  .opt-btn.selected {
+    border-width: 2.5px;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+  }
+  .opt-btn:active { transform: scale(0.97); transition: transform .1s; }
 }
+
+@keyframes confirmar {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(0.96); }
+  70%  { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+.opt-btn.confirming { animation: confirmar .25s ease; }
+
+@keyframes slideOut {
+  to { opacity: 0; transform: translateX(-18px); }
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+#question-content.slide-out { animation: slideOut .18s ease forwards; }
+#question-content.slide-in  { animation: slideIn  .2s ease forwards; }
 </style>
 </head>
 <body>
@@ -608,7 +631,7 @@ function renderQuestion(cur) {
       const label = it.name;
       const sub = it.desc || '';
       const selected = preselected === id ? ' selected' : '';
-      html += '<button class="opt-btn' + selected + '" onclick="selectReference(\'' + id + '\')">' +
+      html += '<button class="opt-btn' + selected + '" onclick="selectReference(\'' + id + '\',this)">' +
               '<div class="opt-marker">' + (i + 1) + '</div>' +
               '<div class="opt-label"><strong>' + label + '</strong>' + (sub ? '<span class="opt-sub">' + sub + '</span>' : '') + '</div>' +
               '</button>';
@@ -641,7 +664,7 @@ function renderQuestion(cur) {
     html += '<div class="opt-list">';
     COMPARISON_OPTIONS.forEach((opt, i) => {
       const selected = curChoice === opt.id ? ' selected' : '';
-      html += '<button class="opt-btn' + selected + '" onclick="selectComparison(\'' + opt.id + '\')">' +
+      html += '<button class="opt-btn' + selected + '" onclick="selectComparison(\'' + opt.id + '\',this)">' +
               '<div class="opt-marker">' + (i + 1) + '</div>' +
               '<div class="opt-label"><strong>' + opt.label + '</strong><span class="opt-sub">' + opt.sub + '</span></div>' +
               '</button>';
@@ -653,38 +676,76 @@ function renderQuestion(cur) {
   document.getElementById('btn-back').disabled = state.idx === 0 && state.history.length === 0;
 }
 
-function selectReference(id) {
-  pushHistory();
-  const cur = state.screens[state.idx];
-  state.lastReferences[cur.block] = id;
-  if (cur.block === 'dimensions') {
-    state.answers.dimensions.reference = id;
-    const others = DIMENSIONS.filter(d => d.key !== id).map(d => d.key);
-    const compareScreens = others.map(k => ({ type: 'compare', block: 'dimensions', item: k }));
-    state.screens.splice(state.idx + 1, 0, ...compareScreens);
-  } else {
-    const dim = DIMENSIONS.find(d => d.key === cur.block);
-    state.answers.indicators[cur.block] = state.answers.indicators[cur.block] || { reference: null, comparisons: {} };
-    state.answers.indicators[cur.block].reference = id;
-    const others = dim.indicators.filter(ind => ind.id !== id).map(ind => ind.id);
-    const compareScreens = others.map(ind => ({ type: 'compare', block: cur.block, item: ind }));
-    state.screens.splice(state.idx + 1, 0, ...compareScreens);
+function selectReference(id, btnEl) {
+  if (state._transitioning) return;
+  state._transitioning = true;
+  if (btnEl) {
+    document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
+    btnEl.classList.add('selected', 'confirming');
+    btnEl.addEventListener('animationend', () => btnEl.classList.remove('confirming'), {once: true});
   }
-  advance();
+  if (navigator.vibrate) navigator.vibrate(30);
+  const doWork = () => {
+    pushHistory();
+    const cur = state.screens[state.idx];
+    state.lastReferences[cur.block] = id;
+    if (cur.block === 'dimensions') {
+      state.answers.dimensions.reference = id;
+      const others = DIMENSIONS.filter(d => d.key !== id).map(d => d.key);
+      const compareScreens = others.map(k => ({ type: 'compare', block: 'dimensions', item: k }));
+      state.screens.splice(state.idx + 1, 0, ...compareScreens);
+    } else {
+      const dim = DIMENSIONS.find(d => d.key === cur.block);
+      state.answers.indicators[cur.block] = state.answers.indicators[cur.block] || { reference: null, comparisons: {} };
+      state.answers.indicators[cur.block].reference = id;
+      const others = dim.indicators.filter(ind => ind.id !== id).map(ind => ind.id);
+      const compareScreens = others.map(ind => ({ type: 'compare', block: cur.block, item: ind }));
+      state.screens.splice(state.idx + 1, 0, ...compareScreens);
+    }
+    advance();
+  };
+  animateTransition(doWork);
 }
 
-function selectComparison(optionId) {
-  pushHistory();
-  const cur = state.screens[state.idx];
-  state.lastComparisons[cur.block] = state.lastComparisons[cur.block] || {};
-  state.lastComparisons[cur.block][cur.item] = optionId;
-  if (cur.block === 'dimensions') {
-    state.answers.dimensions.comparisons[cur.item] = optionId;
-  } else {
-    state.answers.indicators[cur.block] = state.answers.indicators[cur.block] || { reference: null, comparisons: {} };
-    state.answers.indicators[cur.block].comparisons[cur.item] = optionId;
+function selectComparison(optionId, btnEl) {
+  if (state._transitioning) return;
+  state._transitioning = true;
+  if (btnEl) {
+    document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
+    btnEl.classList.add('selected', 'confirming');
+    btnEl.addEventListener('animationend', () => btnEl.classList.remove('confirming'), {once: true});
   }
-  advance();
+  if (navigator.vibrate) navigator.vibrate(30);
+  const doWork = () => {
+    pushHistory();
+    const cur = state.screens[state.idx];
+    state.lastComparisons[cur.block] = state.lastComparisons[cur.block] || {};
+    state.lastComparisons[cur.block][cur.item] = optionId;
+    if (cur.block === 'dimensions') {
+      state.answers.dimensions.comparisons[cur.item] = optionId;
+    } else {
+      state.answers.indicators[cur.block] = state.answers.indicators[cur.block] || { reference: null, comparisons: {} };
+      state.answers.indicators[cur.block].comparisons[cur.item] = optionId;
+    }
+    advance();
+  };
+  animateTransition(doWork);
+}
+
+function animateTransition(doWork) {
+  const content = document.getElementById('question-content');
+  setTimeout(() => {
+    if (content) content.classList.add('slide-out');
+    setTimeout(() => {
+      doWork();
+      state._transitioning = false;
+      if (content) {
+        content.classList.remove('slide-out');
+        content.classList.add('slide-in');
+        content.addEventListener('animationend', () => content.classList.remove('slide-in'), {once: true});
+      }
+    }, 130);
+  }, 280);
 }
 
 function advance() {
