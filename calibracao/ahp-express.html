@@ -827,16 +827,6 @@ function saveCalibration() {
   }).catch(err => console.error('Erro ao salvar:', err));
 
   state.calibrationId = calibrationData.id;
-
-  // Download automatico do arquivo JSON
-  const blob = new Blob([JSON.stringify(calibrationData, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = calibrationData.id + '.json';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
 

@@ -294,7 +294,8 @@ body {
         <div class="fields-row">
           <div class="field-group">
             <label for="f-municipio">Município</label>
-            <input type="text" id="f-municipio" placeholder="Ex.: São Paulo"/>
+            <input type="text" id="f-municipio" list="municipios-list" placeholder="Digite o município"/>
+            <datalist id="municipios-list"></datalist>
           </div>
           <div class="field-group">
             <label for="f-estado">Estado</label>
@@ -415,6 +416,17 @@ const SCALE = [
   {value:4,label:'Alto',        sub:'Bem desenvolvido, com poucos gaps'},
   {value:5,label:'Muito Alto',  sub:'Consolidado e robusto para suportar UAM'}
 ];
+
+const MUNICIPIOS_BR = {
+  SP: ['São Paulo', 'Campinas', 'Guarulhos', 'Sorocaba', 'Ribeirão Preto', 'São Bernardo do Campo', 'Osasco', 'Mauá', 'São Caetano do Sul', 'Diadema', 'Santo André', 'Piracicaba', 'Jundiaí', 'São Vicente', 'Presidente Prudente', 'Bauru', 'Araraquara', 'Araçatuba', 'Blumenau'],
+  RJ: ['Rio de Janeiro', 'Niterói', 'Duque de Caxias', 'Nova Iguaçu', 'São Gonçalo', 'Itaboraí', 'Queimados', 'Mesquita', 'São João de Meriti'],
+  MG: ['Belo Horizonte', 'Contagem', 'Betim', 'Uberlândia', 'Juiz de Fora', 'Montes Claros', 'Uberaba', 'Divinópolis', 'Itabira'],
+  BA: ['Salvador', 'Feira de Santana', 'Vitória da Conquista', 'Camaçari', 'Ilhéus', 'Itabuna', 'Jequié', 'Alagoinhas'],
+  PR: ['Curitiba', 'Londrina', 'Maringá', 'Ponta Grossa', 'Cascavel', 'São José dos Pinhais', 'Foz do Iguaçu'],
+  PE: ['Recife', 'Jaboatão dos Guararapes', 'Olinda', 'Caruaru', 'Petrolina', 'Paulista'],
+  CE: ['Fortaleza', 'Caucaia', 'Juazeiro do Norte', 'Maracanaú', 'Sobral'],
+  PA: ['Belém', 'Ananindeua', 'Santarém', 'Marabá']
+};
 
 const state = {
   resp:{name:'',municipio:'',estado:'',formacao:''},
@@ -627,7 +639,22 @@ function resetAll(){
   showScreen();
 }
 
+function updateMunicipiosList() {
+  const estado = document.getElementById('f-estado').value;
+  const datalist = document.getElementById('municipios-list');
+  datalist.innerHTML = '';
+  const municipios = MUNICIPIOS_BR[estado] || [];
+  municipios.forEach(m => {
+    const option = document.createElement('option');
+    option.value = m;
+    datalist.appendChild(option);
+  });
+}
+
 // Init
+document.getElementById('f-estado').addEventListener('change', updateMunicipiosList);
+document.getElementById('f-estado').value = 'SP';
+updateMunicipiosList();
 loadWeights();
 updateProgress();
 </script>
