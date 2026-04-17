@@ -224,7 +224,7 @@ body {
 .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
 
 @media (max-width: 540px) {
-  .main { padding: 20px 14px 80px; }
+  .main { padding: 16px 12px 80px; }
   .intro-card { padding: 24px 18px; }
   .result-card { padding: 24px 18px; }
   .intro-title { font-size: 18px; }
@@ -232,22 +232,53 @@ body {
   .q-title { font-size: 17px; }
   .q-hint { font-size: 12px; }
   .score-big { font-size: 48px; }
-  .rating-btn { padding: 12px 14px; font-size: 14px; gap: 12px; }
-  .rating-btn.extreme { padding: 16px 14px; }
-  .rating-num { width: 32px; height: 32px; font-size: 15px; }
   .site-header { height: auto; min-height: 48px; padding: 8px 16px; }
   .block-label { padding: 6px 16px; font-size: 10px; }
   .progress-wrap { top: 48px; }
   .nav-row { flex-wrap: wrap; gap: 8px; }
   .btn-back { font-size: 12px; }
-}
 
-@media (max-width: 380px) {
-  .rating-middles { grid-template-columns: 1fr 1fr 1fr; }
-  .rating-btn { padding: 10px 8px; gap: 8px; font-size: 13px; }
-  .rating-num { width: 28px; height: 28px; font-size: 13px; }
-  .rating-label strong { font-size: 12px; }
-  .rating-sub { font-size: 11px; }
+  /* Layout mobile: tudo em coluna única */
+  .rating-extremes { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .rating-middles  { grid-template-columns: 1fr; gap: 6px; }
+  .rating-grid     { gap: 8px; }
+
+  /* Botões extremos: compactos */
+  .rating-btn.extreme {
+    padding: 14px 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    text-align: left;
+  }
+  .rating-btn.extreme .rating-num {
+    width: 34px; height: 34px; font-size: 16px;
+  }
+  .rating-btn.extreme .rating-label strong { font-size: 13px; }
+  .rating-btn.extreme .rating-sub { font-size: 11px; }
+
+  /* Botões do meio: linha horizontal compacta */
+  .rating-middles .rating-btn {
+    padding: 12px 14px;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+  .rating-middles .rating-num {
+    width: 36px; height: 36px; font-size: 16px; flex-shrink: 0;
+  }
+  .rating-middles .rating-label { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .rating-middles .rating-label strong { font-size: 14px; }
+  .rating-middles .rating-sub { font-size: 12px; margin-top: 0; }
+
+  /* Botão NA */
+  .rating-btn.na-btn {
+    padding: 11px 14px;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+  .rating-btn.na-btn .rating-num { width: 36px; height: 36px; font-size: 11px; }
 }
 
 @media (hover: none) {
