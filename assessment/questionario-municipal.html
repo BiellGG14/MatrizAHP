@@ -252,7 +252,41 @@ body {
 
 @media (hover: none) {
   .rating-btn:hover { transform: none; box-shadow: none; }
+  .rating-btn.selected {
+    border-width: 2.5px;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+  }
+  .rating-btn.extreme-low.selected {
+    box-shadow: 0 0 0 3px rgba(220,38,38,0.15);
+  }
+  .rating-btn.extreme-high.selected {
+    box-shadow: 0 0 0 3px rgba(5,150,105,0.15);
+  }
+  .rating-btn:active {
+    transform: scale(0.97);
+    transition: transform .1s;
+  }
 }
+
+@keyframes confirmar {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(0.96); }
+  70%  { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+.rating-btn.confirming {
+  animation: confirmar .25s ease;
+}
+
+@keyframes slideOut {
+  to { opacity: 0; transform: translateX(-18px); }
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+#question-content.slide-out { animation: slideOut .18s ease forwards; }
+#question-content.slide-in  { animation: slideIn  .2s ease forwards; }
 </style>
 </head>
 <body>
@@ -294,8 +328,7 @@ body {
         <div class="fields-row">
           <div class="field-group">
             <label for="f-municipio">Município</label>
-            <input type="text" id="f-municipio" list="municipios-list" placeholder="Digite o município"/>
-            <datalist id="municipios-list"></datalist>
+            <input type="text" id="f-municipio" placeholder="Ex.: São José dos Campos"/>
           </div>
           <div class="field-group">
             <label for="f-estado">Estado</label>
@@ -417,16 +450,6 @@ const SCALE = [
   {value:5,label:'Muito Alto',  sub:'Consolidado e robusto para suportar UAM'}
 ];
 
-const MUNICIPIOS_BR = {
-  SP: ['São Paulo', 'Campinas', 'Guarulhos', 'Sorocaba', 'Ribeirão Preto', 'São Bernardo do Campo', 'Osasco', 'Mauá', 'São Caetano do Sul', 'Diadema', 'Santo André', 'Piracicaba', 'Jundiaí', 'São Vicente', 'Presidente Prudente', 'Bauru', 'Araraquara', 'Araçatuba', 'Blumenau'],
-  RJ: ['Rio de Janeiro', 'Niterói', 'Duque de Caxias', 'Nova Iguaçu', 'São Gonçalo', 'Itaboraí', 'Queimados', 'Mesquita', 'São João de Meriti'],
-  MG: ['Belo Horizonte', 'Contagem', 'Betim', 'Uberlândia', 'Juiz de Fora', 'Montes Claros', 'Uberaba', 'Divinópolis', 'Itabira'],
-  BA: ['Salvador', 'Feira de Santana', 'Vitória da Conquista', 'Camaçari', 'Ilhéus', 'Itabuna', 'Jequié', 'Alagoinhas'],
-  PR: ['Curitiba', 'Londrina', 'Maringá', 'Ponta Grossa', 'Cascavel', 'São José dos Pinhais', 'Foz do Iguaçu'],
-  PE: ['Recife', 'Jaboatão dos Guararapes', 'Olinda', 'Caruaru', 'Petrolina', 'Paulista'],
-  CE: ['Fortaleza', 'Caucaia', 'Juazeiro do Norte', 'Maracanaú', 'Sobral'],
-  PA: ['Belém', 'Ananindeua', 'Santarém', 'Marabá']
-};
 
 const state = {
   resp:{name:'',municipio:'',estado:'',formacao:''},
@@ -515,7 +538,7 @@ function renderQuestion(cur){
   ['low','high'].forEach((type,i)=>{
     const s=type==='low'?s1:s5;
     const sel=curVal===s.value?' selected':'';
-    html+='<button class="rating-btn extreme extreme-'+type+sel+'" onclick="selectRating(\''+cur.id+'\','+s.value+')">' +
+    html+='<button class="rating-btn extreme extreme-'+type+sel+'" onclick="selectRating(\''+cur.id+'\','+s.value+',this)">' +
           '<div class="rating-num">'+s.value+'</div>' +
           '<div class="rating-label"><strong>'+s.label+'</strong><span class="rating-sub">'+s.sub+'</span></div>' +
           '</button>';
@@ -524,14 +547,14 @@ function renderQuestion(cur){
   html+='<div class="rating-middles">';
   middles.forEach(s=>{
     const sel=curVal===s.value?' selected':'';
-    html+='<button class="rating-btn'+sel+'" onclick="selectRating(\''+cur.id+'\','+s.value+')">' +
+    html+='<button class="rating-btn'+sel+'" onclick="selectRating(\''+cur.id+'\','+s.value+',this)">' +
           '<div class="rating-num">'+s.value+'</div>' +
           '<div class="rating-label"><strong>'+s.label+'</strong><span class="rating-sub">'+s.sub+'</span></div>' +
           '</button>';
   });
   html+='</div>';
   const selNA=curVal==='NA'?' selected':'';
-  html+='<button class="rating-btn na-btn'+selNA+'" onclick="selectRating(\''+cur.id+'\',\'NA\')">' +
+  html+='<button class="rating-btn na-btn'+selNA+'" onclick="selectRating(\''+cur.id+'\',\'NA\',this)">' +
         '<div class="rating-num">N/A</div>' +
         '<div class="rating-label"><strong>Não se aplica</strong><span class="rating-sub">Este indicador não é relevante para este município</span></div>' +
         '</button>';
@@ -539,12 +562,37 @@ function renderQuestion(cur){
   document.getElementById('question-content').innerHTML=html;
 }
 
-function selectRating(id,value){
-  pushHistory();
-  state.answers[id]=value;
-  state.lastAnswers[id]=value;
-  state.idx++;
-  showScreen();
+function selectRating(id, value, btnEl) {
+  if (state._transitioning) return;
+  state._transitioning = true;
+
+  if (btnEl) {
+    document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+    btnEl.classList.add('selected', 'confirming');
+    btnEl.addEventListener('animationend', () => btnEl.classList.remove('confirming'), {once: true});
+  }
+
+  if (navigator.vibrate) navigator.vibrate(30);
+
+  const content = document.getElementById('question-content');
+  const delay = btnEl ? 280 : 0;
+
+  setTimeout(() => {
+    if (content) content.classList.add('slide-out');
+    setTimeout(() => {
+      pushHistory();
+      state.answers[id] = value;
+      state.lastAnswers[id] = value;
+      state.idx++;
+      state._transitioning = false;
+      showScreen();
+      if (content) {
+        content.classList.remove('slide-out');
+        content.classList.add('slide-in');
+        content.addEventListener('animationend', () => content.classList.remove('slide-in'), {once: true});
+      }
+    }, 130);
+  }, delay);
 }
 
 function goBack(){
@@ -639,22 +687,8 @@ function resetAll(){
   showScreen();
 }
 
-function updateMunicipiosList() {
-  const estado = document.getElementById('f-estado').value;
-  const datalist = document.getElementById('municipios-list');
-  datalist.innerHTML = '';
-  const municipios = MUNICIPIOS_BR[estado] || [];
-  municipios.forEach(m => {
-    const option = document.createElement('option');
-    option.value = m;
-    datalist.appendChild(option);
-  });
-}
-
 // Init
-document.getElementById('f-estado').addEventListener('change', updateMunicipiosList);
 document.getElementById('f-estado').value = 'SP';
-updateMunicipiosList();
 loadWeights();
 updateProgress();
 </script>

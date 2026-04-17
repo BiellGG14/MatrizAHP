@@ -283,6 +283,17 @@ body {
 .detail-item-value { font-size: 13px; font-weight: 600; color: var(--text); }
 .dim-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 .dim-pill { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; background: var(--primary-light); color: var(--primary); }
+.notas-table-wrap { margin-top: 14px; overflow-x: auto; }
+.notas-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.notas-table th { background: var(--surface); padding: 7px 10px; text-align: left; font-size: 11px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.notas-table td { padding: 6px 10px; border-bottom: 1px solid var(--border-light); vertical-align: middle; }
+.notas-table tr:last-child td { border-bottom: none; }
+.notas-table .dim-header td { background: var(--primary-light); font-weight: 700; color: var(--primary); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+.nota-bruta { font-weight: 700; color: var(--text); }
+.nota-na { color: var(--text-light); font-style: italic; }
+.nota-ponderada { font-weight: 700; color: var(--primary); }
+.btn-notas { margin-top: 10px; font-size: 11px; padding: 5px 12px; border: 1px solid var(--border); border-radius: 5px; background: var(--white); color: var(--text-sec); cursor: pointer; font-family: inherit; }
+.btn-notas:hover { border-color: var(--primary); color: var(--primary); }
 </style>
 </head>
 <body>
@@ -870,6 +881,27 @@ async function viewCalibration(id) {
   mainRow.insertAdjacentElement('afterend', tr);
 }
 
+const DIMENSIONS_ADMIN = [
+  { key:'P', name:'Política', indicators:[
+    {id:'P1',name:'Governança institucional'},{id:'P2',name:'Articulação interinstitucional'},{id:'P3',name:'Integração ao planejamento urbano'}
+  ]},
+  { key:'E', name:'Econômica', indicators:[
+    {id:'E1',name:'Demanda funcional potencial'},{id:'E2',name:'Atratividade para investimentos'},{id:'E3',name:'Capacidade de financiamento'},{id:'E4',name:'Aderência a casos de uso'}
+  ]},
+  { key:'S', name:'Social', indicators:[
+    {id:'S1',name:'Aceitação pública'},{id:'S2',name:'Percepção de segurança'},{id:'S3',name:'Externalidades sociais'},{id:'S4',name:'Equidade e acessibilidade'}
+  ]},
+  { key:'T', name:'Tecnológica', indicators:[
+    {id:'T1',name:'Gestão do espaço aéreo'},{id:'T2',name:'Comunicação, navegação e vigilância'},{id:'T3',name:'Infraestrutura energética'},{id:'T4',name:'Aptidão para vertiportos'}
+  ]},
+  { key:'A', name:'Ambiental', indicators:[
+    {id:'A1',name:'Eficiência energética e emissões'},{id:'A2',name:'Poluição sonora'},{id:'A3',name:'Uso do solo'},{id:'A4',name:'Resiliência ambiental'}
+  ]},
+  { key:'L', name:'Legal', indicators:[
+    {id:'L1',name:'Legislação urbanística'},{id:'L2',name:'Regulação aeronáutica'},{id:'L3',name:'Licenciamento ambiental'},{id:'L4',name:'Responsabilidade civil'}
+  ]}
+];
+
 async function viewAvaliacao(id) {
   const rowId = 'detail-aval-' + id;
   const existing = document.getElementById(rowId);
@@ -877,15 +909,15 @@ async function viewAvaliacao(id) {
     existing.classList.toggle('open');
     return;
   }
-  const avaliacoes = await api.get('avaliacoes');
+  const [avaliacoes, activeWeights] = await Promise.all([api.get('avaliacoes'), api.get('active-weights')]);
   const av = avaliacoes.find(a => a.id === id);
   if (!av) return;
 
   const dimKeys = ['P','E','S','T','A','L'];
-  const dimNames = {P:'Política',E:'Econômica',S:'Social',T:'Tecnológica',A:'Ambiental',L:'Legal'};
   const pills = dimKeys.map(k => {
     const s = av.dimScores && av.dimScores[k];
-    return `<span class="dim-pill">${dimNames[k]}: ${s !== null && s !== undefined ? Number(s).toFixed(2) : 'N/A'}</span>`;
+    const dim = DIMENSIONS_ADMIN.find(d => d.key === k);
+    return `<span class="dim-pill">${dim.name}: ${s !== null && s !== undefined ? Number(s).toFixed(2) : 'N/A'}</span>`;
   }).join('');
 
   const levelColor = av.level==='Avançado'?'#15803d':av.level==='Em Desenvolvimento'?'#2563eb':av.level==='Emergente'?'#d97706':'#dc2626';
@@ -893,18 +925,80 @@ async function viewAvaliacao(id) {
   const tr = document.createElement('tr');
   tr.id = rowId;
   tr.className = 'detail-row open';
-  tr.innerHTML = `<td colspan="5">
+  tr.innerHTML = `<td colspan="6">
     <div class="detail-grid">
-      <div><div class="detail-item-label">Avaliador</div><div class="detail-item-value">${av.respondent.name}</div></div>
       <div><div class="detail-item-label">Formação</div><div class="detail-item-value">${av.respondent.formacao || '—'}</div></div>
       <div><div class="detail-item-label">Índice Final</div><div class="detail-item-value" style="color:${levelColor};font-size:18px;">${av.indice}</div></div>
       <div><div class="detail-item-label">Nível</div><div class="detail-item-value" style="color:${levelColor};">${av.level}</div></div>
     </div>
     <div class="dim-pills">${pills}</div>
+    <button class="btn-notas" onclick="toggleNotasTable('notas-${id}', '${id}', this)">Ver todas as notas</button>
+    <div id="notas-${id}" style="display:none;" data-av-id="${id}"></div>
   </td>`;
 
   const mainRow = document.querySelector(`[onclick="viewAvaliacao('${id}')"]`).closest('tr');
   mainRow.insertAdjacentElement('afterend', tr);
+  tr._avData = av;
+  tr._activeWeights = activeWeights;
+}
+
+function toggleNotasTable(containerId, avId, btn) {
+  const container = document.getElementById(containerId);
+  if (container.style.display !== 'none') {
+    container.style.display = 'none';
+    btn.textContent = 'Ver todas as notas';
+    return;
+  }
+  if (container.dataset.rendered) {
+    container.style.display = '';
+    btn.textContent = 'Ocultar notas';
+    return;
+  }
+
+  const detailRow = document.getElementById('detail-aval-' + avId);
+  const av = detailRow._avData;
+  const activeWeights = detailRow._activeWeights;
+  const answers = av.answers || {};
+
+  let rows = '';
+  DIMENSIONS_ADMIN.forEach(dim => {
+    const dimWeightData = activeWeights && activeWeights.weights && activeWeights.weights[dim.key];
+    const dimWeight = dimWeightData ? dimWeightData.weight : null;
+
+    rows += `<tr class="dim-header"><td colspan="5">${dim.name}${dimWeight !== null ? ` — peso da dimensão: ${(dimWeight*100).toFixed(1)}%` : ''}</td></tr>`;
+
+    dim.indicators.forEach(ind => {
+      const rawVal = answers[ind.id];
+      const indWeightData = dimWeightData && dimWeightData.indicators && dimWeightData.indicators[ind.id];
+      const indWeight = indWeightData ? indWeightData.weight : null;
+
+      const notaBruta = rawVal === undefined ? '—' : rawVal === 'NA' ? 'N/A' : rawVal;
+      const notaBrutaClass = rawVal === undefined || rawVal === 'NA' ? 'nota-na' : 'nota-bruta';
+      const notaPond = (rawVal !== undefined && rawVal !== 'NA' && indWeight !== null)
+        ? (rawVal * indWeight).toFixed(3)
+        : '—';
+
+      rows += `<tr>
+        <td style="color:var(--text-sec);font-size:11px;">${ind.id}</td>
+        <td>${ind.name}</td>
+        <td class="${notaBrutaClass}">${notaBruta}</td>
+        <td style="color:var(--text-sec);">${indWeight !== null ? (indWeight*100).toFixed(1)+'%' : '—'}</td>
+        <td class="${notaPond !== '—' ? 'nota-ponderada' : 'nota-na'}">${notaPond}</td>
+      </tr>`;
+    });
+  });
+
+  container.innerHTML = `<div class="notas-table-wrap">
+    <table class="notas-table">
+      <thead><tr>
+        <th>ID</th><th>Indicador</th><th>Nota Bruta</th><th>Peso Ind.</th><th>Nota Ponderada</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+  container.dataset.rendered = '1';
+  container.style.display = '';
+  btn.textContent = 'Ocultar notas';
 }
 
 async function exportAllData() {
