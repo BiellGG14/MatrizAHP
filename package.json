@@ -1,0 +1,8 @@
+{
+  "name": "matrizahp",
+  "version": "1.0.0",
+  "description": "Índice de Maturidade Municipal UAM",
+  "dependencies": {
+    "@libsql/client": "^0.14.0"
+  }
+}
