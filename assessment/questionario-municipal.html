@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Índice UAM</title>
+<style>
+:root {
+  --primary:       #2563eb;
+  --primary-dark:  #1d4ed8;
+  --primary-light: #eff6ff;
+  --text:          #111827;
+  --text-sec:      #6b7280;
+  --text-light:    #9ca3af;
+  --border:        #d1d5db;
+  --border-light:  #e5e7eb;
+  --surface:       #f9fafb;
+  --white:         #ffffff;
+  --success:       #059669;
+  --success-lt:    #f0fdf4;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--surface);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+.site-header {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.header-left { display: flex; flex-direction: column; gap: 1px; }
+.header-title { font-size: 13px; font-weight: 700; color: var(--text); }
+.header-sub   { font-size: 11px; color: var(--text-sec); }
+.step-counter { font-size: 12px; color: var(--text-sec); font-weight: 500; }
+.progress-wrap {
+  background: var(--white);
+  border-bottom: 1px solid var(--border-light);
+  position: sticky; top: 54px; z-index: 99;
+}
+.progress-bar-line { height: 3px; background: var(--border-light); overflow: hidden; }
+.progress-bar-fill { height: 100%; background: var(--primary); transition: width .4s ease; width: 0%; }
+.block-label {
+  padding: 8px 28px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--text-sec);
+  display: flex; justify-content: space-between;
+}
+.main { max-width: 640px; margin: 0 auto; padding: 40px 20px 80px; }
+.screen { display: none; animation: fadeIn .3s ease; }
+.screen.active { display: block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+
+.intro-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 10px; padding: 40px 36px;
+}
+.intro-badge {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--primary); background: var(--primary-light);
+  border-radius: 4px; padding: 3px 10px; margin-bottom: 16px;
+}
+.intro-title { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
+.intro-desc  { font-size: 14px; color: var(--text-sec); line-height: 1.7; margin-bottom: 24px; }
+.intro-desc strong { color: var(--text); }
+.intro-fields { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
+.fields-row { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
+.field-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+.field-group input, .field-group select {
+  width: 100%; padding: 10px 12px;
+  border: 1px solid var(--border); border-radius: 6px;
+  font-size: 14px; color: var(--text); background: var(--white);
+  outline: none; font-family: inherit;
+  transition: border-color .15s, box-shadow .15s;
+}
+.field-group input:focus, .field-group select:focus {
+  border-color: var(--primary); box-shadow: 0 0 0 3px #bfdbfe;
+}
+.intro-note {
+  font-size: 12px; color: var(--text-sec);
+  padding: 14px 16px; background: var(--surface);
+  border: 1px solid var(--border-light); border-radius: 6px;
+  line-height: 1.65; margin-bottom: 24px;
+}
+.intro-note strong { color: var(--text); }
+
+.weights-info {
+  background: var(--success-lt);
+  border: 1px solid #dcfce7;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-size: 12px;
+  color: var(--success);
+}
+
+.q-block-tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--primary); background: var(--primary-light);
+  border-radius: 4px; padding: 3px 10px; margin-bottom: 14px;
+}
+.q-number { font-size: 11px; font-weight: 700; color: var(--text-light); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 6px; }
+.q-title  { font-size: 21px; font-weight: 800; color: var(--text); line-height: 1.35; margin-bottom: 8px; }
+.q-hint   { font-size: 13px; color: var(--text-sec); line-height: 1.65; margin-bottom: 28px; }
+
+.rating-grid { display: flex; flex-direction: column; gap: 10px; }
+.rating-extremes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.rating-middles  { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.rating-btn {
+  width: 100%; padding: 16px 18px;
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: 10px; font-size: 15px; font-weight: 600;
+  color: var(--text); text-align: left; cursor: pointer;
+  transition: all .15s; font-family: inherit;
+  display: flex; align-items: center; gap: 14px;
+}
+.rating-btn:hover {
+  border-color: var(--primary); background: var(--primary-light);
+  transform: translateY(-1px); box-shadow: 0 2px 8px rgba(37,99,235,.08);
+}
+.rating-btn:active { transform: translateY(0); }
+.rating-btn.selected { border-color: var(--primary); background: var(--primary-light); }
+.rating-btn.extreme { padding: 22px 18px; }
+.rating-btn.extreme-low  { border-color: #fca5a5; background: #fff5f5; }
+.rating-btn.extreme-low  .rating-num { background: #dc2626; border-color: #dc2626; color: var(--white); }
+.rating-btn.extreme-low:hover  { border-color: #dc2626; background: #fee2e2; }
+.rating-btn.extreme-high { border-color: #6ee7b7; background: #f0fdf4; }
+.rating-btn.extreme-high .rating-num { background: #059669; border-color: #059669; color: var(--white); }
+.rating-btn.extreme-high:hover { border-color: #059669; background: #dcfce7; }
+.rating-btn.extreme-low.selected  { border-color: #dc2626; background: #fee2e2; }
+.rating-btn.extreme-high.selected { border-color: #059669; background: #dcfce7; }
+.rating-num {
+  width: 38px; height: 38px; border-radius: 8px;
+  border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 800; color: var(--text-sec);
+  flex-shrink: 0; transition: all .15s;
+}
+.rating-btn:hover .rating-num { border-color: var(--primary); color: var(--primary); }
+.rating-btn.selected .rating-num { background: var(--primary); border-color: var(--primary); color: var(--white); }
+.rating-label { flex: 1; }
+.rating-sub { display: block; font-size: 12px; font-weight: 500; color: var(--text-sec); margin-top: 2px; }
+.rating-btn.na-btn { border-style: dashed; }
+.rating-btn.na-btn .rating-num { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; }
+
+.nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; }
+.btn-back {
+  background: transparent; border: none; color: var(--text-sec);
+  font-size: 13px; font-weight: 600; cursor: pointer; padding: 8px 0; font-family: inherit;
+}
+.btn-back:hover { color: var(--primary); }
+.btn-back:disabled { color: var(--text-light); cursor: not-allowed; }
+
+.result-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 10px; padding: 32px 32px; margin-bottom: 16px;
+}
+.result-header { display: flex; align-items: center; gap: 14px; margin-bottom: 4px; }
+.result-check {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--success-lt); color: var(--success);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 800; flex-shrink: 0;
+}
+.result-title { font-size: 20px; font-weight: 800; color: var(--text); }
+.result-sub { font-size: 13px; color: var(--text-sec); margin-bottom: 24px; }
+.score-big { font-size: 64px; font-weight: 800; line-height: 1; letter-spacing: -2px; color: var(--primary); margin-bottom: 4px; }
+.score-label {
+  display: inline-block; font-size: 12px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 3px 12px; border-radius: 4px; margin-bottom: 20px;
+}
+.score-bar-wrap { height: 8px; background: var(--border-light); border-radius: 4px; overflow: hidden; margin-bottom: 6px; }
+.score-bar { height: 100%; background: var(--primary); border-radius: 4px; transition: width 1s ease; width: 0%; }
+.score-bar-legend { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-light); margin-bottom: 24px; }
+.divider { height: 1px; background: var(--border-light); margin: 20px 0; }
+.section-title-res { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 14px; }
+.dim-list { display: flex; flex-direction: column; gap: 10px; }
+.dim-row { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 10px; }
+.dim-letter {
+  width: 28px; height: 28px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800;
+  background: var(--primary-light); color: var(--primary); flex-shrink: 0;
+}
+.dim-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.dim-bar-wrap { height: 4px; background: var(--border-light); border-radius: 3px; overflow: hidden; margin-top: 3px; }
+.dim-bar { height: 100%; background: var(--primary); border-radius: 3px; transition: width 1s ease; width: 0%; }
+.dim-score { font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; }
+.res-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.res-table th {
+  text-align: left; padding: 7px 10px; font-size: 11px; font-weight: 700;
+  color: var(--text-sec); border-bottom: 1px solid var(--border);
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.res-table td { padding: 7px 10px; border-bottom: 1px solid var(--border-light); color: var(--text); }
+.res-table tr:last-child td { border-bottom: none; }
+.note-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 700; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 11px 24px; border-radius: 6px; font-size: 14px; font-weight: 600;
+  cursor: pointer; border: 1.5px solid transparent;
+  transition: all .15s; font-family: inherit;
+}
+.btn-primary { background: var(--primary); color: var(--white); border-color: var(--primary); }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-ghost { background: transparent; color: var(--text-sec); border-color: var(--border); }
+.btn-ghost:hover { background: var(--surface); color: var(--text); }
+
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+
+@media (max-width: 540px) {
+  .main { padding: 20px 14px 80px; }
+  .intro-card { padding: 24px 18px; }
+  .result-card { padding: 24px 18px; }
+  .intro-title { font-size: 18px; }
+  .result-title { font-size: 18px; }
+  .q-title { font-size: 17px; }
+  .q-hint { font-size: 12px; }
+  .score-big { font-size: 48px; }
+  .rating-btn { padding: 12px 14px; font-size: 14px; gap: 12px; }
+  .rating-btn.extreme { padding: 16px 14px; }
+  .rating-num { width: 32px; height: 32px; font-size: 15px; }
+  .site-header { height: auto; min-height: 48px; padding: 8px 16px; }
+  .block-label { padding: 6px 16px; font-size: 10px; }
+  .progress-wrap { top: 48px; }
+  .nav-row { flex-wrap: wrap; gap: 8px; }
+  .btn-back { font-size: 12px; }
+}
+
+@media (max-width: 380px) {
+  .rating-middles { grid-template-columns: 1fr 1fr 1fr; }
+  .rating-btn { padding: 10px 8px; gap: 8px; font-size: 13px; }
+  .rating-num { width: 28px; height: 28px; font-size: 13px; }
+  .rating-label strong { font-size: 12px; }
+  .rating-sub { font-size: 11px; }
+}
+
+@media (hover: none) {
+  .rating-btn:hover { transform: none; box-shadow: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-left">
+    <div class="header-title">Índice UAM</div>
+    <div class="header-sub">Índice de Maturidade para Mobilidade Aérea Urbana</div>
+  </div>
+  <span class="step-counter" id="stepCounter">Início</span>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-bar-line">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+  <div class="block-label">
+    <span id="blockLabel">Identificação</span>
+    <span id="blockCounter"></span>
+  </div>
+</div>
+
+<main class="main">
+
+  <div class="screen active" id="screen-intro">
+    <div class="intro-card">
+      <span class="intro-badge">Avaliação Municipal</span>
+      <h1 class="intro-title">Avaliação de Prontidão para UAM</h1>
+      <p class="intro-desc">
+        Avalie um município nos <strong>23 indicadores</strong> do Índice de Maturidade para Mobilidade Aérea Urbana.
+        Para cada indicador, atribua uma nota de <strong>1 a 5</strong>.
+      </p>
+
+      <div class="intro-fields">
+        <div class="field-group">
+          <label for="f-avaliador">Nome</label>
+          <input type="text" id="f-avaliador" placeholder="Nome completo"/>
+        </div>
+        <div class="fields-row">
+          <div class="field-group">
+            <label for="f-municipio">Município</label>
+            <input type="text" id="f-municipio" placeholder="Ex.: São Paulo"/>
+          </div>
+          <div class="field-group">
+            <label for="f-estado">Estado</label>
+            <select id="f-estado">
+              <option value="">UF</option>
+              <option value="AC">AC</option>
+              <option value="AL">AL</option>
+              <option value="AP">AP</option>
+              <option value="AM">AM</option>
+              <option value="BA">BA</option>
+              <option value="CE">CE</option>
+              <option value="DF">DF</option>
+              <option value="ES">ES</option>
+              <option value="GO">GO</option>
+              <option value="MA">MA</option>
+              <option value="MT">MT</option>
+              <option value="MS">MS</option>
+              <option value="MG">MG</option>
+              <option value="PA">PA</option>
+              <option value="PB">PB</option>
+              <option value="PR">PR</option>
+              <option value="PE">PE</option>
+              <option value="PI">PI</option>
+              <option value="RJ">RJ</option>
+              <option value="RN">RN</option>
+              <option value="RS">RS</option>
+              <option value="RO">RO</option>
+              <option value="RR">RR</option>
+              <option value="SC">SC</option>
+              <option value="SP">SP</option>
+              <option value="SE">SE</option>
+              <option value="TO">TO</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-group">
+          <label for="f-formacao">Formação acadêmica</label>
+          <input type="text" id="f-formacao" placeholder="Ex.: Engenharia Civil"/>
+        </div>
+      </div>
+
+      <div class="intro-note">
+        <strong>Como funciona:</strong> uma pergunta por vez, cliques simples.
+        Para cada indicador, escolha a nota que melhor descreve a situação atual do município.
+        Use <strong>N/A</strong> quando o indicador não se aplicar.
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="startAssessment()">Iniciar avaliação</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-question">
+    <div id="question-content"></div>
+    <div class="nav-row">
+      <button class="btn-back" id="btn-back" onclick="goBack()">&#8249; Voltar</button>
+      <button class="btn-back" style="font-size:12px;" onclick="goBackToIntro()">Voltar ao início</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-result">
+    <div class="result-card">
+      <div class="result-header">
+        <div class="result-check">&#10003;</div>
+        <div class="result-title">Avaliação registrada com sucesso</div>
+      </div>
+      <p class="result-sub" style="margin-bottom: 28px;">Obrigado pela sua participação.</p>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-primary" onclick="goBackToIntro()" style="flex: 1; justify-content: center;">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+const DIMENSIONS = [
+  { key:'P', name:'Política', indicators:[
+    {id:'P1',name:'Governança institucional',hint:'Existência de estrutura administrativa e liderança para coordenar políticas de UAM no município.'},
+    {id:'P2',name:'Articulação interinstitucional',hint:'Capacidade de articulação com ANAC, DECEA e outros órgãos reguladores e parceiros.'},
+    {id:'P3',name:'Integração ao planejamento urbano',hint:'Inserção da UAM em planos diretores, PDMobs e instrumentos urbanísticos municipais.'}
+  ]},
+  { key:'E', name:'Econômica', indicators:[
+    {id:'E1',name:'Demanda funcional potencial',hint:'Volume de fluxos de deslocamento e perfil de acessibilidade compatíveis com UAM.'},
+    {id:'E2',name:'Atratividade para investimentos',hint:'Capacidade do município de atrair capital privado, operadores e fabricantes de eVTOL.'},
+    {id:'E3',name:'Capacidade de financiamento',hint:'Disponibilidade de recursos públicos e acesso a instrumentos financeiros para infraestrutura UAM.'},
+    {id:'E4',name:'Aderência a casos de uso',hint:'Alinhamento com casos de uso validados: saúde, logística, transporte e monitoramento.'}
+  ]},
+  { key:'S', name:'Social', indicators:[
+    {id:'S1',name:'Aceitação pública',hint:'Nível de receptividade da população local a operações de aeronaves em área urbana.'},
+    {id:'S2',name:'Percepção de segurança',hint:'Confiança da população na segurança operacional e percepção de riscos associados.'},
+    {id:'S3',name:'Externalidades sociais',hint:'Impactos percebidos: geração de empregos, ruído, privacidade e incômodos urbanos.'},
+    {id:'S4',name:'Equidade e acessibilidade',hint:'Potencial de distribuição dos benefícios e inclusão de diferentes grupos sociais.'}
+  ]},
+  { key:'T', name:'Tecnológica', indicators:[
+    {id:'T1',name:'Gestão do espaço aéreo',hint:'Existência ou viabilidade de sistemas UTM/U-space para operações de baixa altitude.'},
+    {id:'T2',name:'Comunicação, navegação e vigilância',hint:'Disponibilidade de infraestrutura CNS adequada para suporte a operações UAM seguras.'},
+    {id:'T3',name:'Infraestrutura energética',hint:'Capacidade da rede elétrica para recarga de eVTOL em vertiportos.'},
+    {id:'T4',name:'Aptidão para vertiportos',hint:'Existência de áreas físicas viáveis e viabilidade técnica para instalação de vertiportos.'}
+  ]},
+  { key:'A', name:'Ambiental', indicators:[
+    {id:'A1',name:'Eficiência energética e emissões',hint:'Ganho de eficiência e redução de emissões comparado aos modos de transporte substituídos.'},
+    {id:'A2',name:'Poluição sonora',hint:'Sensibilidade do ambiente urbano ao ruído de eVTOLs e tolerância das comunidades.'},
+    {id:'A3',name:'Uso do solo',hint:'Compatibilidade do zoneamento e do uso do solo com vertiportos e corredores aéreos.'},
+    {id:'A4',name:'Resiliência ambiental',hint:'Capacidade de operação segura sob condições climáticas adversas.'}
+  ]},
+  { key:'L', name:'Legal', indicators:[
+    {id:'L1',name:'Legislação urbanística',hint:'Adequação das normas municipais de uso do solo e zoneamento para receber UAM.'},
+    {id:'L2',name:'Regulação aeronáutica',hint:'Compatibilidade local com normativas federais da ANAC e do DECEA.'},
+    {id:'L3',name:'Licenciamento ambiental',hint:'Agilidade e clareza dos processos de licenciamento para infraestrutura UAM.'},
+    {id:'L4',name:'Responsabilidade civil',hint:'Existência de arcabouço jurídico que define riscos, seguros e responsabilidades.'}
+  ]}
+];
+
+let WEIGHTS = null;  // Será carregado via API
+const SCALE = [
+  {value:1,label:'Muito Baixo', sub:'Ausente ou praticamente inexistente no município'},
+  {value:2,label:'Baixo',       sub:'Presente de forma incipiente, com grandes lacunas'},
+  {value:3,label:'Moderado',    sub:'Existe, mas com limitações relevantes'},
+  {value:4,label:'Alto',        sub:'Bem desenvolvido, com poucos gaps'},
+  {value:5,label:'Muito Alto',  sub:'Consolidado e robusto para suportar UAM'}
+];
+
+const state = {
+  resp:{name:'',municipio:'',estado:'',formacao:''},
+  startedAt:null, finishedAt:null,
+  screens:[], idx:-1,
+  answers:{}, history:[],
+  computed:null,
+  lastAnswers:{}
+};
+
+function buildScreens(){
+  return DIMENSIONS.flatMap(d => d.indicators.map(ind => ({block:d.key,id:ind.id})));
+}
+
+async function loadWeights() {
+  try {
+    const res = await fetch('/api/active-weights');
+    const active = await res.json();
+    if (active && active.weights) {
+      WEIGHTS = {};
+      Object.keys(active.weights).forEach(dimKey => {
+        const dimData = active.weights[dimKey];
+        WEIGHTS[dimKey] = { dim: dimData.weight, ind: {} };
+        Object.keys(dimData.indicators).forEach(indKey => {
+          WEIGHTS[dimKey].ind[indKey] = dimData.indicators[indKey].weight;
+        });
+      });
+      return;
+    }
+  } catch (e) { /* fallback */ }
+  WEIGHTS = {
+    P:{dim:1/6,ind:{P1:1/3,P2:1/3,P3:1/3}},
+    E:{dim:1/6,ind:{E1:1/4,E2:1/4,E3:1/4,E4:1/4}},
+    S:{dim:1/6,ind:{S1:1/4,S2:1/4,S3:1/4,S4:1/4}},
+    T:{dim:1/6,ind:{T1:1/4,T2:1/4,T3:1/4,T4:1/4}},
+    A:{dim:1/6,ind:{A1:1/4,A2:1/4,A3:1/4,A4:1/4}},
+    L:{dim:1/6,ind:{L1:1/4,L2:1/4,L3:1/4,L4:1/4}}
+  };
+}
+
+function startAssessment(){
+  const av=document.getElementById('f-avaliador').value.trim();
+  const mun=document.getElementById('f-municipio').value.trim();
+  const est=document.getElementById('f-estado').value.trim();
+  const formacao=document.getElementById('f-formacao').value.trim();
+  if(!WEIGHTS){alert('Carregando pesos, tente novamente em instantes.');return;}
+  if(!av||!mun||!est||!formacao){alert('Preencha todos os campos para iniciar.');return;}
+  state.resp={name:av,municipio:mun,estado:est.toUpperCase(),formacao:formacao};
+  state.startedAt=new Date().toISOString();
+  state.screens=buildScreens();
+  state.idx=0; state.history=[];
+  showScreen();
+}
+
+function showScreen(){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  if(state.idx<0){document.getElementById('screen-intro').classList.add('active');updateProgress();return;}
+  if(state.idx>=state.screens.length){
+    state.finishedAt=new Date().toISOString();
+    state.computed=computeIndex();
+    saveAvaliacao();
+    renderResult();
+    document.getElementById('screen-result').classList.add('active');
+    updateProgress(); return;
+  }
+  renderQuestion(state.screens[state.idx]);
+  document.getElementById('screen-question').classList.add('active');
+  document.getElementById('btn-back').disabled=state.history.length===0;
+  updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderQuestion(cur){
+  const dim=DIMENSIONS.find(d=>d.key===cur.block);
+  const ind=dim.indicators.find(i=>i.id===cur.id);
+  const dimIdx=DIMENSIONS.findIndex(d=>d.key===cur.block);
+  const curVal=state.lastAnswers[cur.id]!==undefined?state.lastAnswers[cur.id]:state.answers[cur.id];
+  let html='';
+  html+='<span class="q-block-tag">Dimensão '+(dimIdx+1)+' de 6 — '+dim.name+'</span>';
+  html+='<div class="q-number">Indicador '+(state.idx+1)+' de 23</div>';
+  html+='<div class="q-title">'+ind.name+'</div>';
+  html+='<div class="q-hint">'+ind.hint+'</div>';
+  const s1=SCALE[0], s5=SCALE[4], middles=SCALE.slice(1,4);
+  html+='<div class="rating-grid">';
+  html+='<div class="rating-extremes">';
+  ['low','high'].forEach((type,i)=>{
+    const s=type==='low'?s1:s5;
+    const sel=curVal===s.value?' selected':'';
+    html+='<button class="rating-btn extreme extreme-'+type+sel+'" onclick="selectRating(\''+cur.id+'\','+s.value+')">' +
+          '<div class="rating-num">'+s.value+'</div>' +
+          '<div class="rating-label"><strong>'+s.label+'</strong><span class="rating-sub">'+s.sub+'</span></div>' +
+          '</button>';
+  });
+  html+='</div>';
+  html+='<div class="rating-middles">';
+  middles.forEach(s=>{
+    const sel=curVal===s.value?' selected':'';
+    html+='<button class="rating-btn'+sel+'" onclick="selectRating(\''+cur.id+'\','+s.value+')">' +
+          '<div class="rating-num">'+s.value+'</div>' +
+          '<div class="rating-label"><strong>'+s.label+'</strong><span class="rating-sub">'+s.sub+'</span></div>' +
+          '</button>';
+  });
+  html+='</div>';
+  const selNA=curVal==='NA'?' selected':'';
+  html+='<button class="rating-btn na-btn'+selNA+'" onclick="selectRating(\''+cur.id+'\',\'NA\')">' +
+        '<div class="rating-num">N/A</div>' +
+        '<div class="rating-label"><strong>Não se aplica</strong><span class="rating-sub">Este indicador não é relevante para este município</span></div>' +
+        '</button>';
+  html+='</div>';
+  document.getElementById('question-content').innerHTML=html;
+}
+
+function selectRating(id,value){
+  pushHistory();
+  state.answers[id]=value;
+  state.lastAnswers[id]=value;
+  state.idx++;
+  showScreen();
+}
+
+function goBack(){
+  if(!state.history.length)return;
+  const snap=state.history.pop();
+  state.idx=snap.idx;
+  state.answers=JSON.parse(JSON.stringify(snap.answers));
+  showScreen();
+}
+
+function goBackToIntro(){
+  state.screens=[];state.idx=-1;state.answers={};state.history=[];state.computed=null;state.lastAnswers={};
+  document.getElementById('f-avaliador').value=state.resp.name;
+  document.getElementById('f-municipio').value=state.resp.municipio;
+  document.getElementById('f-estado').value=state.resp.estado;
+  document.getElementById('f-formacao').value=state.resp.formacao;
+  showScreen();
+}
+
+function pushHistory(){
+  state.history.push({idx:state.idx,answers:JSON.parse(JSON.stringify(state.answers))});
+}
+
+function updateProgress(){
+  if(state.idx<0){
+    document.getElementById('stepCounter').textContent='Início';
+    document.getElementById('blockLabel').textContent='Identificação';
+    document.getElementById('blockCounter').textContent='';
+    document.getElementById('progressFill').style.width='0%'; return;
+  }
+  if(state.idx>=state.screens.length){
+    document.getElementById('stepCounter').textContent='Finalizado';
+    document.getElementById('blockLabel').textContent='Resultado';
+    document.getElementById('blockCounter').textContent='';
+    document.getElementById('progressFill').style.width='100%'; return;
+  }
+  const cur=state.screens[state.idx];
+  const dim=DIMENSIONS.find(d=>d.key===cur.block);
+  const dimScreens=state.screens.filter(s=>s.block===cur.block);
+  const posInDim=dimScreens.findIndex(s=>s.id===cur.id)+1;
+  document.getElementById('stepCounter').textContent='Indicador '+(state.idx+1)+' de 23';
+  document.getElementById('blockLabel').textContent=dim.name;
+  document.getElementById('blockCounter').textContent=posInDim+'/'+dimScreens.length;
+  document.getElementById('progressFill').style.width=((state.idx/23)*100)+'%';
+}
+
+function computeIndex(){
+  const dimScores={};
+  let totalScore=0, totalWeight=0;
+  DIMENSIONS.forEach(d=>{
+    let num=0,den=0;
+    d.indicators.forEach(ind=>{
+      const val=state.answers[ind.id];
+      if(val===undefined||val==='NA')return;
+      const w=WEIGHTS[d.key].ind[ind.id];
+      num+=w*val; den+=w;
+    });
+    const s=den>0?num/den:null;
+    dimScores[d.key]=s;
+    if(s!==null){totalScore+=WEIGHTS[d.key].dim*s;totalWeight+=WEIGHTS[d.key].dim;}
+  });
+  return{finalScore:totalWeight>0?totalScore/totalWeight:0,dimScores};
+}
+
+function saveAvaliacao() {
+  const{finalScore,dimScores}=state.computed;
+  const avaliacao = {
+    id: 'aval_' + Date.now(),
+    timestamp: new Date().toISOString(),
+    respondent: state.resp,
+    indice: finalScore.toFixed(2),
+    level: finalScore>=4?'Avançado':finalScore>=3?'Em Desenvolvimento':finalScore>=2?'Emergente':'Incipiente',
+    dimScores: dimScores,
+    answers: state.answers
+  };
+
+  fetch('/api/avaliacoes', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(avaliacao)
+  }).catch(err => console.error('Erro ao salvar:', err));
+}
+
+function renderResult(){}
+
+function resetAll(){
+  if(!confirm('Iniciar nova avaliação? As respostas atuais serão perdidas.'))return;
+  state.resp={name:'',municipio:'',estado:'',formacao:''};
+  state.startedAt=null;state.finishedAt=null;
+  state.screens=[];state.idx=-1;state.answers={};state.history=[];state.computed=null;state.lastAnswers={};
+  ['f-avaliador','f-municipio','f-estado','f-formacao'].forEach(id=>document.getElementById(id).value='');
+  showScreen();
+}
+
+// Init
+loadWeights();
+updateProgress();
+</script>
+</body>
+</html>

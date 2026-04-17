@@ -1,83 +1,55 @@
 const { createClient } = require('@libsql/client');
 
-const corsHeaders = {
+const cors = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
+function client() {
+  return createClient({ url: process.env.TURSO_URL, authToken: process.env.TURSO_TOKEN });
+}
+
+async function ensureTable(db) {
+  await db.execute(`CREATE TABLE IF NOT EXISTS active_weights (
+    id TEXT PRIMARY KEY,
+    timestamp TEXT,
+    calibrations_included TEXT,
+    weights TEXT,
+    activated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`);
+}
+
 exports.handler = async (event) => {
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers: corsHeaders, body: '' };
-  }
+  if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: cors, body: '' };
 
-  const client = createClient({
-    url: process.env.TURSO_URL,
-    authToken: process.env.TURSO_TOKEN,
-  });
-
+  const db = client();
   try {
+    await ensureTable(db);
+
     if (event.httpMethod === 'GET') {
-      const result = await client.execute(
-        'SELECT * FROM active_weights ORDER BY activated_at DESC LIMIT 1'
-      );
-      const raw = result.rows[0] || null;
-      const row = raw
-        ? {
-            ...raw,
-            weights: JSON.parse(raw.weights),
-            calibrations_included: JSON.parse(raw.calibrations_included),
-          }
-        : null;
-      return {
-        statusCode: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        body: JSON.stringify(row),
-      };
+      const result = await db.execute('SELECT * FROM active_weights ORDER BY activated_at DESC LIMIT 1');
+      const r = result.rows[0] || null;
+      const row = r ? {
+        id: r.id,
+        timestamp: r.timestamp,
+        calibrationsIncluded: JSON.parse(r.calibrations_included || '[]'),
+        weights: JSON.parse(r.weights || '{}'),
+      } : null;
+      return { statusCode: 200, headers: { ...cors, 'Content-Type': 'application/json' }, body: JSON.stringify(row) };
     }
 
     if (event.httpMethod === 'POST') {
-      let body;
-      try {
-        body = JSON.parse(event.body);
-      } catch {
-        return {
-          statusCode: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ error: 'Invalid JSON in request body' }),
-        };
-      }
-      const { id, timestamp, calibrations_included, weights } = body;
-
-      await client.execute({
-        sql: `INSERT OR REPLACE INTO active_weights
-              (id, timestamp, calibrations_included, weights)
-              VALUES (?, ?, ?, ?)`,
-        args: [
-          id,
-          timestamp,
-          JSON.stringify(calibrations_included),
-          JSON.stringify(weights),
-        ],
+      const { id, timestamp, calibrationsIncluded, weights } = JSON.parse(event.body);
+      await db.execute({
+        sql: `INSERT OR REPLACE INTO active_weights (id, timestamp, calibrations_included, weights) VALUES (?, ?, ?, ?)`,
+        args: [id, timestamp, JSON.stringify(calibrationsIncluded), JSON.stringify(weights)],
       });
-
-      return {
-        statusCode: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ success: true }),
-      };
+      return { statusCode: 200, headers: { ...cors, 'Content-Type': 'application/json' }, body: JSON.stringify({ success: true }) };
     }
 
-    return {
-      statusCode: 405,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: 'Method not allowed' }),
-    };
+    return { statusCode: 405, headers: cors, body: JSON.stringify({ error: 'Method not allowed' }) };
   } catch (err) {
-    return {
-      statusCode: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: err.message }),
-    };
+    return { statusCode: 500, headers: { ...cors, 'Content-Type': 'application/json' }, body: JSON.stringify({ error: err.message }) };
   }
 };

@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Comparação de Relevâncias</title>
+<style>
+:root {
+  --primary:       #2563eb;
+  --primary-dark:  #1d4ed8;
+  --primary-light: #eff6ff;
+  --primary-ring:  #bfdbfe;
+  --text:          #111827;
+  --text-sec:      #6b7280;
+  --text-light:    #9ca3af;
+  --border:        #d1d5db;
+  --border-light:  #e5e7eb;
+  --surface:       #f9fafb;
+  --white:         #ffffff;
+  --success:       #059669;
+  --success-lt:    #f0fdf4;
+  --header-bg:     #1e293b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--surface);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.site-header {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-left  { display: flex; flex-direction: column; gap: 1px; }
+.header-title { font-size: 13px; font-weight: 700; color: var(--text); }
+.header-sub   { font-size: 11px; color: var(--text-sec); }
+.header-right { display: flex; align-items: center; gap: 16px; }
+.step-counter { font-size: 12px; color: var(--text-sec); font-weight: 500; }
+
+.progress-wrap {
+  background: var(--white);
+  border-bottom: 1px solid var(--border-light);
+  position: sticky;
+  top: 54px;
+  z-index: 99;
+}
+.progress-bar-line {
+  height: 3px;
+  background: var(--border-light);
+  position: relative;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: var(--primary);
+  transition: width .4s ease;
+  width: 0%;
+}
+.block-label {
+  padding: 8px 28px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-sec);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+}
+
+.screen { display: none; animation: fadeIn .3s ease; }
+.screen.active { display: block; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.intro-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 40px 36px;
+}
+.intro-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary);
+  background: var(--primary-light);
+  border-radius: 4px;
+  padding: 3px 10px;
+  margin-bottom: 16px;
+}
+.intro-title { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
+.intro-desc  { font-size: 14px; color: var(--text-sec); line-height: 1.7; margin-bottom: 24px; }
+.intro-desc strong { color: var(--text); }
+
+.intro-fields { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
+.fields-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 540px) { .fields-row { grid-template-columns: 1fr; } }
+.field-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 5px;
+}
+.field-group input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--white);
+  outline: none;
+  font-family: inherit;
+  transition: border-color .15s, box-shadow .15s;
+}
+.field-group input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-ring);
+}
+
+.intro-note {
+  font-size: 12px;
+  color: var(--text-sec);
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  line-height: 1.65;
+  margin-bottom: 24px;
+}
+.intro-note strong { color: var(--text); }
+
+.q-block-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary);
+  background: var(--primary-light);
+  border-radius: 4px;
+  padding: 3px 10px;
+  margin-bottom: 14px;
+}
+.q-number {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-light);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.q-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.35;
+  margin-bottom: 8px;
+}
+.q-hint {
+  font-size: 13px;
+  color: var(--text-sec);
+  line-height: 1.65;
+  margin-bottom: 28px;
+}
+
+.q-context {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-sec);
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  padding: 4px 10px;
+  margin-bottom: 16px;
+}
+.q-context-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+}
+
+.opt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.opt-btn {
+  width: 100%;
+  padding: 18px 22px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: all .15s;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.opt-btn:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+}
+.opt-btn:active { transform: translateY(0); }
+.opt-btn.selected {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+}
+.opt-marker {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all .15s;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-light);
+}
+.opt-btn:hover .opt-marker { border-color: var(--primary); color: var(--primary); }
+.opt-btn.selected .opt-marker { background: var(--primary); border-color: var(--primary); color: var(--white); }
+.opt-label { flex: 1; }
+.opt-sub {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-sec);
+  margin-top: 2px;
+}
+.opt-btn.selected .opt-sub { color: var(--primary); }
+
+.nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 28px;
+}
+.btn-back {
+  background: transparent;
+  border: none;
+  color: var(--text-sec);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 0;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.btn-back:hover { color: var(--primary); }
+.btn-back:disabled { color: var(--text-light); cursor: not-allowed; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 28px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all .15s;
+  font-family: inherit;
+}
+.btn-primary {
+  background: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
+}
+.btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
+.btn-primary:disabled {
+  background: var(--border);
+  border-color: var(--border);
+  cursor: not-allowed;
+}
+
+.result-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 32px 32px;
+  margin-bottom: 16px;
+}
+.result-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 6px;
+}
+.result-check {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--success-lt);
+  color: var(--success);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.result-title { font-size: 20px; font-weight: 800; color: var(--text); }
+.result-sub { font-size: 13px; color: var(--text-sec); margin-bottom: 22px; }
+
+.success-message {
+  background: #f0fdf4;
+  border: 1px solid #dcfce7;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+.success-message strong {
+  color: var(--success);
+  font-size: 14px;
+}
+.success-message p {
+  font-size: 13px;
+  color: var(--text-sec);
+  margin-top: 6px;
+}
+
+@media (max-width: 540px) {
+  .main { padding: 24px 14px 80px; }
+  .intro-card, .result-card { padding: 22px 18px; }
+  .intro-title { font-size: 18px; }
+  .q-title { font-size: 18px; }
+  .result-title { font-size: 17px; }
+  .opt-btn { padding: 14px 16px; font-size: 14px; }
+  .site-header { height: auto; min-height: 48px; padding: 8px 16px; }
+  .block-label { padding: 6px 16px; font-size: 10px; }
+  .progress-wrap { top: 48px; }
+  .nav-row { flex-wrap: wrap; gap: 8px; }
+  .btn-back { font-size: 12px; }
+}
+
+@media (hover: none) {
+  .opt-btn:hover { transform: none; box-shadow: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-left">
+    <div class="header-title">Comparação de Relevâncias</div>
+    <div class="header-sub">Índice de Maturidade Municipal UAM</div>
+  </div>
+  <div class="header-right">
+    <span class="step-counter" id="stepCounter">Inicio</span>
+  </div>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-bar-line">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+  <div class="block-label">
+    <span id="blockLabel">Identificação</span>
+    <span id="blockCounter"></span>
+  </div>
+</div>
+
+<main class="main" id="main">
+
+  <div class="screen active" id="screen-intro">
+    <div class="intro-card">
+      <span class="intro-badge">Comparação de Relevâncias</span>
+      <h1 class="intro-title">Comparação de Relevâncias para o Índice UAM</h1>
+      <p class="intro-desc">
+        Esta ferramenta captura a importância relativa das <strong>6 dimensões PESTEL</strong> e dos <strong>23 indicadores</strong> que compõem o Índice de Maturidade Municipal para Mobilidade Aérea Urbana.
+      </p>
+      <div class="intro-fields">
+        <div class="field-group">
+          <label for="f-nome">Nome</label>
+          <input type="text" id="f-nome" placeholder="Nome completo"/>
+        </div>
+        <div class="fields-row">
+          <div class="field-group">
+            <label for="f-inst">Instituição</label>
+            <input type="text" id="f-inst" placeholder="Ex.: Prefeitura de Jacareí"/>
+          </div>
+          <div class="field-group">
+            <label for="f-municipio">Município</label>
+            <input type="text" id="f-municipio" placeholder="Ex.: Jacareí"/>
+          </div>
+        </div>
+        <div class="field-group">
+          <label for="f-formacao">Formação</label>
+          <input type="text" id="f-formacao" placeholder="Ex.: Engenharia Civil"/>
+        </div>
+      </div>
+      <div class="intro-note">
+        <strong>Como funciona:</strong> responda blocos curtos, uma pergunta por vez. Primeiro escolhe o item mais importante; depois compara os outros com esse item escolhido.
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="startCalibration()">Iniciar</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-question">
+    <div id="question-content"></div>
+    <div class="nav-row">
+      <button class="btn-back" id="btn-back" onclick="goBack()">&#8249; Voltar</button>
+      <button class="btn-back" style="font-size:12px;" onclick="goBackToIntro()">Voltar ao inicio</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-result">
+    <div class="result-card">
+      <div class="result-header">
+        <div class="result-check">&#10003;</div>
+        <div class="result-title">Seus resultados foram registrados com sucesso</div>
+      </div>
+
+      <p class="result-sub" style="margin-bottom: 28px;">Obrigado pela sua participação.</p>
+
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="btn btn-primary" onclick="resetAll()" style="flex: 1; justify-content: center;">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+const DIMENSIONS = [
+  { key: 'P', name: 'Política', indicators: [
+    { id: 'P1', name: 'Governança institucional', desc: 'Estrutura administrativa e liderança para condução do tema UAM no município.' },
+    { id: 'P2', name: 'Articulação interinstitucional', desc: 'Capacidade de articulação com ANAC, DECEA e outros órgãos reguladores.' },
+    { id: 'P3', name: 'Integração ao planejamento urbano', desc: 'Inserção da UAM em planos diretores, PDMobs e instrumentos urbanísticos.' }
+  ]},
+  { key: 'E', name: 'Econômica', indicators: [
+    { id: 'E1', name: 'Demanda funcional potencial', desc: 'Fluxos de deslocamento e acessibilidade compatíveis com UAM.' },
+    { id: 'E2', name: 'Atratividade para investimentos', desc: 'Capacidade de atrair capital privado, operadores e fabricantes.' },
+    { id: 'E3', name: 'Capacidade de financiamento', desc: 'Disponibilidade de recursos públicos e instrumentos financeiros.' },
+    { id: 'E4', name: 'Aderência a casos de uso', desc: 'Alinhamento com casos validados de UAM (saúde, logística, transporte).' }
+  ]},
+  { key: 'S', name: 'Social', indicators: [
+    { id: 'S1', name: 'Aceitação pública', desc: 'Receptividade da população local a operações de UAM.' },
+    { id: 'S2', name: 'Percepção de segurança', desc: 'Confiança na segurança operacional e percepção de risco.' },
+    { id: 'S3', name: 'Externalidades sociais', desc: 'Impactos sociais percebidos: emprego, ruído, privacidade.' },
+    { id: 'S4', name: 'Equidade e acessibilidade', desc: 'Distribuição dos benefícios e inclusão social.' }
+  ]},
+  { key: 'T', name: 'Tecnológica', indicators: [
+    { id: 'T1', name: 'Gestão do espaço aéreo', desc: 'Integração com controle de tráfego aéreo e UTM.' },
+    { id: 'T2', name: 'Comunicação, navegação e vigilância', desc: 'Infraestrutura CNS adequada a operações urbanas.' },
+    { id: 'T3', name: 'Infraestrutura energética', desc: 'Capacidade da rede elétrica para recarga de eVTOL.' },
+    { id: 'T4', name: 'Aptidão para vertiportos', desc: 'Viabilidade física e integração urbana de vertiportos.' }
+  ]},
+  { key: 'A', name: 'Ambiental', indicators: [
+    { id: 'A1', name: 'Eficiência energética e emissões', desc: 'Consumo e emissões comparados aos modos substituídos.' },
+    { id: 'A2', name: 'Poluição sonora', desc: 'Impacto do ruído de operações no ambiente urbano.' },
+    { id: 'A3', name: 'Uso do solo', desc: 'Compatibilidade territorial e impactos ambientais locais.' },
+    { id: 'A4', name: 'Resiliência ambiental', desc: 'Operação sob condições climáticas adversas.' }
+  ]},
+  { key: 'L', name: 'Legal', indicators: [
+    { id: 'L1', name: 'Legislação urbanística', desc: 'Adequação às normas de uso do solo e zoneamento.' },
+    { id: 'L2', name: 'Regulação aeronáutica', desc: 'Compatibilidade com normativas ANAC e DECEA.' },
+    { id: 'L3', name: 'Licenciamento ambiental', desc: 'Processos de aprovação e controle ambiental.' },
+    { id: 'L4', name: 'Responsabilidade civil', desc: 'Existência de arcabouço jurídico de riscos e responsabilidades.' }
+  ]}
+];
+
+const COMPARISON_OPTIONS = [
+  { id: 'equal', label: 'Igualmente importantes', sub: 'Pesam o mesmo que o item de referência', value: 1 },
+  { id: 'slightly', label: 'Um pouco menos importante', sub: 'Referência levemente superior', value: 3 },
+  { id: 'moderately', label: 'Moderadamente menos importante', sub: 'Referência claramente superior', value: 5 },
+  { id: 'strongly', label: 'Muito menos importante', sub: 'Referência muito superior', value: 7 },
+  { id: 'extremely', label: 'Extremamente menos importante', sub: 'Referência domina de forma absoluta', value: 9 }
+];
+
+const state = {
+  respondent: { name: '', institution: '' },
+  startedAt: null,
+  finishedAt: null,
+  screens: [],
+  idx: -1,
+  answers: {
+    dimensions: { reference: null, comparisons: {} },
+    indicators: {}
+  },
+  history: [],
+  lastReferences: {},
+  lastComparisons: {},
+  maxProgress: 0
+};
+
+function buildFlow() {
+  const screens = [];
+  screens.push({ type: 'pick', block: 'dimensions' });
+  DIMENSIONS.forEach(d => {
+    screens.push({ type: 'pick', block: d.key });
+  });
+  return screens;
+}
+
+function startCalibration() {
+  const nome = document.getElementById('f-nome').value.trim();
+  const inst = document.getElementById('f-inst').value.trim();
+  const formacao = document.getElementById('f-formacao').value.trim();
+  const municipio = document.getElementById('f-municipio').value.trim();
+  if (!nome || !inst || !formacao || !municipio) {
+    alert('Preencha todos os campos para iniciar.');
+    return;
+  }
+  state.respondent.name = nome;
+  state.respondent.institution = inst;
+  state.respondent.formacao = formacao;
+  state.respondent.municipio = municipio;
+  state.startedAt = new Date().toISOString();
+  state.screens = buildFlow();
+  state.idx = 0;
+  state.history = [];
+  showScreen();
+}
+
+function showScreen() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
+  if (state.idx < 0) {
+    document.getElementById('screen-intro').classList.add('active');
+    updateProgress();
+    return;
+  }
+
+  if (state.idx >= state.screens.length) {
+    state.finishedAt = new Date().toISOString();
+    saveCalibration();
+    renderResult();
+    document.getElementById('screen-result').classList.add('active');
+    updateProgress();
+    return;
+  }
+
+  const cur = state.screens[state.idx];
+  renderQuestion(cur);
+  document.getElementById('screen-question').classList.add('active');
+  updateProgress();
+}
+
+function renderQuestion(cur) {
+  const content = document.getElementById('question-content');
+  const blockName = cur.block === 'dimensions' ? 'Dimensões PESTEL' : 'Indicadores da ' + DIMENSIONS.find(d => d.key === cur.block).name;
+
+  let html = '';
+  if (cur.type === 'pick') {
+    const items = cur.block === 'dimensions' ? DIMENSIONS : DIMENSIONS.find(d => d.key === cur.block).indicators;
+    const blockTag = cur.block === 'dimensions' ? 'Bloco 1 de 7' : 'Bloco ' + (DIMENSIONS.findIndex(d => d.key === cur.block) + 2) + ' de 7';
+    const preselected = state.lastReferences[cur.block] || null;
+
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:14px;">';
+    html += '<span class="q-block-tag" style="margin-bottom:0;">' + blockTag + ' — ' + blockName + '</span>';
+    if (cur.block !== 'dimensions') {
+      const dim = DIMENSIONS.find(d => d.key === cur.block);
+      html += '<div class="q-context" style="margin-bottom:0;"><span class="q-context-dot"></span>Dimensão ' + dim.name + '</div>';
+    }
+    html += '</div>';
+    html += '<div class="q-number">Passo 1 — Escolha o mais importante</div>';
+    html += '<div class="q-title">' + (cur.block === 'dimensions'
+      ? 'Qual destas dimensões é a mais importante para a maturidade UAM do município?'
+      : 'Dentro da dimensão ' + DIMENSIONS.find(d => d.key === cur.block).name + ', qual indicador é o mais importante?') + '</div>';
+    html += '<div class="q-hint">' + (cur.block === 'dimensions'
+      ? 'Escolha a dimensão que você considera mais determinante. Ela será a base de comparação com todas as outras.'
+      : 'Selecione o indicador mais determinante dentro desta dimensão.') + '</div>';
+
+    html += '<div class="opt-list">';
+    items.forEach((it, i) => {
+      const id = cur.block === 'dimensions' ? it.key : it.id;
+      const label = it.name;
+      const sub = it.desc || '';
+      const selected = preselected === id ? ' selected' : '';
+      html += '<button class="opt-btn' + selected + '" onclick="selectReference(\'' + id + '\')">' +
+              '<div class="opt-marker">' + (i + 1) + '</div>' +
+              '<div class="opt-label"><strong>' + label + '</strong>' + (sub ? '<span class="opt-sub">' + sub + '</span>' : '') + '</div>' +
+              '</button>';
+    });
+    html += '</div>';
+  } else if (cur.type === 'compare') {
+    const items = cur.block === 'dimensions' ? DIMENSIONS : DIMENSIONS.find(d => d.key === cur.block).indicators;
+    const refId = cur.block === 'dimensions' ? state.answers.dimensions.reference : state.answers.indicators[cur.block].reference;
+    const refItem = items.find(i => (cur.block === 'dimensions' ? i.key : i.id) === refId);
+    const compItem = items.find(i => (cur.block === 'dimensions' ? i.key : i.id) === cur.item);
+
+    const blockScreens = state.screens.filter(s => s.block === cur.block);
+    const compScreens = blockScreens.filter(s => s.type === 'compare');
+    const curCompIndex = compScreens.findIndex(s => s.item === cur.item);
+    const blockTag = cur.block === 'dimensions' ? 'Bloco 1 de 7' : 'Bloco ' + (DIMENSIONS.findIndex(d => d.key === cur.block) + 2) + ' de 7';
+
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:14px;">';
+    html += '<span class="q-block-tag" style="margin-bottom:0;">' + blockTag + ' — ' + blockName + '</span>';
+    if (cur.block !== 'dimensions') {
+      const dim = DIMENSIONS.find(d => d.key === cur.block);
+      html += '<div class="q-context" style="margin-bottom:0;"><span class="q-context-dot"></span>Dimensão ' + dim.name + '</div>';
+    }
+    html += '</div>';
+    html += '<div class="q-number">Comparação ' + (curCompIndex + 1) + ' de ' + compScreens.length + '</div>';
+    html += '<div class="q-title">Comparada com <span style="color:var(--primary)">' + refItem.name + '</span>, como você avalia <span style="color:var(--primary)">' + compItem.name + '</span>?</div>';
+    html += '<div class="q-hint"><strong>' + refItem.name + '</strong> foi escolhido como o mais importante. Indique o quão menos importante é <strong>' + compItem.name + '</strong> em relação a ele.</div>';
+
+    const curChoice = state.lastComparisons[cur.block] && state.lastComparisons[cur.block][cur.item];
+
+    html += '<div class="opt-list">';
+    COMPARISON_OPTIONS.forEach((opt, i) => {
+      const selected = curChoice === opt.id ? ' selected' : '';
+      html += '<button class="opt-btn' + selected + '" onclick="selectComparison(\'' + opt.id + '\')">' +
+              '<div class="opt-marker">' + (i + 1) + '</div>' +
+              '<div class="opt-label"><strong>' + opt.label + '</strong><span class="opt-sub">' + opt.sub + '</span></div>' +
+              '</button>';
+    });
+    html += '</div>';
+  }
+
+  content.innerHTML = html;
+  document.getElementById('btn-back').disabled = state.idx === 0 && state.history.length === 0;
+}
+
+function selectReference(id) {
+  pushHistory();
+  const cur = state.screens[state.idx];
+  state.lastReferences[cur.block] = id;
+  if (cur.block === 'dimensions') {
+    state.answers.dimensions.reference = id;
+    const others = DIMENSIONS.filter(d => d.key !== id).map(d => d.key);
+    const compareScreens = others.map(k => ({ type: 'compare', block: 'dimensions', item: k }));
+    state.screens.splice(state.idx + 1, 0, ...compareScreens);
+  } else {
+    const dim = DIMENSIONS.find(d => d.key === cur.block);
+    state.answers.indicators[cur.block] = state.answers.indicators[cur.block] || { reference: null, comparisons: {} };
+    state.answers.indicators[cur.block].reference = id;
+    const others = dim.indicators.filter(ind => ind.id !== id).map(ind => ind.id);
+    const compareScreens = others.map(ind => ({ type: 'compare', block: cur.block, item: ind }));
+    state.screens.splice(state.idx + 1, 0, ...compareScreens);
+  }
+  advance();
+}
+
+function selectComparison(optionId) {
+  pushHistory();
+  const cur = state.screens[state.idx];
+  state.lastComparisons[cur.block] = state.lastComparisons[cur.block] || {};
+  state.lastComparisons[cur.block][cur.item] = optionId;
+  if (cur.block === 'dimensions') {
+    state.answers.dimensions.comparisons[cur.item] = optionId;
+  } else {
+    state.answers.indicators[cur.block] = state.answers.indicators[cur.block] || { reference: null, comparisons: {} };
+    state.answers.indicators[cur.block].comparisons[cur.item] = optionId;
+  }
+  advance();
+}
+
+function advance() {
+  state.idx++;
+  showScreen();
+}
+
+function goBack() {
+  if (state.history.length === 0) return;
+  const snap = state.history.pop();
+  state.idx = snap.idx;
+  state.answers = JSON.parse(JSON.stringify(snap.answers));
+  state.screens = JSON.parse(JSON.stringify(snap.screens));
+  showScreen();
+}
+
+function pushHistory() {
+  state.history.push({
+    idx: state.idx,
+    answers: JSON.parse(JSON.stringify(state.answers)),
+    screens: JSON.parse(JSON.stringify(state.screens))
+  });
+}
+
+function updateProgress() {
+  if (state.idx < 0) {
+    document.getElementById('stepCounter').textContent = 'Inicio';
+    document.getElementById('blockLabel').textContent = 'Identificação';
+    document.getElementById('blockCounter').textContent = '';
+    document.getElementById('progressFill').style.width = '0%';
+    return;
+  }
+  if (state.idx >= state.screens.length) {
+    document.getElementById('stepCounter').textContent = 'Finalizado';
+    document.getElementById('blockLabel').textContent = 'Resultado';
+    document.getElementById('blockCounter').textContent = '';
+    document.getElementById('progressFill').style.width = '100%';
+    return;
+  }
+  const cur = state.screens[state.idx];
+  const blockName = cur.block === 'dimensions' ? 'Dimensões PESTEL' : 'Indicadores da ' + DIMENSIONS.find(d => d.key === cur.block).name;
+  document.getElementById('blockLabel').textContent = blockName;
+
+  const totalScreens = state.screens.length;
+  const pct = (state.idx / totalScreens) * 100;
+  state.maxProgress = Math.max(state.maxProgress, pct);
+  document.getElementById('progressFill').style.width = state.maxProgress + '%';
+  document.getElementById('stepCounter').textContent = 'Pergunta ' + (state.idx + 1) + ' de ' + totalScreens;
+
+  const blockScreens = state.screens.filter(s => s.block === cur.block);
+  const posInBlock = blockScreens.indexOf(cur) + 1;
+  document.getElementById('blockCounter').textContent = posInBlock + '/' + blockScreens.length;
+}
+
+function computeWeights(referenceId, items, comparisons, idKey) {
+  const raw = {};
+  items.forEach(it => {
+    const id = it[idKey];
+    if (id === referenceId) {
+      raw[id] = 1;
+    } else {
+      const choiceId = comparisons[id];
+      const option = COMPARISON_OPTIONS.find(o => o.id === choiceId);
+      raw[id] = option ? (1 / option.value) : 0;
+    }
+  });
+  const sum = Object.values(raw).reduce((a, b) => a + b, 0);
+  const normalized = {};
+  Object.keys(raw).forEach(k => { normalized[k] = sum > 0 ? raw[k] / sum : 0; });
+  return { raw, normalized };
+}
+
+function computeCR(referenceId, items, comparisons, idKey) {
+  const values = items
+    .filter(it => it[idKey] !== referenceId)
+    .map(it => {
+      const choice = comparisons[it[idKey]];
+      const opt = COMPARISON_OPTIONS.find(o => o.id === choice);
+      return opt ? opt.value : null;
+    })
+    .filter(v => v !== null);
+  if (values.length === 0) return 0;
+  const mean = values.reduce((a, b) => a + b, 0) / values.length;
+  const variance = values.reduce((acc, v) => acc + Math.pow(v - mean, 2), 0) / values.length;
+  const stdev = Math.sqrt(variance);
+  return mean > 0 ? stdev / mean : 0;
+}
+
+function saveCalibration() {
+  const dimResult = computeWeights(
+    state.answers.dimensions.reference,
+    DIMENSIONS,
+    state.answers.dimensions.comparisons,
+    'key'
+  );
+
+  const indResults = {};
+  DIMENSIONS.forEach(d => {
+    const ans = state.answers.indicators[d.key];
+    if (!ans || !ans.reference) return;
+    indResults[d.key] = {
+      weights: computeWeights(ans.reference, d.indicators, ans.comparisons, 'id'),
+      cr: computeCR(ans.reference, d.indicators, ans.comparisons, 'id')
+    };
+  });
+
+  const dims = {};
+  DIMENSIONS.forEach(d => {
+    const ind = indResults[d.key];
+    dims[d.key] = {
+      name: d.name,
+      weight: +((dimResult.normalized[d.key] || 0).toFixed(4)),
+      indicators: {}
+    };
+    d.indicators.forEach(i => {
+      dims[d.key].indicators[i.id] = {
+        name: i.name,
+        weight: +(((ind && ind.weights.normalized[i.id]) || 0).toFixed(4)),
+        effective: +((((dimResult.normalized[d.key] || 0) * ((ind && ind.weights.normalized[i.id]) || 0))).toFixed(4))
+      };
+    });
+  });
+
+  const calibrationData = {
+    id: 'calib_' + Date.now(),
+    method: 'AHP-Express',
+    timestamp: new Date().toISOString(),
+    respondent: state.respondent,
+    startedAt: state.startedAt,
+    finishedAt: state.finishedAt,
+    weights: dims,
+    rawAnswers: state.answers
+  };
+
+  // Salvar no banco via API
+  fetch('/api/calibrations', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(calibrationData)
+  }).catch(err => console.error('Erro ao salvar:', err));
+
+  state.calibrationId = calibrationData.id;
+
+  // Download automatico do arquivo JSON
+  const blob = new Blob([JSON.stringify(calibrationData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = calibrationData.id + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function renderResult() {}
+
+function resetAll() {
+  state.respondent = { name: '', institution: '', formacao: '', municipio: '' };
+  state.startedAt = null;
+  state.finishedAt = null;
+  state.screens = [];
+  state.idx = -1;
+  state.answers = { dimensions: { reference: null, comparisons: {} }, indicators: {} };
+  state.history = [];
+  state.lastReferences = {};
+  state.lastComparisons = {};
+  state.maxProgress = 0;
+  ['f-nome', 'f-inst', 'f-formacao', 'f-municipio'].forEach(id => document.getElementById(id).value = '');
+  showScreen();
+}
+
+function goBackToIntro() {
+  state.screens = [];
+  state.idx = -1;
+  state.answers = { dimensions: { reference: null, comparisons: {} }, indicators: {} };
+  state.history = [];
+  state.lastReferences = {};
+  state.lastComparisons = {};
+  state.maxProgress = 0;
+  document.getElementById('f-nome').value = state.respondent.name;
+  document.getElementById('f-inst').value = state.respondent.institution;
+  document.getElementById('f-formacao').value = state.respondent.formacao;
+  document.getElementById('f-municipio').value = state.respondent.municipio;
+  showScreen();
+}
+
+updateProgress();
+</script>
+</body>
+</html>

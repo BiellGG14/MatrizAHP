@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Dashboard</title>
+<style>
+:root {
+  --primary:       #2563eb;
+  --primary-dark:  #1d4ed8;
+  --primary-light: #eff6ff;
+  --text:          #111827;
+  --text-sec:      #6b7280;
+  --text-light:    #9ca3af;
+  --border:        #d1d5db;
+  --border-light:  #e5e7eb;
+  --surface:       #f9fafb;
+  --white:         #ffffff;
+  --success:       #059669;
+  --success-lt:    #f0fdf4;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--surface);
+  line-height: 1.6;
+}
+
+.header {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-left { display: flex; flex-direction: column; gap: 4px; }
+.header-title { font-size: 16px; font-weight: 700; color: var(--text); }
+.header-sub { font-size: 12px; color: var(--text-sec); }
+.header-right { display: flex; gap: 12px; align-items: center; }
+
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: var(--primary-light);
+  color: var(--primary);
+  text-transform: uppercase;
+}
+.badge-success {
+  background: var(--success-lt);
+  color: var(--success);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+.tab-btn {
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-sec);
+  cursor: pointer;
+  transition: all .2s;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.card-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background: var(--surface);
+  border-radius: 6px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+.checkbox-item input[type="checkbox"] {
+  margin-right: 12px;
+  cursor: pointer;
+}
+.checkbox-label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.checkbox-label-name { font-weight: 600; color: var(--text); }
+.checkbox-label-meta { font-size: 12px; color: var(--text-sec); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all .15s;
+  font-family: inherit;
+}
+.btn-primary {
+  background: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
+}
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-secondary {
+  background: transparent;
+  color: var(--primary);
+  border-color: var(--primary);
+}
+.btn-secondary:hover { background: var(--primary-light); }
+.btn-ghost {
+  background: transparent;
+  color: var(--text-sec);
+  border-color: var(--border);
+}
+.btn-ghost:hover { background: var(--surface); color: var(--text); }
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.table th {
+  text-align: left;
+  padding: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-sec);
+  border-bottom: 1px solid var(--border);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.table td {
+  padding: 10px;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text);
+}
+.table tr:hover { background: var(--surface); }
+
+.success-message {
+  background: var(--success-lt);
+  border: 1px solid #dcfce7;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--success);
+}
+
+.active-version-badge {
+  background: var(--success-lt);
+  color: var(--success);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.btn-danger {
+  background: #dc2626;
+  color: var(--white);
+  border-color: #dc2626;
+}
+.btn-danger:hover { background: #b91c1c; border-color: #b91c1c; }
+.btn-trash {
+  background: transparent;
+  border: none;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1;
+  transition: color .15s, background .15s;
+  flex-shrink: 0;
+}
+.btn-trash:hover { color: #dc2626; background: #fee2e2; }
+
+@media (max-width: 768px) {
+  .container { padding: 16px; }
+  .header { padding: 12px 16px; }
+  .tabs { flex-wrap: wrap; }
+}
+
+.calib-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+  user-select: none;
+}
+.calib-item:hover { border-color: var(--primary); background: var(--primary-light); }
+.calib-item.checked { border-color: var(--primary); background: var(--primary-light); }
+.calib-check {
+  width: 20px; height: 20px; flex-shrink: 0;
+  border: 2px solid var(--border);
+  border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+  background: var(--white);
+}
+.calib-item.checked .calib-check {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+.calib-check-mark {
+  display: none;
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+}
+.calib-item.checked .calib-check-mark { display: block; }
+.calib-label { flex: 1; }
+.calib-label-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.calib-label-meta { font-size: 12px; color: var(--text-sec); margin-top: 2px; }
+.select-all-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0 12px;
+  font-size: 12px; font-weight: 600; color: var(--text-sec);
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 12px;
+}
+.select-all-row:hover { color: var(--primary); }
+
+.detail-row {
+  display: none;
+  background: var(--surface);
+  border-top: 1px solid var(--border-light);
+}
+.detail-row.open { display: table-row; }
+.detail-row td { padding: 14px 16px; }
+.detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.detail-item-label { font-size: 11px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 3px; }
+.detail-item-value { font-size: 13px; font-weight: 600; color: var(--text); }
+.dim-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.dim-pill { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; background: var(--primary-light); color: var(--primary); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-title">Admin Dashboard</div>
+    <div class="header-sub">Gerenciamento de Calibrações e Avaliações</div>
+  </div>
+  <div class="header-right">
+    <div class="badge">Sistema Integrado</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('pesos')">Gerenciar Pesos</button>
+    <button class="tab-btn" onclick="switchTab('gerenciar-avaliacoes')">Gerenciar Avaliações</button>
+    <button class="tab-btn" onclick="switchTab('calibracoes')">Calibrações</button>
+    <button class="tab-btn" onclick="switchTab('avaliacoes')">Avaliações</button>
+    <button class="tab-btn" onclick="switchTab('relatorios')">Relatórios</button>
+  </div>
+
+  <!-- ABA 1: GERENCIAR PESOS -->
+  <div class="tab-content active" id="tab-pesos">
+    <div class="card">
+      <div class="card-title">Selecionar Calibrações para Aplicar</div>
+      <p style="font-size: 13px; color: var(--text-sec); margin-bottom: 16px;">
+        Selecione uma ou mais calibrações abaixo para calcular a média ponderada dos pesos. Estes serão aplicados automaticamente aos avaliadores.
+      </p>
+
+      <div id="select-all-row" class="select-all-row" onclick="toggleSelectAll()" style="display:none;">
+        <div id="select-all-check" class="calib-check" style="width:18px;height:18px;border-radius:4px;border:2px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:center;">
+          <span id="select-all-mark" style="display:none;color:var(--white);font-size:11px;font-weight:800;">&#10003;</span>
+        </div>
+        <span id="select-all-label">Selecionar todos</span>
+      </div>
+      <div id="calibracoes-list" style="margin-bottom: 20px;"></div>
+
+      <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <button class="btn btn-primary" onclick="applySelectedWeights()">Aplicar Pesos Selecionados</button>
+        <button class="btn btn-ghost" onclick="resetWeightSelection()">Limpar Seleção</button>
+      </div>
+
+      <div id="active-version-info" style="display: none;">
+        <div style="background: var(--surface); border: 1px solid var(--border-light); border-radius: 8px; padding: 14px 18px; display: flex; gap: 32px; flex-wrap: wrap;">
+          <div>
+            <div style="font-size: 11px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px;">Versão dos pesos ativada</div>
+            <div style="font-size: 13px; font-weight: 600; color: var(--text);" id="active-version-date"></div>
+          </div>
+          <div>
+            <div style="font-size: 11px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px;">Calibrações incluídas</div>
+            <div style="font-size: 13px; font-weight: 600; color: var(--primary);" id="active-version-count"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABA: GERENCIAR AVALIAÇÕES -->
+  <div class="tab-content" id="tab-gerenciar-avaliacoes">
+    <div class="card">
+      <div class="card-title">Gerenciar Avaliações</div>
+      <p style="font-size: 13px; color: var(--text-sec); margin-bottom: 16px;">
+        Selecione avaliações para excluir do sistema. Esta ação é irreversível.
+      </p>
+
+      <div id="ga-select-all-row" class="select-all-row" onclick="toggleSelectAllAvaliacoes()" style="display:none;">
+        <div id="ga-select-all-check" class="calib-check" style="width:18px;height:18px;border-radius:4px;border:2px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:center;">
+          <span id="ga-select-all-mark" style="display:none;color:var(--white);font-size:11px;font-weight:800;">&#10003;</span>
+        </div>
+        <span id="ga-select-all-label">Selecionar todas</span>
+      </div>
+
+      <div id="avaliacoes-gerenciar-list" style="margin-bottom: 20px;"></div>
+
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="btn btn-danger" onclick="excluirAvaliacoesSelecionadas()">Excluir Selecionadas</button>
+        <button class="btn btn-ghost" onclick="resetAvaliacoesSelection()">Limpar Seleção</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABA 2: CALIBRACOES -->
+  <div class="tab-content" id="tab-calibracoes">
+    <div class="card">
+      <div class="card-title">Histórico de Calibrações</div>
+      <p style="font-size: 13px; color: var(--text-sec); margin-bottom: 16px;">
+        Todas as calibrações realizadas pelos especialistas.
+      </p>
+
+      <table class="table" id="calibracoes-table">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Respondente</th>
+            <th>Instituição</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody id="calibracoes-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ABA 3: AVALIACOES -->
+  <div class="tab-content" id="tab-avaliacoes">
+    <div class="card">
+      <div class="card-title">Avaliações Municipais Realizadas</div>
+      <p style="font-size: 13px; color: var(--text-sec); margin-bottom: 16px;">
+        Todas as avaliações de municípios realizadas pelos avaliadores.
+      </p>
+
+      <table class="table" id="avaliacoes-table">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Município</th>
+            <th>Estado</th>
+            <th>Avaliador</th>
+            <th>Índice Final</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody id="avaliacoes-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ABA 4: RELATORIOS -->
+  <div class="tab-content" id="tab-relatorios">
+    <div class="card">
+      <div class="card-title">Estatísticas Gerais</div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px;" id="stats-grid">
+        <div style="padding: 16px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border-light);">
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;">Total de Calibrações</div>
+          <div style="font-size: 32px; font-weight: 800; color: var(--primary);" id="stat-calibracoes">0</div>
+        </div>
+        <div style="padding: 16px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border-light);">
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;">Total de Avaliações</div>
+          <div style="font-size: 32px; font-weight: 800; color: var(--primary);" id="stat-avaliacoes">0</div>
+        </div>
+        <div style="padding: 16px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border-light);">
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;">Municípios Avaliados</div>
+          <div style="font-size: 32px; font-weight: 800; color: var(--primary);" id="stat-municipios">0</div>
+        </div>
+        <div style="padding: 16px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border-light);">
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;">Índice Médio</div>
+          <div style="font-size: 32px; font-weight: 800; color: var(--primary);" id="stat-indice-medio">—</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px;">Distribuição por Nível de Maturidade</div>
+        <div id="nivel-dist" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px;">Filtrar por Município</div>
+        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap;">
+          <select id="filtro-municipio" style="padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-family: inherit; color: var(--text); background: var(--white); outline: none; min-width: 200px;" onchange="filtrarAvaliacoes()">
+            <option value="">Todos os municípios</option>
+          </select>
+          <span style="font-size: 12px; color: var(--text-sec);" id="filtro-count"></span>
+        </div>
+        <table class="table" id="filtro-table">
+          <thead><tr>
+            <th>Município</th><th>Estado</th><th>Avaliador</th><th>Índice</th><th>Nível</th><th>Data</th>
+          </tr></thead>
+          <tbody id="filtro-tbody"></tbody>
+        </table>
+      </div>
+
+      <div style="border-top: 1px solid var(--border-light); padding-top: 16px; text-align: right;">
+        <button class="btn btn-ghost" onclick="exportAllData()">Exportar dados completos (JSON)</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const api = {
+  async get(endpoint) {
+    const res = await fetch(`/api/${endpoint}`);
+    if (!res.ok) throw new Error(`API error: ${res.status}`);
+    return res.json();
+  },
+  async post(endpoint, data) {
+    const res = await fetch(`/api/${endpoint}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error(`API error: ${res.status}`);
+    return res.json();
+  },
+  async del(endpoint, id) {
+    const res = await fetch(`/api/${endpoint}?id=${id}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error(`API error: ${res.status}`);
+    return res.json();
+  },
+};
+
+function switchTab(tabName) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+  document.getElementById('tab-' + tabName).classList.add('active');
+  event.target.classList.add('active');
+
+  if (tabName === 'gerenciar-avaliacoes') loadGerenciarAvaliacoesTab();
+  if (tabName === 'calibracoes') loadCalibracoesTab();
+  if (tabName === 'avaliacoes') loadAvaliacoesTab();
+  if (tabName === 'relatorios') loadRelatoriosTab();
+}
+
+async function loadCalibracoesTab() {
+  const tbody = document.getElementById('calibracoes-tbody');
+  tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-sec);">Carregando...</td></tr>';
+  const calibrations = await api.get('calibrations');
+  tbody.innerHTML = '';
+  calibrations.forEach(cal => {
+    const date = new Date(cal.timestamp);
+    tbody.innerHTML += `<tr>
+      <td>${date.toLocaleDateString('pt-BR')}</td>
+      <td>${cal.respondent.name}</td>
+      <td>${cal.respondent.institution || '—'}</td>
+      <td><button class="btn btn-ghost" onclick="viewCalibration('${cal.id}')">Ver detalhes</button></td>
+    </tr>`;
+  });
+  if (calibrations.length === 0)
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-sec);">Nenhuma calibração registrada ainda.</td></tr>';
+}
+
+async function loadAvaliacoesTab() {
+  const tbody = document.getElementById('avaliacoes-tbody');
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-sec);">Carregando...</td></tr>';
+  const avaliacoes = await api.get('avaliacoes');
+  tbody.innerHTML = '';
+  avaliacoes.forEach(av => {
+    const date = new Date(av.timestamp);
+    tbody.innerHTML += `<tr>
+      <td>${date.toLocaleDateString('pt-BR')}</td>
+      <td>${av.respondent.municipio}</td>
+      <td>${av.respondent.estado}</td>
+      <td>${av.respondent.name}</td>
+      <td><strong>${av.indice || '-'}</strong></td>
+      <td><button class="btn btn-ghost" onclick="viewAvaliacao('${av.id}')">Ver Detalhes</button></td>
+    </tr>`;
+  });
+  if (avaliacoes.length === 0)
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-sec);">Nenhuma avaliação registrada ainda.</td></tr>';
+}
+
+async function loadRelatoriosTab() {
+  const [calibrations, avaliacoes] = await Promise.all([api.get('calibrations'), api.get('avaliacoes')]);
+  _avaliacoes = avaliacoes;
+
+  document.getElementById('stat-calibracoes').textContent = calibrations.length;
+  document.getElementById('stat-avaliacoes').textContent = avaliacoes.length;
+
+  const municipiosUnicos = new Set(avaliacoes.map(av => av.respondent.municipio));
+  document.getElementById('stat-municipios').textContent = municipiosUnicos.size;
+
+  // Índice médio
+  const indices = avaliacoes.map(av => parseFloat(av.indice)).filter(v => !isNaN(v));
+  const medio = indices.length > 0 ? (indices.reduce((a,b)=>a+b,0)/indices.length).toFixed(2) : '—';
+  document.getElementById('stat-indice-medio').textContent = medio;
+
+  // Distribuição por nível
+  const niveis = {Avançado:0,'Em Desenvolvimento':0,Emergente:0,Incipiente:0};
+  avaliacoes.forEach(av => { if (niveis[av.level] !== undefined) niveis[av.level]++; });
+  const colors = {Avançado:'#15803d','Em Desenvolvimento':'#2563eb',Emergente:'#d97706',Incipiente:'#dc2626'};
+  const dist = document.getElementById('nivel-dist');
+  dist.innerHTML = '';
+  Object.entries(niveis).forEach(([nivel, count]) => {
+    const pct = avaliacoes.length > 0 ? ((count/avaliacoes.length)*100).toFixed(0) : 0;
+    dist.innerHTML += `<div style="padding:10px 16px;background:${colors[nivel]}18;border:1px solid ${colors[nivel]}44;border-radius:8px;min-width:140px;">
+      <div style="font-size:11px;font-weight:700;color:${colors[nivel]};text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px;">${nivel}</div>
+      <div style="font-size:22px;font-weight:800;color:${colors[nivel]};">${count}</div>
+      <div style="font-size:11px;color:${colors[nivel]}88;">${pct}%</div>
+    </div>`;
+  });
+
+  // Filtro de municípios
+  const sel = document.getElementById('filtro-municipio');
+  sel.innerHTML = '<option value="">Todos os municípios</option>';
+  [...municipiosUnicos].sort().forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m; opt.textContent = m;
+    sel.appendChild(opt);
+  });
+
+  filtrarAvaliacoes();
+}
+
+function filtrarAvaliacoes() {
+  const filtro = document.getElementById('filtro-municipio').value;
+  const avaliacoes = _avaliacoes;
+  const filtered = filtro ? avaliacoes.filter(av => av.respondent.municipio === filtro) : avaliacoes;
+  const tbody = document.getElementById('filtro-tbody');
+  const colors = {Avançado:'#15803d','Em Desenvolvimento':'#2563eb',Emergente:'#d97706',Incipiente:'#dc2626'};
+
+  document.getElementById('filtro-count').textContent = filtered.length + ' avaliação(ões)';
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-sec);padding:20px;">Nenhuma avaliação encontrada.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(av => {
+    const date = new Date(av.timestamp);
+    const c = colors[av.level] || '#6b7280';
+    return `<tr>
+      <td><strong>${av.respondent.municipio}</strong></td>
+      <td>${av.respondent.estado}</td>
+      <td>${av.respondent.name}</td>
+      <td style="font-weight:700;color:${c};">${av.indice}</td>
+      <td><span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;background:${c}18;color:${c};">${av.level}</span></td>
+      <td style="color:var(--text-sec);">${date.toLocaleDateString('pt-BR')}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function loadPesosTab() {
+  const [calibrations, active] = await Promise.all([api.get('calibrations'), api.get('active-weights')]);
+  const activeIds = active ? active.calibrationsIncluded : [];
+  const list = document.getElementById('calibracoes-list');
+  const selectAllRow = document.getElementById('select-all-row');
+  list.innerHTML = '';
+
+  if (calibrations.length === 0) {
+    list.innerHTML = '<p style="color: var(--text-sec); text-align: center; padding: 20px 0;">Nenhuma calibração disponível ainda.</p>';
+    selectAllRow.style.display = 'none';
+    return;
+  }
+
+  selectAllRow.style.display = 'flex';
+
+  calibrations.forEach(cal => {
+    const date = new Date(cal.timestamp);
+    const isActive = activeIds.includes(cal.id);
+    const item = document.createElement('div');
+    item.className = 'calib-item' + (isActive ? ' checked' : '');
+    item.dataset.id = cal.id;
+    item.dataset.weights = JSON.stringify(cal.weights).replace(/"/g, '&quot;');
+    item.innerHTML = `
+      <div class="calib-check"><span class="calib-check-mark">&#10003;</span></div>
+      <div class="calib-label">
+        <div class="calib-label-name">${cal.respondent.name}</div>
+        <div class="calib-label-meta">${cal.respondent.institution || cal.respondent.formacao || '—'} &bull; ${date.toLocaleDateString('pt-BR')}</div>
+      </div>
+      <button class="btn-trash" title="Excluir calibração" onclick="excluirCalibracao('${cal.id}', event)"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='16' height='16' fill='none' style='pointer-events:none;display:block;'><rect x='3' y='5' width='18' height='3' rx='1.5' fill='#c0c0c0' stroke='#222' stroke-width='1.5'/><circle cx='12' cy='3.2' r='1.1' fill='#aaa' stroke='#333' stroke-width='1.2'/><path d='M5 8l1.1 13a1 1 0 001 .9h9.8a1 1 0 001-.9L19 8z' fill='#cacaca' stroke='#222' stroke-width='1.5' stroke-linejoin='round'/><line x1='9' y1='11' x2='8.7' y2='18.5' stroke='#444' stroke-width='1.4' stroke-linecap='round'/><line x1='12' y1='11' x2='12' y2='18.5' stroke='#444' stroke-width='1.4' stroke-linecap='round'/><line x1='15' y1='11' x2='15.3' y2='18.5' stroke='#444' stroke-width='1.4' stroke-linecap='round'/></svg></button>`;
+    item.addEventListener('click', () => {
+      item.classList.toggle('checked');
+      updateSelectAllState();
+    });
+    list.appendChild(item);
+  });
+
+  updateSelectAllState();
+}
+
+function updateSelectAllState() {
+  const all = document.querySelectorAll('#calibracoes-list .calib-item');
+  const checked = document.querySelectorAll('#calibracoes-list .calib-item.checked');
+  const allChecked = all.length > 0 && checked.length === all.length;
+  const check = document.getElementById('select-all-check');
+  const mark = document.getElementById('select-all-mark');
+  const label = document.getElementById('select-all-label');
+  if (allChecked) {
+    check.style.background = 'var(--primary)'; check.style.borderColor = 'var(--primary)';
+    mark.style.display = 'block';
+    label.textContent = 'Desmarcar todos';
+  } else {
+    check.style.background = 'var(--white)'; check.style.borderColor = 'var(--border)';
+    mark.style.display = 'none';
+    label.textContent = checked.length > 0 ? 'Selecionar todos (' + checked.length + ' selecionado' + (checked.length > 1 ? 's' : '') + ')' : 'Selecionar todos';
+  }
+}
+
+function toggleSelectAll() {
+  const all = document.querySelectorAll('#calibracoes-list .calib-item');
+  const checked = document.querySelectorAll('#calibracoes-list .calib-item.checked');
+  const shouldCheck = checked.length < all.length;
+  all.forEach(item => {
+    if (shouldCheck) item.classList.add('checked');
+    else item.classList.remove('checked');
+  });
+  updateSelectAllState();
+}
+
+async function applySelectedWeights() {
+  const checked = document.querySelectorAll('#calibracoes-list .calib-item.checked');
+  if (checked.length === 0) { alert('Selecione pelo menos uma calibração.'); return; }
+  const selectedIds = Array.from(checked).map(el => el.dataset.id);
+  const calibrations = await api.get('calibrations');
+  const selectedCals = calibrations.filter(c => selectedIds.includes(c.id));
+
+  // Calcular media dos pesos
+  const avgWeights = {};
+  const DIMENSIONS = ['P', 'E', 'S', 'T', 'A', 'L'];
+
+  DIMENSIONS.forEach(dim => {
+    avgWeights[dim] = {
+      name: selectedCals[0].weights[dim].name,
+      weight: 0,
+      indicators: {}
+    };
+
+    // Media do peso da dimensao
+    const dimWeights = selectedCals.map(c => c.weights[dim].weight);
+    avgWeights[dim].weight = dimWeights.reduce((a, b) => a + b, 0) / dimWeights.length;
+
+    // Media dos pesos dos indicadores
+    const indicators = selectedCals[0].weights[dim].indicators;
+    Object.keys(indicators).forEach(indId => {
+      const indWeights = selectedCals.map(c => c.weights[dim].indicators[indId].weight);
+      avgWeights[dim].indicators[indId] = {
+        name: indicators[indId].name,
+        weight: indWeights.reduce((a, b) => a + b, 0) / indWeights.length
+      };
+    });
+  });
+
+  // Salvar como versao ativa
+  const activeVersion = {
+    id: 'weight_v_' + Date.now(),
+    timestamp: new Date().toISOString(),
+    calibrationsIncluded: selectedIds,
+    weights: avgWeights
+  };
+
+  await api.post('active-weights', activeVersion);
+  await showActiveVersion();
+  alert('Pesos aplicados com sucesso! Os avaliadores agora usarão estes pesos.');
+}
+
+async function showActiveVersion() {
+  const active = await api.get('active-weights');
+  if (active) {
+    document.getElementById('active-version-info').style.display = 'block';
+    document.getElementById('active-version-count').textContent = active.calibrationsIncluded.length + ' calibração(ões)';
+    document.getElementById('active-version-date').textContent = new Date(active.timestamp).toLocaleString('pt-BR');
+  }
+}
+
+function resetWeightSelection() {
+  document.querySelectorAll('#calibracoes-list .calib-item').forEach(el => el.classList.remove('checked'));
+  updateSelectAllState();
+}
+
+async function excluirCalibracao(id, event) {
+  event.stopPropagation();
+  if (!confirm('Excluir esta calibração? A ação é irreversível.')) return;
+  await api.del('calibrations', id);
+  await showActiveVersion();
+  loadPesosTab();
+}
+
+async function loadGerenciarAvaliacoesTab() {
+  const avaliacoes = await api.get('avaliacoes');
+  const list = document.getElementById('avaliacoes-gerenciar-list');
+  const selectAllRow = document.getElementById('ga-select-all-row');
+  list.innerHTML = '';
+
+  if (avaliacoes.length === 0) {
+    list.innerHTML = '<p style="color: var(--text-sec); text-align: center; padding: 20px 0;">Nenhuma avaliação registrada ainda.</p>';
+    selectAllRow.style.display = 'none';
+    return;
+  }
+
+  selectAllRow.style.display = 'flex';
+  const levelColors = {Avançado:'#15803d','Em Desenvolvimento':'#2563eb',Emergente:'#d97706',Incipiente:'#dc2626'};
+
+  avaliacoes.forEach(av => {
+    const date = new Date(av.timestamp);
+    const c = levelColors[av.level] || '#6b7280';
+    const item = document.createElement('div');
+    item.className = 'calib-item';
+    item.dataset.id = av.id;
+    item.innerHTML = `
+      <div class="calib-check"><span class="calib-check-mark">&#10003;</span></div>
+      <div class="calib-label" style="display:grid;grid-template-columns:1fr 1fr;gap:4px 20px;">
+        <div>
+          <div class="calib-label-name">${av.respondent.municipio} — ${av.respondent.estado}</div>
+          <div class="calib-label-meta">${av.respondent.name} &bull; ${date.toLocaleDateString('pt-BR')}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:13px;font-weight:700;color:${c};">Índice ${av.indice}</div>
+          <div style="font-size:11px;font-weight:700;color:${c};">${av.level}</div>
+        </div>
+      </div>
+      <button class="btn-trash" title="Excluir avaliação" onclick="excluirAvaliacao('${av.id}', event)"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='16' height='16' fill='none' style='pointer-events:none;display:block;'><rect x='3' y='5' width='18' height='3' rx='1.5' fill='#c0c0c0' stroke='#222' stroke-width='1.5'/><circle cx='12' cy='3.2' r='1.1' fill='#aaa' stroke='#333' stroke-width='1.2'/><path d='M5 8l1.1 13a1 1 0 001 .9h9.8a1 1 0 001-.9L19 8z' fill='#cacaca' stroke='#222' stroke-width='1.5' stroke-linejoin='round'/><line x1='9' y1='11' x2='8.7' y2='18.5' stroke='#444' stroke-width='1.4' stroke-linecap='round'/><line x1='12' y1='11' x2='12' y2='18.5' stroke='#444' stroke-width='1.4' stroke-linecap='round'/><line x1='15' y1='11' x2='15.3' y2='18.5' stroke='#444' stroke-width='1.4' stroke-linecap='round'/></svg></button>`;
+    item.addEventListener('click', (e) => {
+      if (e.target.closest('.btn-trash')) return;
+      item.classList.toggle('checked');
+      updateSelectAllAvaliacoesState();
+    });
+    list.appendChild(item);
+  });
+
+  updateSelectAllAvaliacoesState();
+}
+
+function updateSelectAllAvaliacoesState() {
+  const all = document.querySelectorAll('#avaliacoes-gerenciar-list .calib-item');
+  const checked = document.querySelectorAll('#avaliacoes-gerenciar-list .calib-item.checked');
+  const allChecked = all.length > 0 && checked.length === all.length;
+  const check = document.getElementById('ga-select-all-check');
+  const mark = document.getElementById('ga-select-all-mark');
+  const label = document.getElementById('ga-select-all-label');
+  if (allChecked) {
+    check.style.background = 'var(--primary)'; check.style.borderColor = 'var(--primary)';
+    mark.style.display = 'block'; label.textContent = 'Desmarcar todas';
+  } else {
+    check.style.background = 'var(--white)'; check.style.borderColor = 'var(--border)';
+    mark.style.display = 'none';
+    label.textContent = checked.length > 0 ? 'Selecionar todas (' + checked.length + ' selecionada' + (checked.length > 1 ? 's' : '') + ')' : 'Selecionar todas';
+  }
+}
+
+function toggleSelectAllAvaliacoes() {
+  const all = document.querySelectorAll('#avaliacoes-gerenciar-list .calib-item');
+  const checked = document.querySelectorAll('#avaliacoes-gerenciar-list .calib-item.checked');
+  const shouldCheck = checked.length < all.length;
+  all.forEach(item => shouldCheck ? item.classList.add('checked') : item.classList.remove('checked'));
+  updateSelectAllAvaliacoesState();
+}
+
+function resetAvaliacoesSelection() {
+  document.querySelectorAll('#avaliacoes-gerenciar-list .calib-item').forEach(el => el.classList.remove('checked'));
+  updateSelectAllAvaliacoesState();
+}
+
+async function excluirAvaliacao(id, event) {
+  event.stopPropagation();
+  if (!confirm('Excluir esta avaliação? A ação é irreversível.')) return;
+  await api.del('avaliacoes', id);
+  loadGerenciarAvaliacoesTab();
+}
+
+async function excluirAvaliacoesSelecionadas() {
+  const checked = document.querySelectorAll('#avaliacoes-gerenciar-list .calib-item.checked');
+  if (checked.length === 0) { alert('Selecione ao menos uma avaliação.'); return; }
+  if (!confirm('Excluir ' + checked.length + ' avaliação(ões)? A ação é irreversível.')) return;
+  const ids = Array.from(checked).map(el => el.dataset.id);
+  await Promise.all(ids.map(id => api.del('avaliacoes', id)));
+  loadGerenciarAvaliacoesTab();
+}
+
+async function viewCalibration(id) {
+  const rowId = 'detail-calib-' + id;
+  const existing = document.getElementById(rowId);
+  if (existing) {
+    existing.classList.toggle('open');
+    return;
+  }
+  const calibrations = await api.get('calibrations');
+  const cal = calibrations.find(c => c.id === id);
+  if (!cal) return;
+
+  const dimKeys = ['P','E','S','T','A','L'];
+  const pills = dimKeys.map(k => {
+    const w = cal.weights[k];
+    return `<span class="dim-pill">${w ? w.name : k}: ${w ? (w.weight*100).toFixed(1)+'%' : '—'}</span>`;
+  }).join('');
+
+  const tr = document.createElement('tr');
+  tr.id = rowId;
+  tr.className = 'detail-row open';
+  tr.innerHTML = `<td colspan="4">
+    <div class="detail-grid">
+      <div><div class="detail-item-label">Respondente</div><div class="detail-item-value">${cal.respondent.name}</div></div>
+      <div><div class="detail-item-label">Instituição</div><div class="detail-item-value">${cal.respondent.institution || '—'}</div></div>
+      <div><div class="detail-item-label">Formação</div><div class="detail-item-value">${cal.respondent.formacao || '—'}</div></div>
+      <div><div class="detail-item-label">Município</div><div class="detail-item-value">${cal.respondent.municipio || '—'}</div></div>
+    </div>
+    <div class="dim-pills">${pills}</div>
+  </td>`;
+
+  const mainRow = document.querySelector(`[onclick="viewCalibration('${id}')"]`).closest('tr');
+  mainRow.insertAdjacentElement('afterend', tr);
+}
+
+async function viewAvaliacao(id) {
+  const rowId = 'detail-aval-' + id;
+  const existing = document.getElementById(rowId);
+  if (existing) {
+    existing.classList.toggle('open');
+    return;
+  }
+  const avaliacoes = await api.get('avaliacoes');
+  const av = avaliacoes.find(a => a.id === id);
+  if (!av) return;
+
+  const dimKeys = ['P','E','S','T','A','L'];
+  const dimNames = {P:'Política',E:'Econômica',S:'Social',T:'Tecnológica',A:'Ambiental',L:'Legal'};
+  const pills = dimKeys.map(k => {
+    const s = av.dimScores && av.dimScores[k];
+    return `<span class="dim-pill">${dimNames[k]}: ${s !== null && s !== undefined ? Number(s).toFixed(2) : 'N/A'}</span>`;
+  }).join('');
+
+  const levelColor = av.level==='Avançado'?'#15803d':av.level==='Em Desenvolvimento'?'#2563eb':av.level==='Emergente'?'#d97706':'#dc2626';
+
+  const tr = document.createElement('tr');
+  tr.id = rowId;
+  tr.className = 'detail-row open';
+  tr.innerHTML = `<td colspan="5">
+    <div class="detail-grid">
+      <div><div class="detail-item-label">Avaliador</div><div class="detail-item-value">${av.respondent.name}</div></div>
+      <div><div class="detail-item-label">Formação</div><div class="detail-item-value">${av.respondent.formacao || '—'}</div></div>
+      <div><div class="detail-item-label">Índice Final</div><div class="detail-item-value" style="color:${levelColor};font-size:18px;">${av.indice}</div></div>
+      <div><div class="detail-item-label">Nível</div><div class="detail-item-value" style="color:${levelColor};">${av.level}</div></div>
+    </div>
+    <div class="dim-pills">${pills}</div>
+  </td>`;
+
+  const mainRow = document.querySelector(`[onclick="viewAvaliacao('${id}')"]`).closest('tr');
+  mainRow.insertAdjacentElement('afterend', tr);
+}
+
+async function exportAllData() {
+  const [calibracoes, avaliacoes, pesoAtivo] = await Promise.all([
+    api.get('calibrations'), api.get('avaliacoes'), api.get('active-weights')
+  ]);
+  const data = { calibracoes, avaliacoes, pesoAtivo, exportDate: new Date().toISOString() };
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'matrizahp_dados_completos_' + new Date().toISOString().slice(0, 10) + '.json';
+  a.click();
+}
+
+// Init
+loadPesosTab();
+showActiveVersion();
+loadRelatoriosTab();
+</script>
+</body>
+</html>
