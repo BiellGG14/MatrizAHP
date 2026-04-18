@@ -71,13 +71,12 @@
 - Complexidade: ⭐⭐ Média (1-2h)
 - Impacto: Uniformidade nas comparações
 
-**#4 — Melhorar Relatórios (Cruzamentos Interativos)** ⏳ PENDENTE
-- Status: Não iniciado
-- Problema: Relatórios são "passivos" (somente leitura)
-- Solução: Adicionar filtros dinâmicos, comparações entre avaliações
-- Exemplo: "Comparar município X vs Y por dimensão"
-- Complexidade: ⭐⭐⭐ Alta (6-8h)
-- Impacto: Alto
+**#4 — Melhorar Relatórios (Cruzamentos Interativos)** ✅ COMPLETO
+- Status: Implementado (18/04/2026)
+- O que foi: Painel de filtros (5 filtros), seção de resumo com rankings, 3 tipos de gráficos
+- Filtros: Estado, Nível de Maturidade, Período (data), Formação, Municípios (multi-select com chips)
+- Visualizações: Barras por dimensão, Heatmap, Gráfico de tendência temporal
+- Benefício: Análise interativa de dados com comparações entre municípios
 
 **#5 — Gráficos de Visualização** ⏳ PENDENTE
 - Status: Não iniciado
@@ -153,16 +152,17 @@ Feedback recebido de um dos usuários:
 
 ## 🚀 Próximas Ações Recomendadas
 
-**Curto Prazo (próximas 2-3h):**
-- [ ] Normalizar dimensões (adicionar 4º indicador a Política)
-- [ ] Começar design dos gráficos (escolher tipo: barras? linhas?)
+**Curto Prazo (próximas 1-2h):**
+- [ ] Testar relatórios interativos em produção
+- [ ] Validar gráficos no mobile
+- [ ] Feedback de usuário sobre os novos filtros
 
 **Médio Prazo (próximas 1-2 semanas):**
-- [ ] Implementar gráficos
-- [ ] Melhorar interface de relatórios com filtros
+- [ ] Normalizar dimensões (adicionar 4º indicador a Política) — Tarefa #3
+- [ ] Expandir documentação dos relatórios
 
 **Longo Prazo:**
-- [ ] Criar identidade visual
+- [ ] Criar identidade visual (marca/logo) — Tarefa #6
 - [ ] Expandir funcionalidades conforme feedback
 
 ---
@@ -181,6 +181,7 @@ Feedback recebido de um dos usuários:
 ## 🔗 Commits Principais
 
 ```
+5873c4f — feat: Add interactive cross-reference reporting with filters and charts
 9367d20 — Remove confusing acronym from indicator T2 description
 94c95e8 — Add reference indicator description box in calibration comparison screen
 2d7a2c6 — Fix mobile layout: vertical single-column buttons on small screens
@@ -193,5 +194,5 @@ a8fb733 — Add landing page with navigation to all sections
 
 ---
 
-**Última atualização:** 18/04/2026
-**Responsável:** Claude Sonnet 4.6 + Gabriel Rufino
+**Última atualização:** 18/04/2026 (15h45)
+**Responsável:** Claude Haiku 4.5 + Gabriel Rufino
