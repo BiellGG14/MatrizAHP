@@ -716,7 +716,8 @@ async function loadCalibracoesTab() {
 async function loadAvaliacoesTab() {
   const tbody = document.getElementById('avaliacoes-tbody');
   tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-sec);">Carregando...</td></tr>';
-  const avaliacoes = await api.get('avaliacoes');
+  const [avaliacoes, activeWeights] = await Promise.all([api.get('avaliacoes'), api.get('active-weights')]);
+  enrichAvaliacoes(avaliacoes, activeWeights);
   tbody.innerHTML = '';
   avaliacoes.forEach(av => {
     const date = new Date(av.timestamp);
@@ -734,7 +735,8 @@ async function loadAvaliacoesTab() {
 }
 
 async function loadRelatoriosTab() {
-  const [calibrations, avaliacoes] = await Promise.all([api.get('calibrations'), api.get('avaliacoes')]);
+  const [calibrations, avaliacoes, activeWeights] = await Promise.all([api.get('calibrations'), api.get('avaliacoes'), api.get('active-weights')]);
+  enrichAvaliacoes(avaliacoes, activeWeights);
   _avaliacoes = avaliacoes;
   _relSelectedMuns = new Set([...new Set(avaliacoes.map(av => av.respondent.municipio))]);
   buildRelatoriosFilters(avaliacoes);
@@ -845,12 +847,13 @@ function renderSummarySection() {
 }
 
 function renderStatsCards() {
+  const validIndices = _relFiltered.map(av => parseFloat(av.indice)).filter(n => !isNaN(n));
   const stats = [
     { label: 'Total de Avaliações', value: _relFiltered.length, id: 'stat-total' },
     { label: 'Municípios Únicos', value: new Set(_relFiltered.map(av => av.respondent.municipio)).size, id: 'stat-muns' },
-    { label: 'Índice Médio', value: _relFiltered.length > 0 ? ((_relFiltered.reduce((a,av)=>a+parseFloat(av.indice),0)/_relFiltered.length).toFixed(2)) : '—', id: 'stat-media' },
-    { label: 'Índice Máximo', value: _relFiltered.length > 0 ? Math.max(..._relFiltered.map(av=>parseFloat(av.indice))).toFixed(2) : '—', id: 'stat-max' },
-    { label: 'Índice Mínimo', value: _relFiltered.length > 0 ? Math.min(..._relFiltered.map(av=>parseFloat(av.indice))).toFixed(2) : '—', id: 'stat-min' },
+    { label: 'Índice Médio', value: validIndices.length > 0 ? (validIndices.reduce((a,b)=>a+b,0)/validIndices.length).toFixed(2) : '—', id: 'stat-media' },
+    { label: 'Índice Máximo', value: validIndices.length > 0 ? Math.max(...validIndices).toFixed(2) : '—', id: 'stat-max' },
+    { label: 'Índice Mínimo', value: validIndices.length > 0 ? Math.min(...validIndices).toFixed(2) : '—', id: 'stat-min' },
     { label: 'Estados Representados', value: new Set(_relFiltered.map(av => av.respondent.estado)).size, id: 'stat-est' },
   ];
 
@@ -1424,6 +1427,42 @@ const DIMENSIONS_ADMIN = [
   ]}
 ];
 
+function computeAvaliacaoFields(av, activeWeights) {
+  const empty = { indice: null, level: null, dimScores: {} };
+  if (!activeWeights || !activeWeights.weights) return empty;
+  const dimScores = {};
+  let totalScore = 0, totalWeight = 0;
+  DIMENSIONS_ADMIN.forEach(d => {
+    const dimData = activeWeights.weights[d.key];
+    if (!dimData) { dimScores[d.key] = null; return; }
+    let num = 0, den = 0;
+    d.indicators.forEach(ind => {
+      const val = av.answers && av.answers[ind.id];
+      if (val === undefined || val === 'NA') return;
+      const indData = dimData.indicators && dimData.indicators[ind.id];
+      const w = indData ? indData.weight : 0;
+      num += w * val; den += w;
+    });
+    const s = den > 0 ? num / den : null;
+    dimScores[d.key] = s;
+    if (s !== null) { totalScore += dimData.weight * s; totalWeight += dimData.weight; }
+  });
+  if (totalWeight <= 0) return { indice: null, level: null, dimScores };
+  const finalScore = totalScore / totalWeight;
+  const level = finalScore >= 4 ? 'Avançado' : finalScore >= 3 ? 'Em Desenvolvimento' : finalScore >= 2 ? 'Emergente' : 'Incipiente';
+  return { indice: finalScore.toFixed(2), level, dimScores };
+}
+
+function enrichAvaliacoes(avaliacoes, activeWeights) {
+  avaliacoes.forEach(av => {
+    const c = computeAvaliacaoFields(av, activeWeights);
+    av.indice = c.indice;
+    av.level = c.level;
+    av.dimScores = c.dimScores;
+  });
+  return avaliacoes;
+}
+
 async function viewAvaliacao(id) {
   const rowId = 'detail-aval-' + id;
   const existing = document.getElementById(rowId);
@@ -1434,6 +1473,7 @@ async function viewAvaliacao(id) {
   const [avaliacoes, activeWeights] = await Promise.all([api.get('avaliacoes'), api.get('active-weights')]);
   const av = avaliacoes.find(a => a.id === id);
   if (!av) return;
+  enrichAvaliacoes([av], activeWeights);
 
   const dimKeys = ['P','E','S','T','A','L'];
   const pills = dimKeys.map(k => {
@@ -1450,8 +1490,8 @@ async function viewAvaliacao(id) {
   tr.innerHTML = `<td colspan="6">
     <div class="detail-grid">
       <div><div class="detail-item-label">Formação</div><div class="detail-item-value">${av.respondent.formacao || '—'}</div></div>
-      <div><div class="detail-item-label">Índice Final</div><div class="detail-item-value" style="color:${levelColor};font-size:18px;">${av.indice}</div></div>
-      <div><div class="detail-item-label">Nível</div><div class="detail-item-value" style="color:${levelColor};">${av.level}</div></div>
+      <div><div class="detail-item-label">Índice Final</div><div class="detail-item-value" style="color:${levelColor};font-size:18px;">${av.indice || '—'}</div></div>
+      <div><div class="detail-item-label">Nível</div><div class="detail-item-value" style="color:${levelColor};">${av.level || '—'}</div></div>
     </div>
     <div class="dim-pills">${pills}</div>
     <button class="btn-notas" onclick="toggleNotasTable('notas-${id}', '${id}', this)">Ver todas as notas</button>

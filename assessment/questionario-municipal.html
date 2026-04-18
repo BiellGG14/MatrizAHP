@@ -694,14 +694,10 @@ function computeIndex(){
 }
 
 function saveAvaliacao() {
-  const{finalScore,dimScores}=state.computed;
   const avaliacao = {
     id: 'aval_' + Date.now(),
     timestamp: new Date().toISOString(),
     respondent: state.resp,
-    indice: finalScore.toFixed(2),
-    level: finalScore>=4?'Avançado':finalScore>=3?'Em Desenvolvimento':finalScore>=2?'Emergente':'Incipiente',
-    dimScores: dimScores,
     answers: state.answers
   };
 
