@@ -920,27 +920,13 @@ function saveCalibration() {
     rawAnswers: state.answers
   };
 
-  // Salvar no banco via API
   fetch('/api/calibrations', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(calibrationData)
-  })
-  .then(r => {
-    if (!r.ok) throw new Error('Erro HTTP ' + r.status);
-    return r.json();
-  })
-  .then(data => {
-    alert('Calibração salva com sucesso!');
-    window.location.href = '/';
-  })
-  .catch(err => {
-    console.error('Erro ao salvar:', err);
-    alert('Erro ao salvar calibração: ' + err.message);
-  });
+  }).catch(err => console.error('Erro ao salvar:', err));
 
   state.calibrationId = calibrationData.id;
-  URL.revokeObjectURL(url);
 }
 
 function renderResult() {}
