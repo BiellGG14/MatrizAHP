@@ -41,7 +41,8 @@ body {
   top: 0;
   z-index: 100;
 }
-.header-left { display: flex; flex-direction: column; gap: 4px; }
+.header-left { display: flex; flex-direction: row; align-items: center; gap: 14px; }
+.header-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .header-title { font-size: 16px; font-weight: 700; color: var(--text); }
 .header-sub { font-size: 12px; color: var(--text-sec); }
 .header-right { display: flex; gap: 12px; align-items: center; }
@@ -358,11 +359,11 @@ body {
 <body>
 
 <div class="header">
-  <div class="header-left" style="display:flex;align-items:center;gap:14px;flex-wrap:nowrap;min-width:0;">
+  <div class="header-left">
     <img src="../assets/logo.png" alt="Logo" style="width:44px;height:44px;flex-shrink:0;"/>
-    <div style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-      <div class="header-title" style="font-size:15px;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;">Admin Dashboard</div>
-      <div class="header-sub" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;">Gerenciamento de Calibrações e Avaliações</div>
+    <div class="header-text">
+      <div class="header-title">Admin Dashboard</div>
+      <div class="header-sub">Gerenciamento de Calibrações e Avaliações</div>
     </div>
   </div>
   <div class="header-right">
@@ -389,7 +390,7 @@ body {
 
       <div id="select-all-row" class="select-all-row" onclick="toggleSelectAll()" style="display:none;">
         <div id="select-all-check" class="calib-check" style="width:18px;height:18px;border-radius:4px;border:2px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:center;">
-          <span id="select-all-mark" style="display:none;color:var(--white);font-size:11px;font-weight:800;">×</span>
+          <span id="select-all-mark" style="display:none;color:var(--white);font-size:11px;font-weight:800;">&#10003;</span>
         </div>
         <span id="select-all-label">Selecionar todos</span>
       </div>
@@ -574,12 +575,12 @@ body {
         </div>
       </div>
 
-      <div id="rel-view-heatmap" class="rel-chart-view" style="display:none;">
+      <div id="rel-view-heatmap" class="rel-chart-view">
         <div class="rel-section-title">Mapa de Calor — Dimensão × Município</div>
         <div id="rel-heatmap-container" class="rel-heatmap-container"></div>
       </div>
 
-      <div id="rel-view-trend" class="rel-chart-view" style="display:none;">
+      <div id="rel-view-trend" class="rel-chart-view">
         <div class="rel-section-title">Tendência Temporal por Município</div>
         <div class="rel-chart-options-row">
           <label class="rel-filter-label">Dimensão:</label>
@@ -757,7 +758,7 @@ function renderMunicipioSelector(searchText = '') {
   container.innerHTML = filtered.map(mun => {
     const isSelected = _relSelectedMuns.has(mun);
     return `<div class="rel-mun-chip ${isSelected ? 'selected' : ''}" onclick="toggleMunicipioSelection('${mun}')">
-      <div class="rel-mun-chip-check">${isSelected ? '×' : ''}</div>
+      <div class="rel-mun-chip-check">${isSelected ? '&#10003;' : ''}</div>
       <span>${mun}</span>
     </div>`;
   }).join('');
@@ -1169,7 +1170,7 @@ async function loadPesosTab() {
     item.dataset.id = cal.id;
     item.dataset.weights = JSON.stringify(cal.weights).replace(/"/g, '&quot;');
     item.innerHTML = `
-      <div class="calib-check"><span class="calib-check-mark">×</span></div>
+      <div class="calib-check"><span class="calib-check-mark">&#10003;</span></div>
       <div class="calib-label">
         <div class="calib-label-name">${cal.respondent.name}</div>
         <div class="calib-label-meta">${cal.respondent.institution || cal.respondent.formacao || '—'} &bull; ${date.toLocaleDateString('pt-BR')}</div>
@@ -1304,7 +1305,7 @@ async function loadGerenciarAvaliacoesTab() {
     item.className = 'calib-item';
     item.dataset.id = av.id;
     item.innerHTML = `
-      <div class="calib-check"><span class="calib-check-mark">×</span></div>
+      <div class="calib-check"><span class="calib-check-mark">&#10003;</span></div>
       <div class="calib-label" style="display:grid;grid-template-columns:1fr 1fr;gap:4px 20px;">
         <div>
           <div class="calib-label-name">${av.respondent.municipio} — ${av.respondent.estado}</div>
