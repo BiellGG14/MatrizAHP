@@ -304,7 +304,37 @@ body {
 .rel-select { padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-family: inherit; color: var(--text); background: var(--white); outline: none; }
 .rel-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px #bfdbfe; }
 .rel-checkbox-group { display: flex; flex-direction: column; gap: 6px; }
-.rel-checkbox-group label { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text); cursor: pointer; }
+.rel-checkbox-group label { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text); cursor: pointer; user-select: none; }
+.rel-checkbox-group input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 4px;
+  background: var(--white);
+  cursor: pointer;
+  position: relative;
+  transition: all .15s;
+  flex-shrink: 0;
+  margin: 0;
+}
+.rel-checkbox-group input[type="checkbox"]:hover { border-color: var(--primary); }
+.rel-checkbox-group input[type="checkbox"]:checked {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+.rel-checkbox-group input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 5px;
+  height: 9px;
+  border: solid var(--white);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
 .rel-date-pair { display: flex; align-items: center; gap: 8px; }
 .rel-date-input { padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-family: inherit; color: var(--text); flex: 1; }
 .rel-date-sep { font-size: 12px; color: var(--text-sec); white-space: nowrap; }
@@ -560,7 +590,6 @@ body {
     <div class="card" id="rel-charts-section">
       <div class="rel-chart-tabs">
         <button class="rel-chart-tab active" data-chart="bar" onclick="switchChartView('bar', this)">Barras por Dimensão</button>
-        <button class="rel-chart-tab" data-chart="heatmap" onclick="switchChartView('heatmap', this)">Mapa de Calor</button>
         <button class="rel-chart-tab" data-chart="trend" onclick="switchChartView('trend', this)">Tendência Temporal</button>
       </div>
 
@@ -575,13 +604,11 @@ body {
         </div>
       </div>
 
-      <div id="rel-view-heatmap" class="rel-chart-view">
-        <div class="rel-section-title">Mapa de Calor — Dimensão × Município</div>
-        <div id="rel-heatmap-container" class="rel-heatmap-container"></div>
-      </div>
-
       <div id="rel-view-trend" class="rel-chart-view">
         <div class="rel-section-title">Tendência Temporal por Município</div>
+        <div style="font-size:12px;color:var(--text-sec);margin-bottom:12px;">
+          Mostra a evolução do índice ou dimensão ao longo do tempo. Requer municípios com 2+ avaliações em datas diferentes.
+        </div>
         <div class="rel-chart-options-row">
           <label class="rel-filter-label">Dimensão:</label>
           <select id="rel-trend-dim" onchange="renderTrendChart()">
@@ -594,12 +621,10 @@ body {
             <option value="L">Legal (L)</option>
           </select>
         </div>
-        <div class="rel-canvas-wrap">
+        <div id="rel-trend-wrap" class="rel-canvas-wrap">
           <canvas id="rel-chart-trend"></canvas>
         </div>
-        <div id="rel-trend-notice" style="display:none; font-size:12px; color:var(--text-sec); margin-top:8px;">
-          Apenas municípios com múltiplas avaliações aparecem neste gráfico.
-        </div>
+        <div id="rel-trend-empty" style="display:none; text-align:center; color:var(--text-sec); padding:60px 20px;"></div>
       </div>
     </div>
 
@@ -931,12 +956,9 @@ function renderTableSection() {
 function renderChartsSection() {
   if (_relFiltered.length === 0) {
     document.getElementById('rel-view-bar').innerHTML = '<div style="text-align:center;color:var(--text-sec);padding:40px;">Sem dados para exibir</div>';
-    document.getElementById('rel-heatmap-container').innerHTML = '<div style="text-align:center;color:var(--text-sec);padding:40px;">Sem dados para exibir</div>';
-    document.getElementById('rel-view-trend').innerHTML = '<div style="text-align:center;color:var(--text-sec);padding:40px;">Sem dados para exibir</div>';
     return;
   }
   if (_relCurrentView === 'bar') renderBarChart();
-  else if (_relCurrentView === 'heatmap') renderHeatmap();
   else if (_relCurrentView === 'trend') renderTrendChart();
 }
 
@@ -1017,86 +1039,59 @@ function renderBarChart() {
   });
 }
 
-function renderHeatmap() {
-  const grouped = groupByMunicipio(_relFiltered, true);
-  if (!grouped || grouped.length === 0) {
-    document.getElementById('rel-heatmap-container').innerHTML = '<div style="text-align:center;color:var(--text-sec);padding:40px;">Nenhum dado disponível para o heatmap</div>';
-    return;
-  }
-
-  grouped.sort((a,b) => parseFloat(b.indice) - parseFloat(a.indice));
-
-  let html = '<table class="rel-heatmap-table"><thead><tr><th>Município</th>';
-  DIMS.forEach(d => html += `<th>${d}</th>`);
-  html += '<th>Índice</th></tr></thead><tbody>';
-
-  grouped.forEach(av => {
-    html += '<tr>';
-    html += `<td class="mun-label">${av.respondent.municipio}</td>`;
-    DIMS.forEach(d => {
-      const score = av.dimScores && av.dimScores[d] ? av.dimScores[d] : 0;
-      const heat = heatColor(score);
-      html += `<td style="background:${heat.bg};color:${heat.text};">${score.toFixed(1)}</td>`;
-    });
-    const indiceHeat = heatColor(parseFloat(av.indice));
-    html += `<td style="background:${indiceHeat.bg};color:${indiceHeat.text};">${parseFloat(av.indice).toFixed(2)}</td>`;
-    html += '</tr>';
-  });
-
-  html += '</tbody></table>';
-  document.getElementById('rel-heatmap-container').innerHTML = html;
-}
-
 function renderTrendChart() {
   const dimVal = document.getElementById('rel-trend-dim').value;
   const grouped = groupByMunicipio(_avaliacoes, false);
   const multiMuns = Object.entries(grouped).filter(([m, avs]) => avs && avs.length > 1);
 
-  document.getElementById('rel-trend-notice').style.display = multiMuns.length < 2 ? 'block' : 'none';
+  const chartWrap = document.getElementById('rel-trend-wrap');
+  const emptyDiv = document.getElementById('rel-trend-empty');
+
+  const showEmpty = (msg) => {
+    if (_relChartTrend) { _relChartTrend.destroy(); _relChartTrend = null; }
+    chartWrap.style.display = 'none';
+    emptyDiv.style.display = 'block';
+    emptyDiv.textContent = msg;
+  };
 
   if (multiMuns.length === 0) {
-    if (_relChartTrend) _relChartTrend.destroy();
-    const container = document.getElementById('rel-view-trend');
-    const msgDiv = container.querySelector('[style*="text-align:center"]') || document.createElement('div');
-    msgDiv.style.cssText = 'text-align:center;color:var(--text-sec);padding:40px;';
-    msgDiv.textContent = 'Insuficientes dados de tendência (2+ avaliações por município)';
-    if (!container.querySelector('[style*="text-align:center"]')) container.appendChild(msgDiv);
+    showEmpty('Nenhum município possui 2+ avaliações em datas diferentes. Adicione mais avaliações ao longo do tempo para visualizar tendências.');
     return;
   }
 
-  const allDates = new Set();
-  multiMuns.forEach(([m, avs]) => avs.forEach(av => allDates.add(av.timestamp.split('T')[0])));
-  const sortedDates = Array.from(allDates).sort();
-
-  const filteredDatasets = multiMuns.filter(([m]) => _relSelectedMuns.size === 0 || _relSelectedMuns.has(m)).map(([mun, avs], i) => {
-    const sorted = avs.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
-    const data = sorted.map(av => ({
-      x: av.timestamp.split('T')[0],
-      y: dimVal === 'indice' ? parseFloat(av.indice) : (av.dimScores && av.dimScores[dimVal] ? av.dimScores[dimVal] : 0),
-    }));
-    return {
-      label: mun,
-      data: data,
-      borderColor: CHART_PALETTE[i % CHART_PALETTE.length],
-      backgroundColor: CHART_PALETTE[i % CHART_PALETTE.length] + '22',
-      borderWidth: 2,
-      pointRadius: 5,
-      pointHoverRadius: 7,
-      tension: 0.3,
-      fill: false,
-      spanGaps: true,
-    };
-  });
+  const filteredDatasets = multiMuns
+    .filter(([m]) => _relSelectedMuns.size === 0 || _relSelectedMuns.has(m))
+    .map(([mun, avs], i) => {
+      const sorted = avs.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+      const data = sorted.map(av => ({
+        x: av.timestamp.split('T')[0],
+        y: dimVal === 'indice' ? parseFloat(av.indice) : (av.dimScores && av.dimScores[dimVal] ? av.dimScores[dimVal] : 0),
+      }));
+      return {
+        label: mun,
+        data: data,
+        borderColor: CHART_PALETTE[i % CHART_PALETTE.length],
+        backgroundColor: CHART_PALETTE[i % CHART_PALETTE.length] + '22',
+        borderWidth: 2,
+        pointRadius: 5,
+        pointHoverRadius: 7,
+        tension: 0.3,
+        fill: false,
+        spanGaps: true,
+      };
+    });
 
   if (filteredDatasets.length === 0) {
-    if (_relChartTrend) _relChartTrend.destroy();
-    const container = document.getElementById('rel-view-trend');
-    const msgDiv = container.querySelector('[style*="text-align:center"]') || document.createElement('div');
-    msgDiv.style.cssText = 'text-align:center;color:var(--text-sec);padding:40px;';
-    msgDiv.textContent = 'Nenhum município selecionado com dados de tendência';
-    if (!container.querySelector('[style*="text-align:center"]')) container.appendChild(msgDiv);
+    showEmpty('Nenhum município selecionado tem dados suficientes de tendência.');
     return;
   }
+
+  chartWrap.style.display = '';
+  emptyDiv.style.display = 'none';
+
+  const allDates = new Set();
+  filteredDatasets.forEach(ds => ds.data.forEach(p => allDates.add(p.x)));
+  const sortedDates = Array.from(allDates).sort();
 
   if (_relChartTrend) _relChartTrend.destroy();
   _relChartTrend = new Chart(document.getElementById('rel-chart-trend'), {
