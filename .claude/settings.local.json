@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find \"h:/Meu Drive/ITA/MatrizAHP-git\" -type f \\\\\\( -name \"*.html\" -o -name \"*.js\" \\\\\\) -exec grep -l \"P4\\\\|E5\\\\|S5\\\\|T5\\\\|A5\\\\|L5\" {} \\\\;)"
+    ]
+  }
+}

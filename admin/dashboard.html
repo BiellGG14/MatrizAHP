@@ -753,7 +753,7 @@ function renderMunicipioSelector(searchText = '') {
   container.innerHTML = filtered.map(mun => {
     const isSelected = _relSelectedMuns.has(mun);
     return `<div class="rel-mun-chip ${isSelected ? 'selected' : ''}" onclick="toggleMunicipioSelection('${mun}')">
-      <div class="rel-mun-chip-check">${isSelected ? '✓' : ''}</div>
+      <div class="rel-mun-chip-check">${isSelected ? '×' : ''}</div>
       <span>${mun}</span>
     </div>`;
   }).join('');
@@ -1033,7 +1033,7 @@ function renderHeatmap() {
 function renderTrendChart() {
   const dimVal = document.getElementById('rel-trend-dim').value;
   const grouped = groupByMunicipio(_avaliacoes, false);
-  const multiMuns = Object.entries(grouped).filter(([m, avs]) => avs.length > 1);
+  const multiMuns = Object.entries(grouped).filter(([m, avs]) => avs && avs.length > 1);
 
   document.getElementById('rel-trend-notice').style.display = multiMuns.length < 2 ? 'block' : 'none';
 
