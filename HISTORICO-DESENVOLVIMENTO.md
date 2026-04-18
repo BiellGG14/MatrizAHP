@@ -6,7 +6,7 @@
 ---
 
 ## 📋 Resumo da Conversa
-
+**NUNCA USAR EMOJI**
 ### Operações Realizadas
 
 **Fase 1: Setup e Deploy**

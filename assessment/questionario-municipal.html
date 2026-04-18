@@ -347,7 +347,7 @@ body {
       <span class="intro-badge">Avaliação Municipal</span>
       <h1 class="intro-title">Avaliação de Prontidão para UAM</h1>
       <p class="intro-desc">
-        Avalie um município nos <strong>23 indicadores</strong> do Índice de Maturidade para Mobilidade Aérea Urbana.
+        Avalie um município nos <strong>24 indicadores</strong> do Índice de Maturidade para Mobilidade Aérea Urbana.
         Para cada indicador, atribua uma nota de <strong>1 a 5</strong>.
       </p>
 
@@ -438,7 +438,8 @@ const DIMENSIONS = [
   { key:'P', name:'Política', indicators:[
     {id:'P1',name:'Governança institucional',hint:'Existência de estrutura administrativa e liderança para coordenar políticas de UAM no município.'},
     {id:'P2',name:'Articulação interinstitucional',hint:'Capacidade de articulação com ANAC, DECEA e outros órgãos reguladores e parceiros.'},
-    {id:'P3',name:'Integração ao planejamento urbano',hint:'Inserção da UAM em planos diretores, PDMobs e instrumentos urbanísticos municipais.'}
+    {id:'P3',name:'Integração ao planejamento urbano',hint:'Inserção da UAM em planos diretores, PDMobs e instrumentos urbanísticos municipais.'},
+    {id:'P4',name:'Capacidade técnica institucional',hint:'Disponibilidade de corpo técnico qualificado e mecanismos de gestão do conhecimento para projetos de UAM no município.'}
   ]},
   { key:'E', name:'Econômica', indicators:[
     {id:'E1',name:'Demanda funcional potencial',hint:'Volume de fluxos de deslocamento e perfil de acessibilidade compatíveis com UAM.'},
@@ -496,29 +497,28 @@ function buildScreens(){
 }
 
 async function loadWeights() {
-  try {
-    const res = await fetch('/api/active-weights');
-    const active = await res.json();
-    if (active && active.weights) {
-      WEIGHTS = {};
-      Object.keys(active.weights).forEach(dimKey => {
-        const dimData = active.weights[dimKey];
-        WEIGHTS[dimKey] = { dim: dimData.weight, ind: {} };
-        Object.keys(dimData.indicators).forEach(indKey => {
-          WEIGHTS[dimKey].ind[indKey] = dimData.indicators[indKey].weight;
-        });
-      });
-      return;
-    }
-  } catch (e) { /* fallback */ }
   WEIGHTS = {
-    P:{dim:1/6,ind:{P1:1/3,P2:1/3,P3:1/3}},
+    P:{dim:1/6,ind:{P1:1/4,P2:1/4,P3:1/4,P4:1/4}},
     E:{dim:1/6,ind:{E1:1/4,E2:1/4,E3:1/4,E4:1/4}},
     S:{dim:1/6,ind:{S1:1/4,S2:1/4,S3:1/4,S4:1/4}},
     T:{dim:1/6,ind:{T1:1/4,T2:1/4,T3:1/4,T4:1/4}},
     A:{dim:1/6,ind:{A1:1/4,A2:1/4,A3:1/4,A4:1/4}},
     L:{dim:1/6,ind:{L1:1/4,L2:1/4,L3:1/4,L4:1/4}}
   };
+  try {
+    const res = await fetch('/api/active-weights');
+    const active = await res.json();
+    if (active && active.weights) {
+      Object.keys(active.weights).forEach(dimKey => {
+        const dimData = active.weights[dimKey];
+        if (!WEIGHTS[dimKey]) WEIGHTS[dimKey] = { dim: 0, ind: {} };
+        WEIGHTS[dimKey].dim = dimData.weight;
+        Object.keys(dimData.indicators).forEach(indKey => {
+          WEIGHTS[dimKey].ind[indKey] = dimData.indicators[indKey].weight;
+        });
+      });
+    }
+  } catch (e) { /* fallback já setado */ }
 }
 
 function startAssessment(){
@@ -560,7 +560,7 @@ function renderQuestion(cur){
   const curVal=state.lastAnswers[cur.id]!==undefined?state.lastAnswers[cur.id]:state.answers[cur.id];
   let html='';
   html+='<span class="q-block-tag">Dimensão '+(dimIdx+1)+' de 6 — '+dim.name+'</span>';
-  html+='<div class="q-number">Indicador '+(state.idx+1)+' de 23</div>';
+  html+='<div class="q-number">Indicador '+(state.idx+1)+' de 24</div>';
   html+='<div class="q-title">'+ind.name+'</div>';
   html+='<div class="q-hint">'+ind.hint+'</div>';
   const s1=SCALE[0], s5=SCALE[4], middles=SCALE.slice(1,4);
@@ -664,10 +664,10 @@ function updateProgress(){
   const dim=DIMENSIONS.find(d=>d.key===cur.block);
   const dimScreens=state.screens.filter(s=>s.block===cur.block);
   const posInDim=dimScreens.findIndex(s=>s.id===cur.id)+1;
-  document.getElementById('stepCounter').textContent='Indicador '+(state.idx+1)+' de 23';
+  document.getElementById('stepCounter').textContent='Indicador '+(state.idx+1)+' de 24';
   document.getElementById('blockLabel').textContent=dim.name;
   document.getElementById('blockCounter').textContent=posInDim+'/'+dimScreens.length;
-  document.getElementById('progressFill').style.width=((state.idx/23)*100)+'%';
+  document.getElementById('progressFill').style.width=((state.idx/24)*100)+'%';
 }
 
 function computeIndex(){
