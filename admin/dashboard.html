@@ -294,7 +294,65 @@ body {
 .nota-ponderada { font-weight: 700; color: var(--primary); }
 .btn-notas { margin-top: 10px; font-size: 11px; padding: 5px 12px; border: 1px solid var(--border); border-radius: 5px; background: var(--white); color: var(--text-sec); cursor: pointer; font-family: inherit; }
 .btn-notas:hover { border-color: var(--primary); color: var(--primary); }
+
+/* ===== RELATÓRIOS TAB INTERACTIVE REPORTING ===== */
+.rel-filters-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+.rel-filter-group { display: flex; flex-direction: column; gap: 6px; }
+.rel-filter-label { font-size: 11px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.04em; }
+.rel-select { padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-family: inherit; color: var(--text); background: var(--white); outline: none; }
+.rel-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px #bfdbfe; }
+.rel-checkbox-group { display: flex; flex-direction: column; gap: 6px; }
+.rel-checkbox-group label { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text); cursor: pointer; }
+.rel-date-pair { display: flex; align-items: center; gap: 8px; }
+.rel-date-input { padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-family: inherit; color: var(--text); flex: 1; }
+.rel-date-sep { font-size: 12px; color: var(--text-sec); white-space: nowrap; }
+.rel-mun-search-row { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; flex-wrap: wrap; }
+.rel-mun-search-input { flex: 1; min-width: 160px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-family: inherit; color: var(--text); }
+.rel-mun-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 6px; max-height: 200px; overflow-y: auto; border: 1px solid var(--border-light); border-radius: 8px; padding: 8px; background: var(--surface); }
+.rel-mun-chip { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text); border: 1.5px solid var(--border); background: var(--white); transition: all .15s; user-select: none; }
+.rel-mun-chip:hover { border-color: var(--primary); background: var(--primary-light); }
+.rel-mun-chip.selected { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+.rel-mun-chip-check { width: 14px; height: 14px; border-radius: 3px; border: 1.5px solid var(--border); background: var(--white); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; flex-shrink: 0; }
+.rel-mun-chip.selected .rel-mun-chip-check { background: var(--primary); border-color: var(--primary); color: var(--white); }
+.rel-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 4px; }
+.rel-stat-card { padding: 14px 16px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border-light); }
+.rel-stat-label { font-size: 10px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+.rel-stat-value { font-size: 28px; font-weight: 800; color: var(--primary); }
+.rel-stat-sub { font-size: 11px; color: var(--text-sec); margin-top: 2px; }
+.rel-dim-avg-bars { display: flex; flex-direction: column; gap: 8px; }
+.rel-dim-bar-row { display: flex; align-items: center; gap: 10px; }
+.rel-dim-bar-label { width: 90px; font-size: 12px; font-weight: 600; color: var(--text); flex-shrink: 0; }
+.rel-dim-bar-track { flex: 1; height: 12px; border-radius: 6px; background: var(--border-light); overflow: hidden; position: relative; }
+.rel-dim-bar-fill { height: 100%; border-radius: 6px; background: var(--primary); transition: width .4s ease; }
+.rel-dim-bar-val { width: 36px; font-size: 12px; font-weight: 700; color: var(--text); text-align: right; }
+.rel-dim-bar-range { font-size: 11px; color: var(--text-sec); white-space: nowrap; }
+.rel-nivel-dist { display: flex; flex-wrap: wrap; gap: 10px; }
+.rel-section-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+.rel-chart-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+.rel-chart-tab { padding: 10px 16px; background: none; border: none; border-bottom: 2px solid transparent; font-size: 13px; font-weight: 600; color: var(--text-sec); cursor: pointer; transition: all .2s; font-family: inherit; }
+.rel-chart-tab:hover { color: var(--text); }
+.rel-chart-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+.rel-chart-view { display: none; }
+.rel-chart-view.active { display: block; }
+.rel-chart-options-row { display: flex; gap: 16px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; font-size: 13px; color: var(--text); }
+.rel-chart-options-row label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.rel-canvas-wrap { position: relative; height: 360px; }
+.rel-heatmap-container { overflow-x: auto; }
+.rel-heatmap-table { border-collapse: collapse; font-size: 12px; min-width: 100%; }
+.rel-heatmap-table th { padding: 8px 12px; font-size: 11px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--border); white-space: nowrap; text-align: left; }
+.rel-heatmap-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-light); text-align: center; font-weight: 700; font-size: 13px; transition: background .2s; }
+.rel-heatmap-table .mun-label { text-align: left; font-weight: 600; white-space: nowrap; }
+.rel-rank-pos { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; font-size: 11px; font-weight: 800; background: var(--surface); color: var(--text-sec); }
+.rel-rank-pos.gold { background: #fef3c7; color: #d97706; }
+.rel-rank-pos.silver { background: #f1f5f9; color: #64748b; }
+.rel-rank-pos.bronze { background: #fef3c7; color: #b45309; }
+@media (max-width: 768px) {
+  .rel-filters-row { grid-template-columns: 1fr; }
+  .rel-canvas-wrap { height: 260px; }
+  .rel-mun-grid { grid-template-columns: 1fr 1fr; }
+}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -425,51 +483,134 @@ body {
 
   <!-- ABA 4: RELATORIOS -->
   <div class="tab-content" id="tab-relatorios">
-    <div class="card">
-      <div class="card-title">Estatísticas Gerais</div>
+    <!-- Filter Panel -->
+    <div class="card" id="rel-filter-panel">
+      <div class="card-title">Filtros e Seleção de Municípios</div>
+      <div class="rel-filters-row" id="rel-filters-row">
+        <div class="rel-filter-group">
+          <label class="rel-filter-label">Estado</label>
+          <select id="filtro-estado" class="rel-select" multiple size="4" onchange="applyRelatoriosFilters()"></select>
+        </div>
+        <div class="rel-filter-group">
+          <label class="rel-filter-label">Nível de Maturidade</label>
+          <div id="filtro-nivel-group" class="rel-checkbox-group"></div>
+        </div>
+        <div class="rel-filter-group">
+          <label class="rel-filter-label">Período</label>
+          <div class="rel-date-pair">
+            <input type="date" id="filtro-data-inicio" class="rel-date-input" onchange="applyRelatoriosFilters()">
+            <span class="rel-date-sep">até</span>
+            <input type="date" id="filtro-data-fim" class="rel-date-input" onchange="applyRelatoriosFilters()">
+          </div>
+        </div>
+        <div class="rel-filter-group">
+          <label class="rel-filter-label">Formação do Avaliador</label>
+          <div id="filtro-formacao-group" class="rel-checkbox-group"></div>
+        </div>
+      </div>
+      <div style="margin-top: 16px; border-top: 1px solid var(--border-light); padding-top: 16px;">
+        <label class="rel-filter-label">Municípios para Comparação <span id="rel-mun-count" style="font-weight:400;color:var(--text-sec);"></span></label>
+        <div class="rel-mun-search-row">
+          <input type="text" id="rel-mun-search" class="rel-mun-search-input" placeholder="Buscar município…" oninput="renderMunicipioSelector()">
+          <button class="btn btn-ghost" onclick="relSelectAllMunicipios()">Todos</button>
+          <button class="btn btn-ghost" onclick="relClearMunicipios()">Limpar</button>
+        </div>
+        <div id="rel-municipio-selector" class="rel-mun-grid"></div>
+      </div>
+      <div style="margin-top: 12px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <span id="rel-filter-summary" style="font-size:12px;color:var(--text-sec);flex:1;"></span>
+        <button class="btn btn-ghost" onclick="resetRelatoriosFilters()">Limpar Filtros</button>
+        <button class="btn btn-ghost" onclick="exportFilteredCSV()">Exportar CSV</button>
+        <button class="btn btn-ghost" onclick="exportAllData()">Exportar JSON</button>
+      </div>
+    </div>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px;" id="stats-grid">
-        <div style="padding: 16px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border-light);">
-          <div style="font-size: 11px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;">Total de Calibrações</div>
-          <div style="font-size: 32px; font-weight: 800; color: var(--primary);" id="stat-calibracoes">0</div>
+    <!-- Summary Section -->
+    <div class="card" id="rel-summary-section">
+      <div class="card-title">Estatísticas do Conjunto Filtrado</div>
+      <div id="stats-grid" class="rel-stats-grid"></div>
+      <div style="margin-top:20px;">
+        <div class="rel-section-title">Médias por Dimensão (conjunto filtrado)</div>
+        <div id="rel-dim-avg-bars" class="rel-dim-avg-bars"></div>
+      </div>
+      <div style="margin-top:20px;">
+        <div class="rel-section-title">Distribuição por Nível</div>
+        <div id="nivel-dist" class="rel-nivel-dist"></div>
+      </div>
+      <div style="margin-top:20px;">
+        <div class="rel-section-title">Ranking de Municípios por Índice</div>
+        <div style="overflow-x:auto;">
+          <table class="table" id="rel-ranking-table">
+            <thead><tr>
+              <th>#</th><th>Município</th><th>Estado</th><th>Índice</th><th>Nível</th>
+              <th>P</th><th>E</th><th>S</th><th>T</th><th>A</th><th>L</th>
+            </tr></thead>
+            <tbody id="rel-ranking-tbody"></tbody>
+          </table>
         </div>
-        <div style="padding: 16px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border-light);">
-          <div style="font-size: 11px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;">Total de Avaliações</div>
-          <div style="font-size: 32px; font-weight: 800; color: var(--primary);" id="stat-avaliacoes">0</div>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="card" id="rel-charts-section">
+      <div class="rel-chart-tabs">
+        <button class="rel-chart-tab active" data-chart="bar" onclick="switchChartView('bar', this)">Barras por Dimensão</button>
+        <button class="rel-chart-tab" data-chart="heatmap" onclick="switchChartView('heatmap', this)">Mapa de Calor</button>
+        <button class="rel-chart-tab" data-chart="trend" onclick="switchChartView('trend', this)">Tendência Temporal</button>
+      </div>
+
+      <div id="rel-view-bar" class="rel-chart-view active">
+        <div class="rel-section-title">Pontuação por Dimensão — Municípios Selecionados</div>
+        <div class="rel-chart-options-row">
+          <label><input type="radio" name="bar-mode" value="grouped" checked onchange="renderBarChart()"> Agrupado</label>
+          <label><input type="radio" name="bar-mode" value="stacked" onchange="renderBarChart()"> Empilhado</label>
         </div>
-        <div style="padding: 16px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border-light);">
-          <div style="font-size: 11px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;">Municípios Avaliados</div>
-          <div style="font-size: 32px; font-weight: 800; color: var(--primary);" id="stat-municipios">0</div>
-        </div>
-        <div style="padding: 16px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border-light);">
-          <div style="font-size: 11px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;">Índice Médio</div>
-          <div style="font-size: 32px; font-weight: 800; color: var(--primary);" id="stat-indice-medio">—</div>
+        <div class="rel-canvas-wrap">
+          <canvas id="rel-chart-bar"></canvas>
         </div>
       </div>
 
-      <div style="margin-bottom: 24px;">
-        <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px;">Distribuição por Nível de Maturidade</div>
-        <div id="nivel-dist" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+      <div id="rel-view-heatmap" class="rel-chart-view" style="display:none;">
+        <div class="rel-section-title">Mapa de Calor — Dimensão × Município</div>
+        <div id="rel-heatmap-container" class="rel-heatmap-container"></div>
       </div>
 
-      <div style="margin-bottom: 24px;">
-        <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px;">Filtrar por Município</div>
-        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap;">
-          <select id="filtro-municipio" style="padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-family: inherit; color: var(--text); background: var(--white); outline: none; min-width: 200px;" onchange="filtrarAvaliacoes()">
-            <option value="">Todos os municípios</option>
+      <div id="rel-view-trend" class="rel-chart-view" style="display:none;">
+        <div class="rel-section-title">Tendência Temporal por Município</div>
+        <div class="rel-chart-options-row">
+          <label class="rel-filter-label">Dimensão:</label>
+          <select id="rel-trend-dim" onchange="renderTrendChart()">
+            <option value="indice">Índice Geral</option>
+            <option value="P">Política (P)</option>
+            <option value="E">Econômica (E)</option>
+            <option value="S">Social (S)</option>
+            <option value="T">Tecnológica (T)</option>
+            <option value="A">Ambiental (A)</option>
+            <option value="L">Legal (L)</option>
           </select>
-          <span style="font-size: 12px; color: var(--text-sec);" id="filtro-count"></span>
         </div>
+        <div class="rel-canvas-wrap">
+          <canvas id="rel-chart-trend"></canvas>
+        </div>
+        <div id="rel-trend-notice" style="display:none; font-size:12px; color:var(--text-sec); margin-top:8px;">
+          Apenas municípios com múltiplas avaliações aparecem neste gráfico.
+        </div>
+      </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="card" id="rel-table-section">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+        <div class="card-title" style="margin-bottom:0;">Lista de Avaliações</div>
+        <span id="filtro-count" style="font-size:12px;color:var(--text-sec);"></span>
+      </div>
+      <div style="overflow-x:auto;">
         <table class="table" id="filtro-table">
           <thead><tr>
             <th>Município</th><th>Estado</th><th>Avaliador</th><th>Índice</th><th>Nível</th><th>Data</th>
           </tr></thead>
           <tbody id="filtro-tbody"></tbody>
         </table>
-      </div>
-
-      <div style="border-top: 1px solid var(--border-light); padding-top: 16px; text-align: right;">
-        <button class="btn btn-ghost" onclick="exportAllData()">Exportar dados completos (JSON)</button>
       </div>
     </div>
   </div>
@@ -498,6 +639,18 @@ const api = {
     return res.json();
   },
 };
+
+// ===== RELATÓRIOS STATE =====
+let _avaliacoes = [];
+let _relFiltered = [];
+let _relSelectedMuns = new Set();
+let _relChartBar = null;
+let _relChartTrend = null;
+let _relCurrentView = 'bar';
+const DIMS = ['P','E','S','T','A','L'];
+const DIM_NAMES = { P:'Política', E:'Econômica', S:'Social', T:'Tecnológica', A:'Ambiental', L:'Legal' };
+const LEVEL_COLORS = { 'Avançado':'#15803d', 'Em Desenvolvimento':'#2563eb', 'Emergente':'#d97706', 'Incipiente':'#dc2626' };
+const CHART_PALETTE = ['#2563eb','#16a34a','#d97706','#dc2626','#7c3aed','#0891b2','#be123c','#065f46'];
 
 function switchTab(tabName) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -553,62 +706,204 @@ async function loadAvaliacoesTab() {
 async function loadRelatoriosTab() {
   const [calibrations, avaliacoes] = await Promise.all([api.get('calibrations'), api.get('avaliacoes')]);
   _avaliacoes = avaliacoes;
+  _relSelectedMuns = new Set([...new Set(avaliacoes.map(av => av.respondent.municipio))]);
+  buildRelatoriosFilters(avaliacoes);
+  applyRelatoriosFilters();
+}
 
-  document.getElementById('stat-calibracoes').textContent = calibrations.length;
-  document.getElementById('stat-avaliacoes').textContent = avaliacoes.length;
+function buildRelatoriosFilters(avaliacoes) {
+  const estados = [...new Set(avaliacoes.map(av => av.respondent.estado))].sort();
+  const formacoes = [...new Set(avaliacoes.map(av => av.respondent.formacao || ''))].filter(f => f).sort();
+  const estadoSel = document.getElementById('filtro-estado');
+  const formacaoGroup = document.getElementById('filtro-formacao-group');
+  const nivelGroup = document.getElementById('filtro-nivel-group');
 
-  const municipiosUnicos = new Set(avaliacoes.map(av => av.respondent.municipio));
-  document.getElementById('stat-municipios').textContent = municipiosUnicos.size;
+  estadoSel.innerHTML = '';
+  estados.forEach(estado => {
+    const opt = document.createElement('option');
+    opt.value = estado;
+    opt.textContent = estado;
+    opt.selected = true;
+    estadoSel.appendChild(opt);
+  });
 
-  // Índice médio
-  const indices = avaliacoes.map(av => parseFloat(av.indice)).filter(v => !isNaN(v));
-  const medio = indices.length > 0 ? (indices.reduce((a,b)=>a+b,0)/indices.length).toFixed(2) : '—';
-  document.getElementById('stat-indice-medio').textContent = medio;
+  nivelGroup.innerHTML = '';
+  Object.keys(LEVEL_COLORS).forEach(nivel => {
+    const label = document.createElement('label');
+    label.innerHTML = `<input type="checkbox" value="${nivel}" checked onchange="applyRelatoriosFilters()"> ${nivel}`;
+    nivelGroup.appendChild(label);
+  });
 
-  // Distribuição por nível
+  formacaoGroup.innerHTML = '';
+  formacoes.forEach(formacao => {
+    const label = document.createElement('label');
+    label.innerHTML = `<input type="checkbox" value="${formacao}" checked onchange="applyRelatoriosFilters()"> ${formacao}`;
+    formacaoGroup.appendChild(label);
+  });
+
+  renderMunicipioSelector();
+}
+
+function renderMunicipioSelector(searchText = '') {
+  const search = document.getElementById('rel-mun-search').value.toLowerCase() || searchText.toLowerCase();
+  const municipios = [...new Set(_avaliacoes.map(av => av.respondent.municipio))].sort();
+  const filtered = municipios.filter(m => m.toLowerCase().includes(search));
+  const container = document.getElementById('rel-municipio-selector');
+
+  container.innerHTML = filtered.map(mun => {
+    const isSelected = _relSelectedMuns.has(mun);
+    return `<div class="rel-mun-chip ${isSelected ? 'selected' : ''}" onclick="toggleMunicipioSelection('${mun}')">
+      <div class="rel-mun-chip-check">${isSelected ? '✓' : ''}</div>
+      <span>${mun}</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('rel-mun-count').textContent = `(${_relSelectedMuns.size} selecionados)`;
+}
+
+function toggleMunicipioSelection(municipio) {
+  if (_relSelectedMuns.has(municipio)) {
+    _relSelectedMuns.delete(municipio);
+  } else {
+    _relSelectedMuns.add(municipio);
+  }
+  renderMunicipioSelector();
+  applyRelatoriosFilters();
+}
+
+function relSelectAllMunicipios() {
+  const municipios = [...new Set(_avaliacoes.map(av => av.respondent.municipio))];
+  _relSelectedMuns = new Set(municipios);
+  renderMunicipioSelector();
+  applyRelatoriosFilters();
+}
+
+function relClearMunicipios() {
+  _relSelectedMuns.clear();
+  renderMunicipioSelector();
+  applyRelatoriosFilters();
+}
+
+function applyRelatoriosFilters() {
+  const estadoVals = Array.from(document.getElementById('filtro-estado').selectedOptions).map(o => o.value);
+  const nivelVals = Array.from(document.querySelectorAll('#filtro-nivel-group input:checked')).map(i => i.value);
+  const formacaoVals = Array.from(document.querySelectorAll('#filtro-formacao-group input:checked')).map(i => i.value);
+  const dataInicio = new Date(document.getElementById('filtro-data-inicio').value || '0000-01-01');
+  const dataFim = new Date(document.getElementById('filtro-data-fim').value || '9999-12-31');
+
+  _relFiltered = _avaliacoes.filter(av => {
+    const passEstado = estadoVals.length === 0 || estadoVals.includes(av.respondent.estado);
+    const passNivel = nivelVals.length === 0 || nivelVals.includes(av.level);
+    const passFormacao = formacaoVals.length === 0 || formacaoVals.includes(av.respondent.formacao || '');
+    const avDate = new Date(av.timestamp);
+    const passData = avDate >= dataInicio && avDate <= dataFim;
+    const passMun = _relSelectedMuns.size === 0 || _relSelectedMuns.has(av.respondent.municipio);
+    return passEstado && passNivel && passFormacao && passData && passMun;
+  });
+
+  document.getElementById('rel-filter-summary').textContent = `${_relFiltered.length} avaliação(ões) correspondem aos filtros`;
+  renderSummarySection();
+  renderChartsSection();
+  renderTableSection();
+}
+
+function renderSummarySection() {
+  renderStatsCards();
+  renderDimAvgBars(_relFiltered);
+  renderLevelDistribution(_relFiltered);
+  renderRankingTable(_relFiltered);
+}
+
+function renderStatsCards() {
+  const stats = [
+    { label: 'Total de Avaliações', value: _relFiltered.length, id: 'stat-total' },
+    { label: 'Municípios Únicos', value: new Set(_relFiltered.map(av => av.respondent.municipio)).size, id: 'stat-muns' },
+    { label: 'Índice Médio', value: _relFiltered.length > 0 ? ((_relFiltered.reduce((a,av)=>a+parseFloat(av.indice),0)/_relFiltered.length).toFixed(2)) : '—', id: 'stat-media' },
+    { label: 'Índice Máximo', value: _relFiltered.length > 0 ? Math.max(..._relFiltered.map(av=>parseFloat(av.indice))).toFixed(2) : '—', id: 'stat-max' },
+    { label: 'Índice Mínimo', value: _relFiltered.length > 0 ? Math.min(..._relFiltered.map(av=>parseFloat(av.indice))).toFixed(2) : '—', id: 'stat-min' },
+    { label: 'Estados Representados', value: new Set(_relFiltered.map(av => av.respondent.estado)).size, id: 'stat-est' },
+  ];
+
+  const grid = document.getElementById('stats-grid');
+  grid.innerHTML = stats.map(s => `<div class="rel-stat-card"><div class="rel-stat-label">${s.label}</div><div class="rel-stat-value">${s.value}</div></div>`).join('');
+}
+
+function renderDimAvgBars(avaliacoes) {
+  const container = document.getElementById('rel-dim-avg-bars');
+  if (avaliacoes.length === 0) {
+    container.innerHTML = '<p style="color:var(--text-sec);">Nenhum dado para exibir</p>';
+    return;
+  }
+
+  container.innerHTML = DIMS.map(dim => {
+    const scores = avaliacoes.map(av => av.dimScores[dim]).filter(s => !isNaN(s));
+    const avg = scores.length > 0 ? scores.reduce((a,b)=>a+b,0)/scores.length : 0;
+    const min = scores.length > 0 ? Math.min(...scores) : 0;
+    const max = scores.length > 0 ? Math.max(...scores) : 0;
+    const pct = (avg / 5) * 100;
+    return `<div class="rel-dim-bar-row">
+      <div class="rel-dim-bar-label">${DIM_NAMES[dim]}</div>
+      <div class="rel-dim-bar-track"><div class="rel-dim-bar-fill" style="width:${pct}%"></div></div>
+      <div class="rel-dim-bar-val">${avg.toFixed(2)}</div>
+      <div class="rel-dim-bar-range">${min.toFixed(1)}–${max.toFixed(1)}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderLevelDistribution(avaliacoes) {
+  const colors = LEVEL_COLORS;
   const niveis = {Avançado:0,'Em Desenvolvimento':0,Emergente:0,Incipiente:0};
   avaliacoes.forEach(av => { if (niveis[av.level] !== undefined) niveis[av.level]++; });
-  const colors = {Avançado:'#15803d','Em Desenvolvimento':'#2563eb',Emergente:'#d97706',Incipiente:'#dc2626'};
   const dist = document.getElementById('nivel-dist');
   dist.innerHTML = '';
   Object.entries(niveis).forEach(([nivel, count]) => {
     const pct = avaliacoes.length > 0 ? ((count/avaliacoes.length)*100).toFixed(0) : 0;
-    dist.innerHTML += `<div style="padding:10px 16px;background:${colors[nivel]}18;border:1px solid ${colors[nivel]}44;border-radius:8px;min-width:140px;">
-      <div style="font-size:11px;font-weight:700;color:${colors[nivel]};text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px;">${nivel}</div>
-      <div style="font-size:22px;font-weight:800;color:${colors[nivel]};">${count}</div>
-      <div style="font-size:11px;color:${colors[nivel]}88;">${pct}%</div>
+    const c = colors[nivel];
+    dist.innerHTML += `<div style="padding:10px 16px;background:${c}18;border:1px solid ${c}44;border-radius:8px;min-width:140px;">
+      <div style="font-size:11px;font-weight:700;color:${c};text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px;">${nivel}</div>
+      <div style="font-size:22px;font-weight:800;color:${c};">${count}</div>
+      <div style="font-size:11px;color:${c}88;">${pct}%</div>
     </div>`;
   });
-
-  // Filtro de municípios
-  const sel = document.getElementById('filtro-municipio');
-  sel.innerHTML = '<option value="">Todos os municípios</option>';
-  [...municipiosUnicos].sort().forEach(m => {
-    const opt = document.createElement('option');
-    opt.value = m; opt.textContent = m;
-    sel.appendChild(opt);
-  });
-
-  filtrarAvaliacoes();
 }
 
-function filtrarAvaliacoes() {
-  const filtro = document.getElementById('filtro-municipio').value;
-  const avaliacoes = _avaliacoes;
-  const filtered = filtro ? avaliacoes.filter(av => av.respondent.municipio === filtro) : avaliacoes;
+function renderRankingTable(avaliacoes) {
+  const grouped = groupByMunicipio(avaliacoes, true);
+  grouped.sort((a,b) => parseFloat(b.indice) - parseFloat(a.indice));
+
+  const tbody = document.getElementById('rel-ranking-tbody');
+  tbody.innerHTML = grouped.map((av, i) => {
+    const badges = ['gold', 'silver', 'bronze'];
+    const posClass = badges[i] || '';
+    const c = LEVEL_COLORS[av.level] || '#6b7280';
+    const dimCells = DIMS.map(d => {
+      const score = av.dimScores[d];
+      const heat = heatColor(score);
+      return `<td style="background:${heat.bg};color:${heat.text};">${score.toFixed(1)}</td>`;
+    }).join('');
+    return `<tr>
+      <td><span class="rel-rank-pos ${posClass}">${i+1}</span></td>
+      <td><strong>${av.respondent.municipio}</strong></td>
+      <td>${av.respondent.estado}</td>
+      <td style="font-weight:700;color:${c};">${parseFloat(av.indice).toFixed(2)}</td>
+      <td><span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;background:${c}18;color:${c};">${av.level}</span></td>
+      ${dimCells}
+    </tr>`;
+  }).join('');
+}
+
+function renderTableSection() {
   const tbody = document.getElementById('filtro-tbody');
-  const colors = {Avançado:'#15803d','Em Desenvolvimento':'#2563eb',Emergente:'#d97706',Incipiente:'#dc2626'};
+  document.getElementById('filtro-count').textContent = `${_relFiltered.length} avaliação(ões)`;
 
-  document.getElementById('filtro-count').textContent = filtered.length + ' avaliação(ões)';
-
-  if (filtered.length === 0) {
+  if (_relFiltered.length === 0) {
     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-sec);padding:20px;">Nenhuma avaliação encontrada.</td></tr>';
     return;
   }
 
-  tbody.innerHTML = filtered.map(av => {
+  tbody.innerHTML = _relFiltered.map(av => {
     const date = new Date(av.timestamp);
-    const c = colors[av.level] || '#6b7280';
+    const c = LEVEL_COLORS[av.level] || '#6b7280';
     return `<tr>
       <td><strong>${av.respondent.municipio}</strong></td>
       <td>${av.respondent.estado}</td>
@@ -618,6 +913,208 @@ function filtrarAvaliacoes() {
       <td style="color:var(--text-sec);">${date.toLocaleDateString('pt-BR')}</td>
     </tr>`;
   }).join('');
+}
+
+function renderChartsSection() {
+  if (_relFiltered.length === 0) {
+    document.getElementById('rel-view-bar').innerHTML = '<div style="text-align:center;color:var(--text-sec);padding:40px;">Sem dados para exibir</div>';
+    document.getElementById('rel-heatmap-container').innerHTML = '<div style="text-align:center;color:var(--text-sec);padding:40px;">Sem dados para exibir</div>';
+    document.getElementById('rel-view-trend').innerHTML = '<div style="text-align:center;color:var(--text-sec);padding:40px;">Sem dados para exibir</div>';
+    return;
+  }
+  if (_relCurrentView === 'bar') renderBarChart();
+  else if (_relCurrentView === 'heatmap') renderHeatmap();
+  else if (_relCurrentView === 'trend') renderTrendChart();
+}
+
+function switchChartView(view, btn) {
+  _relCurrentView = view;
+  document.querySelectorAll('.rel-chart-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.rel-chart-view').forEach(v => v.classList.remove('active'));
+  document.getElementById('rel-view-' + view).classList.add('active');
+  renderChartsSection();
+}
+
+function heatColor(score) {
+  if (score === null || score === undefined || isNaN(score)) return { bg: '#f9fafb', text: '#9ca3af' };
+  if (score < 1.5) return { bg: '#fee2e2', text: '#dc2626' };
+  if (score < 2.5) return { bg: '#fef3c7', text: '#d97706' };
+  if (score < 3.5) return { bg: '#fef9c3', text: '#ca8a04' };
+  if (score < 4.5) return { bg: '#dcfce7', text: '#15803d' };
+  return { bg: '#bbf7d0', text: '#15803d' };
+}
+
+function groupByMunicipio(avaliacoes, takeLatest = true) {
+  const grouped = {};
+  avaliacoes.forEach(av => {
+    if (!grouped[av.respondent.municipio]) grouped[av.respondent.municipio] = [];
+    grouped[av.respondent.municipio].push(av);
+  });
+  if (takeLatest) {
+    return Object.values(grouped).map(group =>
+      group.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp))[0]
+    );
+  }
+  return grouped;
+}
+
+function renderBarChart() {
+  const container = document.getElementById('rel-view-bar');
+  const barMode = document.querySelector('input[name="bar-mode"]:checked').value;
+  const municipios = Array.from(_relSelectedMuns).filter(m =>
+    _relFiltered.some(av => av.respondent.municipio === m)
+  ).sort();
+
+  if (municipios.length === 0) {
+    container.innerHTML = '<div style="text-align:center;color:var(--text-sec);padding:40px;">Nenhum município selecionado</div>';
+    return;
+  }
+
+  const grouped = groupByMunicipio(_relFiltered, true);
+  const datasets = municipios.map((mun, i) => {
+    const av = grouped.find(a => a.respondent.municipio === mun);
+    return {
+      label: mun,
+      data: DIMS.map(d => av ? av.dimScores[d] : 0),
+      backgroundColor: CHART_PALETTE[i % CHART_PALETTE.length] + 'cc',
+      borderColor: CHART_PALETTE[i % CHART_PALETTE.length],
+      borderWidth: 1.5,
+      borderRadius: 4,
+    };
+  });
+
+  if (_relChartBar) _relChartBar.destroy();
+  _relChartBar = new Chart(document.getElementById('rel-chart-bar'), {
+    type: 'bar',
+    data: {
+      labels: DIMS.map(d => DIM_NAMES[d]),
+      datasets: datasets,
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      indexAxis: 'x',
+      scales: {
+        y: { min: 0, max: 5, ticks: { stepSize: 1 } },
+        x: { stacked: barMode === 'stacked' },
+      },
+      plugins: { legend: { position: 'top' } },
+    },
+  });
+}
+
+function renderHeatmap() {
+  const grouped = groupByMunicipio(_relFiltered, true);
+  grouped.sort((a,b) => parseFloat(b.indice) - parseFloat(a.indice));
+  const municipios = grouped.map(av => av.respondent.municipio);
+
+  let html = '<table class="rel-heatmap-table"><thead><tr><th>Município</th>';
+  DIMS.forEach(d => html += `<th>${d}</th>`);
+  html += '<th>Índice</th></tr></thead><tbody>';
+
+  grouped.forEach(av => {
+    html += '<tr>';
+    html += `<td class="mun-label">${av.respondent.municipio}</td>`;
+    DIMS.forEach(d => {
+      const score = av.dimScores[d];
+      const heat = heatColor(score);
+      html += `<td style="background:${heat.bg};color:${heat.text};">${score.toFixed(1)}</td>`;
+    });
+    const indiceHeat = heatColor(parseFloat(av.indice));
+    html += `<td style="background:${indiceHeat.bg};color:${indiceHeat.text};">${parseFloat(av.indice).toFixed(2)}</td>`;
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  document.getElementById('rel-heatmap-container').innerHTML = html;
+}
+
+function renderTrendChart() {
+  const dimVal = document.getElementById('rel-trend-dim').value;
+  const grouped = groupByMunicipio(_avaliacoes, false);
+  const multiMuns = Object.entries(grouped).filter(([m, avs]) => avs.length > 1);
+
+  document.getElementById('rel-trend-notice').style.display = multiMuns.length < 2 ? 'block' : 'none';
+
+  if (multiMuns.length === 0) {
+    const ctx = document.getElementById('rel-chart-trend');
+    if (_relChartTrend) _relChartTrend.destroy();
+    ctx.parentElement.innerHTML = '<div style="text-align:center;color:var(--text-sec);padding:40px;">Insuficientes dados de tendência (2+ avaliações por município)</div>';
+    return;
+  }
+
+  const allDates = new Set();
+  multiMuns.forEach(([m, avs]) => avs.forEach(av => allDates.add(av.timestamp.split('T')[0])));
+  const sortedDates = Array.from(allDates).sort();
+
+  const datasets = multiMuns.filter(([m]) => _relSelectedMuns.size === 0 || _relSelectedMuns.has(m)).map(([mun, avs], i) => {
+    const sorted = avs.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+    const data = sorted.map(av => ({
+      x: av.timestamp.split('T')[0],
+      y: dimVal === 'indice' ? parseFloat(av.indice) : av.dimScores[dimVal],
+    }));
+    return {
+      label: mun,
+      data: data,
+      borderColor: CHART_PALETTE[i % CHART_PALETTE.length],
+      backgroundColor: CHART_PALETTE[i % CHART_PALETTE.length] + '22',
+      borderWidth: 2,
+      pointRadius: 5,
+      pointHoverRadius: 7,
+      tension: 0.3,
+      fill: false,
+      spanGaps: true,
+    };
+  });
+
+  if (_relChartTrend) _relChartTrend.destroy();
+  _relChartTrend = new Chart(document.getElementById('rel-chart-trend'), {
+    type: 'line',
+    data: { labels: sortedDates, datasets: datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: { y: { min: 0, max: 5 }, x: {} },
+      plugins: { legend: { position: 'top' } },
+    },
+  });
+}
+
+function resetRelatoriosFilters() {
+  document.getElementById('filtro-estado').selectedIndex = -1;
+  Array.from(document.getElementById('filtro-estado').options).forEach(o => o.selected = true);
+  document.querySelectorAll('#filtro-nivel-group input').forEach(i => i.checked = true);
+  document.querySelectorAll('#filtro-formacao-group input').forEach(i => i.checked = true);
+  document.getElementById('filtro-data-inicio').value = '';
+  document.getElementById('filtro-data-fim').value = '';
+  relSelectAllMunicipios();
+}
+
+function exportFilteredCSV() {
+  const headers = ['Município', 'Estado', 'Avaliador', 'Formação', 'Data', 'Índice', 'Nível', 'P', 'E', 'S', 'T', 'A', 'L'];
+  const rows = _relFiltered.map(av => [
+    av.respondent.municipio,
+    av.respondent.estado,
+    av.respondent.name,
+    av.respondent.formacao || '',
+    new Date(av.timestamp).toLocaleDateString('pt-BR'),
+    av.indice,
+    av.level,
+    av.dimScores.P, av.dimScores.E, av.dimScores.S, av.dimScores.T, av.dimScores.A, av.dimScores.L,
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `matrizahp_filtrado_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function filtrarAvaliacoes() {
+  applyRelatoriosFilters();
 }
 
 async function loadPesosTab() {
