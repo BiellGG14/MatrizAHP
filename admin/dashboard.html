@@ -47,6 +47,40 @@ body {
 .header-sub { font-size: 12px; color: var(--text-sec); }
 .header-right { display: flex; gap: 12px; align-items: center; }
 
+.filter-item {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:13px;
+  margin-bottom:4px;
+}
+
+.filter-item input {
+  accent-color: var(--primary);
+  cursor:pointer;
+}
+
+.series-chip {
+  padding:6px 10px;
+  border:1px solid var(--border);
+  border-radius:6px;
+  font-size:12px;
+  cursor:pointer;
+  background:var(--white);
+  color:var(--text-sec);
+  transition:.15s;
+}
+
+.series-chip.active {
+  background:var(--primary);
+  color:white;
+  border-color:var(--primary);
+}
+
+.series-chip.disabled {
+  opacity:0.4;
+}
+
 .badge {
   display: inline-block;
   font-size: 11px;
@@ -178,7 +212,15 @@ body {
   background: var(--success-lt); color: var(--success);
   padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; display: inline-block;
 }
+/* Heatmap simples */
+.heat-low    { background-color: #fee2e2; }  /* vermelho claro */
+.heat-mid    { background-color: #fef9c3; }  /* amarelo */
+.heat-high   { background-color: #dcfce7; }  /* verde claro */
 
+.heat-very-high {
+  background-color: #bbf7d0;
+  font-weight: 700;
+}
 .calib-item {
   display: flex; align-items: center; gap: 14px;
   padding: 12px 14px; background: var(--white); border: 1.5px solid var(--border);
@@ -400,6 +442,45 @@ body {
     <!-- Stats -->
     <div class="rel-stats-grid" id="d01-stats" style="margin-bottom:16px;"></div>
 
+    <div class="card" style="margin-bottom:16px;">
+      <div class="rel-section-title">Filtros de Visualização</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+
+        <!-- FORMAÇÃO -->
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--text-sec);margin-bottom:6px;">
+            FORMAÇÃO
+          </div>
+          <div id="filter-formacao" style="max-height:120px;overflow:auto;border:1px solid var(--border);border-radius:6px;padding:8px;">
+            <!-- preenchido via JS -->
+          </div>
+        </div>
+
+        <!-- INSTITUIÇÃO -->
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--text-sec);margin-bottom:6px;">
+            INSTITUIÇÃO
+          </div>
+          <div id="filter-instituicao" style="max-height:120px;overflow:auto;border:1px solid var(--border);border-radius:6px;padding:8px;">
+            <!-- preenchido via JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CONTROLE DE SÉRIES -->
+      <div style="margin-top:16px;">
+        <div style="font-size:11px;font-weight:700;color:var(--text-sec);margin-bottom:6px;">
+          SÉRIES DO GRÁFICO
+        </div>
+
+        <div id="filter-series" style="display:flex;flex-wrap:wrap;gap:8px;">
+          <!-- preenchido via JS -->
+        </div>
+      </div>
+    </div>
+
     <!-- Dimension weight bars -->
     <div class="card">
       <div class="card-title">Pesos Médios por Dimensão PESTEL</div>
@@ -407,7 +488,58 @@ body {
     </div>
 
     <!-- Charts & Table -->
-    <div class="card">
+     <div class="card">
+        <div class="rel-chart-tabs">
+          <button class="rel-chart-tab active" onclick="switchD01View('bars', this)">
+            Comparação entre Calibrações
+          </button>
+          <button class="rel-chart-tab" onclick="switchD01View('formacao', this)">
+            Por Formação
+          </button>
+        </div>
+
+        <div id="d01-view-bars" class="rel-chart-view active">
+          <div class="rel-section-title">
+            Pesos por Dimensão — Média e Calibrações Individuais
+          </div>
+          <div class="rel-canvas-wrap">
+            <canvas id="d01-chart-bars"></canvas>
+          </div>
+        </div>
+
+        <div id="d01-view-formacao" class="rel-chart-view">
+          <div class="rel-section-title">
+            Pesos Médios por Área de Formação dos Respondentes
+          </div>
+          <div id="d01-formacao-note" style="font-size:12px;color:var(--text-sec);margin-bottom:12px;"></div>
+          <div class="rel-canvas-wrap">
+            <canvas id="d01-chart-formacao"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="rel-section-title">Detalhamento por Calibração</div>
+
+        <div style="overflow-x:auto;">
+          <table class="table" id="d01-table">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Respondente</th>
+                <th>Formação</th>
+                <th>P</th>
+                <th>E</th>
+                <th>S</th>
+                <th>T</th>
+                <th>A</th>
+                <th>L</th>
+              </tr>
+            </thead>
+            <tbody id="d01-tbody"></tbody>
+          </table>
+        </div>
+</div>
+    <!-- <div class="card">
       <div class="rel-chart-tabs">
         <button class="rel-chart-tab active" onclick="switchD01View('bars', this)">Comparação entre Calibrações</button>
         <button class="rel-chart-tab" onclick="switchD01View('formacao', this)">Por Formação</button>
@@ -437,7 +569,7 @@ body {
           </table>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <div style="display:flex;gap:10px;">
       <button class="btn btn-ghost" onclick="exportD01CSV()">Exportar CSV</button>
@@ -615,6 +747,12 @@ body {
 </div>
 
 <script>
+const filtrosD01 = {
+  formacao: new Set(),
+  instituicao: new Set(),
+  seriesAtivas: new Set(['media'])
+};
+
 const api = {
   async get(endpoint) {
     const res = await fetch(`/api/${endpoint}`);
@@ -1382,6 +1520,146 @@ async function excluirAvaliacao(id, event) {
   if (!confirm('Excluir esta avaliação? A ação é irreversível.')) return;
   await api.del('avaliacoes', id);
   loadGerenciarAvaliacoesTab();
+}
+
+function getHeatClass(value) {
+  if (value === null || value === undefined) return '';
+
+  if (value < 2) return 'heat-low';
+  if (value < 3.5) return 'heat-mid';
+  if (value < 4.5) return 'heat-high';
+  return 'heat-very-high';
+}
+
+function renderTabelaD01(data) {
+  const tbody = document.getElementById('d01-tbody');
+  tbody.innerHTML = '';
+
+  data.forEach(row => {
+    const tr = document.createElement('tr');
+
+    function td(content, value=null) {
+      const cell = document.createElement('td');
+      cell.textContent = content;
+
+      if (value !== null) {
+        cell.classList.add(getHeatClass(value));
+      }
+
+      return cell;
+    }
+
+    tr.appendChild(td(row.data));
+    tr.appendChild(td(row.respondente));
+    tr.appendChild(td(row.formacao));
+
+    ['P','E','S','T','A','L'].forEach(dim => {
+      tr.appendChild(td(
+        row[dim] != null ? row[dim].toFixed(2) : '-',
+        row[dim]
+      ));
+    });
+
+    tbody.appendChild(tr);
+  });
+}
+
+function initFiltrosD01(data) {
+  const formacoes = [...new Set(data.map(d => d.formacao))];
+  const instituicoes = [...new Set(data.map(d => d.instituicao))];
+
+  const fForm = document.getElementById('filter-formacao');
+  const fInst = document.getElementById('filter-instituicao');
+  const fSeries = document.getElementById('filter-series');
+
+  fForm.innerHTML = '';
+  fInst.innerHTML = '';
+  fSeries.innerHTML = '';
+
+  // FORMAÇÃO
+  formacoes.forEach(f => {
+    const el = document.createElement('label');
+    el.className = 'filter-item';
+    el.innerHTML = `
+      <input type="checkbox" checked onchange="toggleFiltro('formacao','${f}', this.checked)">
+      ${f}
+    `;
+    filtrosD01.formacao.add(f);
+    fForm.appendChild(el);
+  });
+
+  // INSTITUIÇÃO
+  instituicoes.forEach(i => {
+    const el = document.createElement('label');
+    el.className = 'filter-item';
+    el.innerHTML = `
+      <input type="checkbox" checked onchange="toggleFiltro('instituicao','${i}', this.checked)">
+      ${i}
+    `;
+    filtrosD01.instituicao.add(i);
+    fInst.appendChild(el);
+  });
+
+  // SÉRIES (🔥 só média ativa no início)
+  const series = [
+    {key:'media', label:'Média Geral'},
+    ...data.map(d => ({key:d.id, label:`${d.nome} (${d.formacao})`}))
+  ];
+
+  series.forEach(s => {
+    const chip = document.createElement('div');
+    chip.className = 'series-chip' + (s.key === 'media' ? ' active' : '');
+    chip.textContent = s.label;
+
+    chip.onclick = () => toggleSerie(s.key, chip);
+
+    fSeries.appendChild(chip);
+  });
+}
+
+function toggleFiltro(tipo, valor, ativo) {
+  if (ativo) filtrosD01[tipo].add(valor);
+  else filtrosD01[tipo].delete(valor);
+
+  atualizarD01();
+}
+
+function toggleSerie(key, el) {
+  if (key === 'media') return; // média sempre ligada
+
+  if (filtrosD01.seriesAtivas.has(key)) {
+    filtrosD01.seriesAtivas.delete(key);
+    el.classList.remove('active');
+  } else {
+    filtrosD01.seriesAtivas.add(key);
+    el.classList.add('active');
+  }
+
+  atualizarD01();
+}
+
+function getDadosFiltradosD01(data) {
+  return data.filter(d => 
+    filtrosD01.formacao.has(d.formacao) &&
+    filtrosD01.instituicao.has(d.instituicao)
+  );
+}
+
+function atualizarD01() {
+  const filtrados = getDadosFiltradosD01(DATA_ORIGINAL);
+
+  // 🔥 monta datasets
+  const datasets = [];
+
+  // média sempre
+  datasets.push(buildMediaDataset(filtrados));
+
+  filtrados.forEach(d => {
+    if (!filtrosD01.seriesAtivas.has(d.id)) return;
+    datasets.push(buildDatasetIndividual(d));
+  });
+
+  updateChartD01(datasets);
 }
 
 async function excluirAvaliacoesSelecionadas() {
