@@ -57,10 +57,7 @@ body {
   color: var(--primary);
   text-transform: uppercase;
 }
-.badge-success {
-  background: var(--success-lt);
-  color: var(--success);
-}
+.badge-success { background: var(--success-lt); color: var(--success); }
 
 .container {
   max-width: 1400px;
@@ -68,28 +65,46 @@ body {
   padding: 32px;
 }
 
-.tabs {
+/* ===== 2-COLUMN TAB LAYOUT ===== */
+.tabs-container {
   display: flex;
-  gap: 8px;
-  margin-bottom: 24px;
+  align-items: flex-end;
   border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+  gap: 0;
+  overflow-x: auto;
+}
+.tab-col { display: flex; flex-direction: column; min-width: 0; }
+.tab-col-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-light);
+  padding: 0 4px 3px 4px;
+  white-space: nowrap;
+}
+.tabs-row { display: flex; gap: 0; }
+.tab-col-sep {
+  width: 1px;
+  background: var(--border);
+  align-self: stretch;
+  margin: 4px 10px;
 }
 .tab-btn {
-  padding: 12px 20px;
+  padding: 10px 18px;
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text-sec);
   cursor: pointer;
   transition: all .2s;
+  white-space: nowrap;
 }
 .tab-btn:hover { color: var(--text); }
-.tab-btn.active {
-  color: var(--primary);
-  border-bottom-color: var(--primary);
-}
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
 
 .tab-content { display: none; }
 .tab-content.active { display: block; }
@@ -112,16 +127,8 @@ body {
   margin-bottom: 8px;
   cursor: pointer;
 }
-.checkbox-item input[type="checkbox"] {
-  margin-right: 12px;
-  cursor: pointer;
-}
-.checkbox-label {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
+.checkbox-item input[type="checkbox"] { margin-right: 12px; cursor: pointer; }
+.checkbox-label { flex: 1; display: flex; flex-direction: column; gap: 2px; }
 .checkbox-label-name { font-weight: 600; color: var(--text); }
 .checkbox-label-meta { font-size: 12px; color: var(--text-sec); }
 
@@ -138,146 +145,67 @@ body {
   transition: all .15s;
   font-family: inherit;
 }
-.btn-primary {
-  background: var(--primary);
-  color: var(--white);
-  border-color: var(--primary);
-}
+.btn-primary { background: var(--primary); color: var(--white); border-color: var(--primary); }
 .btn-primary:hover { background: var(--primary-dark); }
-.btn-secondary {
-  background: transparent;
-  color: var(--primary);
-  border-color: var(--primary);
-}
+.btn-secondary { background: transparent; color: var(--primary); border-color: var(--primary); }
 .btn-secondary:hover { background: var(--primary-light); }
-.btn-ghost {
-  background: transparent;
-  color: var(--text-sec);
-  border-color: var(--border);
-}
+.btn-ghost { background: transparent; color: var(--text-sec); border-color: var(--border); }
 .btn-ghost:hover { background: var(--surface); color: var(--text); }
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-}
-.table th {
-  text-align: left;
-  padding: 10px;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-sec);
-  border-bottom: 1px solid var(--border);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-.table td {
-  padding: 10px;
-  border-bottom: 1px solid var(--border-light);
-  color: var(--text);
-}
-.table tr:hover { background: var(--surface); }
-
-.success-message {
-  background: var(--success-lt);
-  border: 1px solid #dcfce7;
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin-bottom: 16px;
-  font-size: 13px;
-  color: var(--success);
-}
-
-.active-version-badge {
-  background: var(--success-lt);
-  color: var(--success);
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 700;
-  display: inline-block;
-}
-
-.btn-danger {
-  background: #dc2626;
-  color: var(--white);
-  border-color: #dc2626;
-}
+.btn-danger { background: #dc2626; color: var(--white); border-color: #dc2626; }
 .btn-danger:hover { background: #b91c1c; border-color: #b91c1c; }
 .btn-trash {
-  background: transparent;
-  border: none;
-  color: var(--text-light);
-  cursor: pointer;
-  padding: 4px 6px;
-  border-radius: 4px;
-  font-size: 14px;
-  line-height: 1;
-  transition: color .15s, background .15s;
-  flex-shrink: 0;
+  background: transparent; border: none; color: var(--text-light);
+  cursor: pointer; padding: 4px 6px; border-radius: 4px; font-size: 14px;
+  line-height: 1; transition: color .15s, background .15s; flex-shrink: 0;
 }
 .btn-trash:hover { color: #dc2626; background: #fee2e2; }
 
-@media (max-width: 768px) {
-  .container { padding: 16px; }
-  .header { padding: 12px 16px; }
-  .tabs { flex-wrap: wrap; }
+.table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table th {
+  text-align: left; padding: 10px; font-size: 11px; font-weight: 700;
+  color: var(--text-sec); border-bottom: 1px solid var(--border);
+  text-transform: uppercase; letter-spacing: 0.03em;
+}
+.table td { padding: 10px; border-bottom: 1px solid var(--border-light); color: var(--text); }
+.table tr:hover { background: var(--surface); }
+
+.success-message {
+  background: var(--success-lt); border: 1px solid #dcfce7;
+  border-radius: 8px; padding: 12px 16px; margin-bottom: 16px;
+  font-size: 13px; color: var(--success);
+}
+.active-version-badge {
+  background: var(--success-lt); color: var(--success);
+  padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; display: inline-block;
 }
 
 .calib-item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 12px 14px;
-  background: var(--white);
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  margin-bottom: 8px;
-  cursor: pointer;
-  transition: border-color .15s, background .15s;
-  user-select: none;
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 14px; background: var(--white); border: 1.5px solid var(--border);
+  border-radius: 8px; margin-bottom: 8px; cursor: pointer;
+  transition: border-color .15s, background .15s; user-select: none;
 }
 .calib-item:hover { border-color: var(--primary); background: var(--primary-light); }
 .calib-item.checked { border-color: var(--primary); background: var(--primary-light); }
 .calib-check {
-  width: 20px; height: 20px; flex-shrink: 0;
-  border: 2px solid var(--border);
-  border-radius: 5px;
-  display: flex; align-items: center; justify-content: center;
-  transition: all .15s;
-  background: var(--white);
+  width: 20px; height: 20px; flex-shrink: 0; border: 2px solid var(--border);
+  border-radius: 5px; display: flex; align-items: center; justify-content: center;
+  transition: all .15s; background: var(--white);
 }
-.calib-item.checked .calib-check {
-  background: var(--primary);
-  border-color: var(--primary);
-}
-.calib-check-mark {
-  display: none;
-  color: var(--white);
-  font-size: 12px;
-  font-weight: 800;
-  line-height: 1;
-}
+.calib-item.checked .calib-check { background: var(--primary); border-color: var(--primary); }
+.calib-check-mark { display: none; color: var(--white); font-size: 12px; font-weight: 800; line-height: 1; }
 .calib-item.checked .calib-check-mark { display: block; }
 .calib-label { flex: 1; }
 .calib-label-name { font-size: 14px; font-weight: 600; color: var(--text); }
 .calib-label-meta { font-size: 12px; color: var(--text-sec); margin-top: 2px; }
 .select-all-row {
-  display: flex; align-items: center; gap: 10px;
-  padding: 8px 0 12px;
-  font-size: 12px; font-weight: 600; color: var(--text-sec);
-  cursor: pointer;
-  border-bottom: 1px solid var(--border-light);
-  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 10px; padding: 8px 0 12px;
+  font-size: 12px; font-weight: 600; color: var(--text-sec); cursor: pointer;
+  border-bottom: 1px solid var(--border-light); margin-bottom: 12px;
 }
 .select-all-row:hover { color: var(--primary); }
 
-.detail-row {
-  display: none;
-  background: var(--surface);
-  border-top: 1px solid var(--border-light);
-}
+.detail-row { display: none; background: var(--surface); border-top: 1px solid var(--border-light); }
 .detail-row.open { display: table-row; }
 .detail-row td { padding: 14px 16px; }
 .detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
@@ -297,7 +225,7 @@ body {
 .btn-notas { margin-top: 10px; font-size: 11px; padding: 5px 12px; border: 1px solid var(--border); border-radius: 5px; background: var(--white); color: var(--text-sec); cursor: pointer; font-family: inherit; }
 .btn-notas:hover { border-color: var(--primary); color: var(--primary); }
 
-/* ===== RELATÓRIOS TAB INTERACTIVE REPORTING ===== */
+/* ===== SHARED REPORT STYLES ===== */
 .rel-filters-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
 .rel-filter-group { display: flex; flex-direction: column; gap: 6px; }
 .rel-filter-label { font-size: 11px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.04em; }
@@ -306,34 +234,15 @@ body {
 .rel-checkbox-group { display: flex; flex-direction: column; gap: 6px; }
 .rel-checkbox-group label { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text); cursor: pointer; user-select: none; }
 .rel-checkbox-group input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
-  border: 1.5px solid var(--border);
-  border-radius: 4px;
-  background: var(--white);
-  cursor: pointer;
-  position: relative;
-  transition: all .15s;
-  flex-shrink: 0;
-  margin: 0;
+  appearance: none; -webkit-appearance: none; width: 16px; height: 16px;
+  border: 1.5px solid var(--border); border-radius: 4px; background: var(--white);
+  cursor: pointer; position: relative; transition: all .15s; flex-shrink: 0; margin: 0;
 }
 .rel-checkbox-group input[type="checkbox"]:hover { border-color: var(--primary); }
-.rel-checkbox-group input[type="checkbox"]:checked {
-  background: var(--primary);
-  border-color: var(--primary);
-}
+.rel-checkbox-group input[type="checkbox"]:checked { background: var(--primary); border-color: var(--primary); }
 .rel-checkbox-group input[type="checkbox"]:checked::after {
-  content: '';
-  position: absolute;
-  left: 4px;
-  top: 1px;
-  width: 5px;
-  height: 9px;
-  border: solid var(--white);
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
+  content: ''; position: absolute; left: 4px; top: 1px; width: 5px; height: 9px;
+  border: solid var(--white); border-width: 0 2px 2px 0; transform: rotate(45deg);
 }
 .rel-date-pair { display: flex; align-items: center; gap: 8px; }
 .rel-date-input { padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-family: inherit; color: var(--text); flex: 1; }
@@ -349,14 +258,14 @@ body {
 .rel-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 4px; }
 .rel-stat-card { padding: 14px 16px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border-light); }
 .rel-stat-label { font-size: 10px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
-.rel-stat-value { font-size: 28px; font-weight: 800; color: var(--primary); }
+.rel-stat-value { font-size: 24px; font-weight: 800; color: var(--primary); line-height: 1.2; }
 .rel-stat-sub { font-size: 11px; color: var(--text-sec); margin-top: 2px; }
 .rel-dim-avg-bars { display: flex; flex-direction: column; gap: 8px; }
 .rel-dim-bar-row { display: flex; align-items: center; gap: 10px; }
 .rel-dim-bar-label { width: 90px; font-size: 12px; font-weight: 600; color: var(--text); flex-shrink: 0; }
 .rel-dim-bar-track { flex: 1; height: 12px; border-radius: 6px; background: var(--border-light); overflow: hidden; position: relative; }
 .rel-dim-bar-fill { height: 100%; border-radius: 6px; background: var(--primary); transition: width .4s ease; }
-.rel-dim-bar-val { width: 36px; font-size: 12px; font-weight: 700; color: var(--text); text-align: right; }
+.rel-dim-bar-val { width: 40px; font-size: 12px; font-weight: 700; color: var(--text); text-align: right; }
 .rel-dim-bar-range { font-size: 11px; color: var(--text-sec); white-space: nowrap; }
 .rel-nivel-dist { display: flex; flex-wrap: wrap; gap: 10px; }
 .rel-section-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
@@ -378,7 +287,12 @@ body {
 .rel-rank-pos.gold { background: #fef3c7; color: #d97706; }
 .rel-rank-pos.silver { background: #f1f5f9; color: #64748b; }
 .rel-rank-pos.bronze { background: #fef3c7; color: #b45309; }
+
 @media (max-width: 768px) {
+  .container { padding: 16px; }
+  .header { padding: 12px 16px; }
+  .tabs-container { flex-direction: column; align-items: stretch; }
+  .tab-col-sep { width: 100%; height: 1px; margin: 4px 0; }
   .rel-filters-row { grid-template-columns: 1fr; }
   .rel-canvas-wrap { height: 260px; }
   .rel-mun-grid { grid-template-columns: 1fr 1fr; }
@@ -392,8 +306,8 @@ body {
   <div class="header-left">
     <img src="../assets/logo.png" alt="Logo" style="width:44px;height:44px;flex-shrink:0;"/>
     <div class="header-text">
-      <div class="header-title">Admin Dashboard</div>
-      <div class="header-sub">Gerenciamento de Calibrações e Avaliações</div>
+      <div class="header-title">Admin Dashboard (Dash 03)</div>
+      <div class="header-sub">Gerenciamento Dash 01 (Pesos PESTEL) · Dash 02 (Avaliações Municipais)</div>
     </div>
   </div>
   <div class="header-right">
@@ -402,20 +316,34 @@ body {
 </div>
 
 <div class="container">
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('pesos')">Gerenciar Pesos</button>
-    <button class="tab-btn" onclick="switchTab('gerenciar-avaliacoes')">Gerenciar Avaliações</button>
-    <button class="tab-btn" onclick="switchTab('calibracoes')">Calibrações</button>
-    <button class="tab-btn" onclick="switchTab('avaliacoes')">Avaliações</button>
-    <button class="tab-btn" onclick="switchTab('relatorios')">Relatórios</button>
+
+  <!-- ===== 2-COLUMN TAB BAR ===== -->
+  <div class="tabs-container">
+    <div class="tab-col">
+      <span class="tab-col-label">Dash 01 — Calibração de Pesos</span>
+      <div class="tabs-row">
+        <button class="tab-btn active" onclick="switchTab('pesos')">Gerenciar Pesos (Dash 01)</button>
+        <button class="tab-btn" onclick="switchTab('calibracoes')">Calibração (Dash 01)</button>
+        <button class="tab-btn" onclick="switchTab('relatorios-d01')">Relatórios (Dash 01)</button>
+      </div>
+    </div>
+    <div class="tab-col-sep"></div>
+    <div class="tab-col">
+      <span class="tab-col-label">Dash 02 — Avaliações Municipais</span>
+      <div class="tabs-row">
+        <button class="tab-btn" onclick="switchTab('gerenciar-avaliacoes')">Gerenciar Avaliações (Dash 02)</button>
+        <button class="tab-btn" onclick="switchTab('avaliacoes')">Avaliações (Dash 02)</button>
+        <button class="tab-btn" onclick="switchTab('relatorios')">Relatórios (Dash 02)</button>
+      </div>
+    </div>
   </div>
 
-  <!-- ABA 1: GERENCIAR PESOS -->
+  <!-- ===== ABA: GERENCIAR PESOS (DASH 01) ===== -->
   <div class="tab-content active" id="tab-pesos">
     <div class="card">
       <div class="card-title">Selecionar Calibrações para Aplicar</div>
       <p style="font-size: 13px; color: var(--text-sec); margin-bottom: 16px;">
-        Selecione uma ou mais calibrações abaixo para calcular a média ponderada dos pesos. Estes serão aplicados automaticamente aos avaliadores.
+        Selecione uma ou mais calibrações abaixo para calcular a média ponderada dos pesos das dimensões PESTEL. Estes serão aplicados automaticamente.
       </p>
 
       <div id="select-all-row" class="select-all-row" onclick="toggleSelectAll()" style="display:none;">
@@ -446,10 +374,80 @@ body {
     </div>
   </div>
 
-  <!-- ABA: GERENCIAR AVALIAÇÕES -->
+  <!-- ===== ABA: CALIBRAÇÃO (DASH 01) ===== -->
+  <div class="tab-content" id="tab-calibracoes">
+    <div class="card">
+      <div class="card-title">Histórico de Calibrações (Dash 01)</div>
+      <p style="font-size: 13px; color: var(--text-sec); margin-bottom: 16px;">
+        Todas as calibrações de pesos PESTEL realizadas pelos especialistas.
+      </p>
+      <table class="table" id="calibracoes-table">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Respondente</th>
+            <th>Instituição</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody id="calibracoes-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== ABA: RELATÓRIOS (DASH 01) — NOVA ===== -->
+  <div class="tab-content" id="tab-relatorios-d01">
+    <!-- Stats -->
+    <div class="rel-stats-grid" id="d01-stats" style="margin-bottom:16px;"></div>
+
+    <!-- Dimension weight bars -->
+    <div class="card">
+      <div class="card-title">Pesos Médios por Dimensão PESTEL</div>
+      <div id="d01-dim-bars" class="rel-dim-avg-bars"></div>
+    </div>
+
+    <!-- Charts & Table -->
+    <div class="card">
+      <div class="rel-chart-tabs">
+        <button class="rel-chart-tab active" onclick="switchD01View('bars', this)">Comparação entre Calibrações</button>
+        <button class="rel-chart-tab" onclick="switchD01View('formacao', this)">Por Formação</button>
+        <button class="rel-chart-tab" onclick="switchD01View('tabela', this)">Tabela Detalhada</button>
+      </div>
+
+      <div id="d01-view-bars" class="rel-chart-view active">
+        <div class="rel-section-title">Pesos por Dimensão — Média e Calibrações Individuais</div>
+        <div class="rel-canvas-wrap"><canvas id="d01-chart-bars"></canvas></div>
+      </div>
+
+      <div id="d01-view-formacao" class="rel-chart-view">
+        <div class="rel-section-title">Pesos Médios por Área de Formação dos Respondentes</div>
+        <div id="d01-formacao-note" style="font-size:12px;color:var(--text-sec);margin-bottom:12px;"></div>
+        <div class="rel-canvas-wrap"><canvas id="d01-chart-formacao"></canvas></div>
+      </div>
+
+      <div id="d01-view-tabela" class="rel-chart-view">
+        <div class="rel-section-title">Detalhamento por Calibração</div>
+        <div style="overflow-x:auto;">
+          <table class="table" id="d01-table">
+            <thead><tr>
+              <th>Data</th><th>Respondente</th><th>Formação</th>
+              <th>P</th><th>E</th><th>S</th><th>T</th><th>A</th><th>L</th>
+            </tr></thead>
+            <tbody id="d01-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-ghost" onclick="exportD01CSV()">Exportar CSV</button>
+    </div>
+  </div>
+
+  <!-- ===== ABA: GERENCIAR AVALIAÇÕES (DASH 02) ===== -->
   <div class="tab-content" id="tab-gerenciar-avaliacoes">
     <div class="card">
-      <div class="card-title">Gerenciar Avaliações</div>
+      <div class="card-title">Gerenciar Avaliações (Dash 02)</div>
       <p style="font-size: 13px; color: var(--text-sec); margin-bottom: 16px;">
         Selecione avaliações para excluir do sistema. Esta ação é irreversível.
       </p>
@@ -470,36 +468,13 @@ body {
     </div>
   </div>
 
-  <!-- ABA 2: CALIBRACOES -->
-  <div class="tab-content" id="tab-calibracoes">
-    <div class="card">
-      <div class="card-title">Histórico de Calibrações</div>
-      <p style="font-size: 13px; color: var(--text-sec); margin-bottom: 16px;">
-        Todas as calibrações realizadas pelos especialistas.
-      </p>
-
-      <table class="table" id="calibracoes-table">
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Respondente</th>
-            <th>Instituição</th>
-            <th>Ação</th>
-          </tr>
-        </thead>
-        <tbody id="calibracoes-tbody"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- ABA 3: AVALIACOES -->
+  <!-- ===== ABA: AVALIAÇÕES (DASH 02) ===== -->
   <div class="tab-content" id="tab-avaliacoes">
     <div class="card">
-      <div class="card-title">Avaliações Municipais Realizadas</div>
+      <div class="card-title">Avaliações Municipais Realizadas (Dash 02)</div>
       <p style="font-size: 13px; color: var(--text-sec); margin-bottom: 16px;">
         Todas as avaliações de municípios realizadas pelos avaliadores.
       </p>
-
       <table class="table" id="avaliacoes-table">
         <thead>
           <tr>
@@ -516,9 +491,8 @@ body {
     </div>
   </div>
 
-  <!-- ABA 4: RELATORIOS -->
+  <!-- ===== ABA: RELATÓRIOS (DASH 02) ===== -->
   <div class="tab-content" id="tab-relatorios">
-    <!-- Filter Panel -->
     <div class="card" id="rel-filter-panel">
       <div class="card-title">Filtros e Seleção de Municípios</div>
       <div class="rel-filters-row" id="rel-filters-row">
@@ -560,7 +534,6 @@ body {
       </div>
     </div>
 
-    <!-- Summary Section -->
     <div class="card" id="rel-summary-section">
       <div class="card-title">Estatísticas do Conjunto Filtrado</div>
       <div id="stats-grid" class="rel-stats-grid"></div>
@@ -586,7 +559,6 @@ body {
       </div>
     </div>
 
-    <!-- Charts Section -->
     <div class="card" id="rel-charts-section">
       <div class="rel-chart-tabs">
         <button class="rel-chart-tab active" data-chart="bar" onclick="switchChartView('bar', this)">Barras por Dimensão</button>
@@ -599,9 +571,7 @@ body {
           <label><input type="radio" name="bar-mode" value="grouped" checked onchange="renderBarChart()"> Agrupado</label>
           <label><input type="radio" name="bar-mode" value="stacked" onchange="renderBarChart()"> Empilhado</label>
         </div>
-        <div class="rel-canvas-wrap">
-          <canvas id="rel-chart-bar"></canvas>
-        </div>
+        <div class="rel-canvas-wrap"><canvas id="rel-chart-bar"></canvas></div>
       </div>
 
       <div id="rel-view-trend" class="rel-chart-view">
@@ -621,14 +591,11 @@ body {
             <option value="L">Legal (L)</option>
           </select>
         </div>
-        <div id="rel-trend-wrap" class="rel-canvas-wrap">
-          <canvas id="rel-chart-trend"></canvas>
-        </div>
+        <div id="rel-trend-wrap" class="rel-canvas-wrap"><canvas id="rel-chart-trend"></canvas></div>
         <div id="rel-trend-empty" style="display:none; text-align:center; color:var(--text-sec); padding:60px 20px;"></div>
       </div>
     </div>
 
-    <!-- Table Section -->
     <div class="card" id="rel-table-section">
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
         <div class="card-title" style="margin-bottom:0;">Lista de Avaliações</div>
@@ -670,22 +637,30 @@ const api = {
   },
 };
 
-// ===== RELATÓRIOS STATE =====
+// ===== CONSTANTS =====
+const DIMS = ['P','E','S','T','A','L'];
+const DIM_NAMES = { P:'Política', E:'Econômica', S:'Social', T:'Tecnológica', A:'Ambiental', L:'Legal' };
+const LEVEL_COLORS = { 'Avançado':'#15803d', 'Em Desenvolvimento':'#2563eb', 'Emergente':'#d97706', 'Incipiente':'#dc2626' };
+const CHART_PALETTE = ['#2563eb','#16a34a','#d97706','#dc2626','#7c3aed','#0891b2','#be123c','#065f46'];
+
+// ===== DASH 02 STATE =====
 let _avaliacoes = [];
 let _relFiltered = [];
 let _relSelectedMuns = new Set();
 let _relChartBar = null;
 let _relChartTrend = null;
 let _relCurrentView = 'bar';
-const DIMS = ['P','E','S','T','A','L'];
-const DIM_NAMES = { P:'Política', E:'Econômica', S:'Social', T:'Tecnológica', A:'Ambiental', L:'Legal' };
-const LEVEL_COLORS = { 'Avançado':'#15803d', 'Em Desenvolvimento':'#2563eb', 'Emergente':'#d97706', 'Incipiente':'#dc2626' };
-const CHART_PALETTE = ['#2563eb','#16a34a','#d97706','#dc2626','#7c3aed','#0891b2','#be123c','#065f46'];
 
+// ===== DASH 01 STATE =====
+let _d01Calibrations = [];
+let _d01ChartBars = null;
+let _d01ChartFormacao = null;
+let _d01CurrentView = 'bars';
+
+// ===== TAB SWITCHING =====
 function switchTab(tabName) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-
   document.getElementById('tab-' + tabName).classList.add('active');
   event.target.classList.add('active');
 
@@ -693,8 +668,10 @@ function switchTab(tabName) {
   if (tabName === 'calibracoes') loadCalibracoesTab();
   if (tabName === 'avaliacoes') loadAvaliacoesTab();
   if (tabName === 'relatorios') loadRelatoriosTab();
+  if (tabName === 'relatorios-d01') loadRelatoriosD01Tab();
 }
 
+// ===== CALIBRAÇÕES TAB (DASH 01) =====
 async function loadCalibracoesTab() {
   const tbody = document.getElementById('calibracoes-tbody');
   tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-sec);">Carregando...</td></tr>';
@@ -713,6 +690,7 @@ async function loadCalibracoesTab() {
     tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-sec);">Nenhuma calibração registrada ainda.</td></tr>';
 }
 
+// ===== AVALIAÇÕES TAB (DASH 02) =====
 async function loadAvaliacoesTab() {
   const tbody = document.getElementById('avaliacoes-tbody');
   tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-sec);">Carregando...</td></tr>';
@@ -734,8 +712,9 @@ async function loadAvaliacoesTab() {
     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-sec);">Nenhuma avaliação registrada ainda.</td></tr>';
 }
 
+// ===== RELATÓRIOS TAB (DASH 02) =====
 async function loadRelatoriosTab() {
-  const [calibrations, avaliacoes, activeWeights] = await Promise.all([api.get('calibrations'), api.get('avaliacoes'), api.get('active-weights')]);
+  const [avaliacoes, activeWeights] = await Promise.all([api.get('avaliacoes'), api.get('active-weights')]);
   enrichAvaliacoes(avaliacoes, activeWeights);
   _avaliacoes = avaliacoes;
   _relSelectedMuns = new Set([...new Set(avaliacoes.map(av => av.respondent.municipio))]);
@@ -753,9 +732,7 @@ function buildRelatoriosFilters(avaliacoes) {
   estadoSel.innerHTML = '';
   estados.forEach(estado => {
     const opt = document.createElement('option');
-    opt.value = estado;
-    opt.textContent = estado;
-    opt.selected = true;
+    opt.value = estado; opt.textContent = estado; opt.selected = true;
     estadoSel.appendChild(opt);
   });
 
@@ -781,7 +758,6 @@ function renderMunicipioSelector(searchText = '') {
   const municipios = [...new Set(_avaliacoes.map(av => av.respondent.municipio))].sort();
   const filtered = municipios.filter(m => m.toLowerCase().includes(search));
   const container = document.getElementById('rel-municipio-selector');
-
   container.innerHTML = filtered.map(mun => {
     const isSelected = _relSelectedMuns.has(mun);
     return `<div class="rel-mun-chip ${isSelected ? 'selected' : ''}" onclick="toggleMunicipioSelection('${mun}')">
@@ -789,23 +765,18 @@ function renderMunicipioSelector(searchText = '') {
       <span>${mun}</span>
     </div>`;
   }).join('');
-
   document.getElementById('rel-mun-count').textContent = `(${_relSelectedMuns.size} selecionados)`;
 }
 
 function toggleMunicipioSelection(municipio) {
-  if (_relSelectedMuns.has(municipio)) {
-    _relSelectedMuns.delete(municipio);
-  } else {
-    _relSelectedMuns.add(municipio);
-  }
+  if (_relSelectedMuns.has(municipio)) _relSelectedMuns.delete(municipio);
+  else _relSelectedMuns.add(municipio);
   renderMunicipioSelector();
   applyRelatoriosFilters();
 }
 
 function relSelectAllMunicipios() {
-  const municipios = [...new Set(_avaliacoes.map(av => av.respondent.municipio))];
-  _relSelectedMuns = new Set(municipios);
+  _relSelectedMuns = new Set([...new Set(_avaliacoes.map(av => av.respondent.municipio))]);
   renderMunicipioSelector();
   applyRelatoriosFilters();
 }
@@ -849,25 +820,21 @@ function renderSummarySection() {
 function renderStatsCards() {
   const validIndices = _relFiltered.map(av => parseFloat(av.indice)).filter(n => !isNaN(n));
   const stats = [
-    { label: 'Total de Avaliações', value: _relFiltered.length, id: 'stat-total' },
-    { label: 'Municípios Únicos', value: new Set(_relFiltered.map(av => av.respondent.municipio)).size, id: 'stat-muns' },
-    { label: 'Índice Médio', value: validIndices.length > 0 ? (validIndices.reduce((a,b)=>a+b,0)/validIndices.length).toFixed(2) : '—', id: 'stat-media' },
-    { label: 'Índice Máximo', value: validIndices.length > 0 ? Math.max(...validIndices).toFixed(2) : '—', id: 'stat-max' },
-    { label: 'Índice Mínimo', value: validIndices.length > 0 ? Math.min(...validIndices).toFixed(2) : '—', id: 'stat-min' },
-    { label: 'Estados Representados', value: new Set(_relFiltered.map(av => av.respondent.estado)).size, id: 'stat-est' },
+    { label: 'Total de Avaliações', value: _relFiltered.length },
+    { label: 'Municípios Únicos', value: new Set(_relFiltered.map(av => av.respondent.municipio)).size },
+    { label: 'Índice Médio', value: validIndices.length > 0 ? (validIndices.reduce((a,b)=>a+b,0)/validIndices.length).toFixed(2) : '—' },
+    { label: 'Índice Máximo', value: validIndices.length > 0 ? Math.max(...validIndices).toFixed(2) : '—' },
+    { label: 'Índice Mínimo', value: validIndices.length > 0 ? Math.min(...validIndices).toFixed(2) : '—' },
+    { label: 'Estados Representados', value: new Set(_relFiltered.map(av => av.respondent.estado)).size },
   ];
-
-  const grid = document.getElementById('stats-grid');
-  grid.innerHTML = stats.map(s => `<div class="rel-stat-card"><div class="rel-stat-label">${s.label}</div><div class="rel-stat-value">${s.value}</div></div>`).join('');
+  document.getElementById('stats-grid').innerHTML = stats.map(s =>
+    `<div class="rel-stat-card"><div class="rel-stat-label">${s.label}</div><div class="rel-stat-value">${s.value}</div></div>`
+  ).join('');
 }
 
 function renderDimAvgBars(avaliacoes) {
   const container = document.getElementById('rel-dim-avg-bars');
-  if (avaliacoes.length === 0) {
-    container.innerHTML = '<p style="color:var(--text-sec);">Nenhum dado para exibir</p>';
-    return;
-  }
-
+  if (avaliacoes.length === 0) { container.innerHTML = '<p style="color:var(--text-sec);">Nenhum dado para exibir</p>'; return; }
   container.innerHTML = DIMS.map(dim => {
     const scores = avaliacoes.map(av => av.dimScores[dim]).filter(s => !isNaN(s));
     const avg = scores.length > 0 ? scores.reduce((a,b)=>a+b,0)/scores.length : 0;
@@ -884,25 +851,18 @@ function renderDimAvgBars(avaliacoes) {
 }
 
 function renderLevelDistribution(avaliacoes) {
-  const colors = LEVEL_COLORS;
   const niveis = {Avançado:0,'Em Desenvolvimento':0,Emergente:0,Incipiente:0};
-  const tooltips = {
-    Avançado: 'Índice > 4.0',
-    'Em Desenvolvimento': 'Índice entre 3.0 e 4.0',
-    Emergente: 'Índice entre 2.0 e 3.0',
-    Incipiente: 'Índice < 2.0'
-  };
+  const tooltips = { Avançado:'Índice > 4.0', 'Em Desenvolvimento':'Índice entre 3.0 e 4.0', Emergente:'Índice entre 2.0 e 3.0', Incipiente:'Índice < 2.0' };
   avaliacoes.forEach(av => { if (niveis[av.level] !== undefined) niveis[av.level]++; });
   const dist = document.getElementById('nivel-dist');
   dist.innerHTML = '';
   Object.entries(niveis).forEach(([nivel, count]) => {
     const pct = avaliacoes.length > 0 ? ((count/avaliacoes.length)*100).toFixed(0) : 0;
-    const c = colors[nivel];
-    const tooltip = tooltips[nivel] || '';
-    dist.innerHTML += `<div style="padding:10px 16px;background:${c}18;border:1px solid ${c}44;border-radius:8px;min-width:140px;cursor:help;" title="${tooltip}">
+    const c = LEVEL_COLORS[nivel];
+    dist.innerHTML += `<div style="padding:10px 16px;background:${c}18;border:1px solid ${c}44;border-radius:8px;min-width:140px;cursor:help;" title="${tooltips[nivel]}">
       <div style="font-size:11px;font-weight:700;color:${c};text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px;">${nivel}</div>
       <div style="font-size:22px;font-weight:800;color:${c};">${count}</div>
-      <div style="font-size:10px;color:${c}88;margin-top:6px;">${tooltip}</div>
+      <div style="font-size:10px;color:${c}88;margin-top:6px;">${tooltips[nivel]}</div>
       <div style="font-size:11px;color:${c}88;">${pct}%</div>
     </div>`;
   });
@@ -911,17 +871,11 @@ function renderLevelDistribution(avaliacoes) {
 function renderRankingTable(avaliacoes) {
   const grouped = groupByMunicipio(avaliacoes, true);
   grouped.sort((a,b) => parseFloat(b.indice) - parseFloat(a.indice));
-
   const tbody = document.getElementById('rel-ranking-tbody');
   tbody.innerHTML = grouped.map((av, i) => {
-    const badges = ['gold', 'silver', 'bronze'];
-    const posClass = badges[i] || '';
+    const posClass = ['gold','silver','bronze'][i] || '';
     const c = LEVEL_COLORS[av.level] || '#6b7280';
-    const dimCells = DIMS.map(d => {
-      const score = av.dimScores[d];
-      const heat = heatColor(score);
-      return `<td style="background:${heat.bg};color:${heat.text};">${score.toFixed(1)}</td>`;
-    }).join('');
+    const dimCells = DIMS.map(d => { const heat = heatColor(av.dimScores[d]); return `<td style="background:${heat.bg};color:${heat.text};">${(av.dimScores[d]||0).toFixed(1)}</td>`; }).join('');
     return `<tr>
       <td><span class="rel-rank-pos ${posClass}">${i+1}</span></td>
       <td><strong>${av.respondent.municipio}</strong></td>
@@ -936,12 +890,10 @@ function renderRankingTable(avaliacoes) {
 function renderTableSection() {
   const tbody = document.getElementById('filtro-tbody');
   document.getElementById('filtro-count').textContent = `${_relFiltered.length} avaliação(ões)`;
-
   if (_relFiltered.length === 0) {
     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-sec);padding:20px;">Nenhuma avaliação encontrada.</td></tr>';
     return;
   }
-
   tbody.innerHTML = _relFiltered.map(av => {
     const date = new Date(av.timestamp);
     const c = LEVEL_COLORS[av.level] || '#6b7280';
@@ -969,7 +921,7 @@ function switchChartView(view, btn) {
   _relCurrentView = view;
   document.querySelectorAll('.rel-chart-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  document.querySelectorAll('.rel-chart-view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('#tab-relatorios .rel-chart-view').forEach(v => v.classList.remove('active'));
   document.getElementById('rel-view-' + view).classList.add('active');
   renderChartsSection();
 }
@@ -989,56 +941,25 @@ function groupByMunicipio(avaliacoes, takeLatest = true) {
     if (!grouped[av.respondent.municipio]) grouped[av.respondent.municipio] = [];
     grouped[av.respondent.municipio].push(av);
   });
-  if (takeLatest) {
-    return Object.values(grouped).map(group =>
-      group.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp))[0]
-    );
-  }
+  if (takeLatest) return Object.values(grouped).map(g => g.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp))[0]);
   return grouped;
 }
 
 function renderBarChart() {
   const container = document.getElementById('rel-view-bar');
   const barMode = document.querySelector('input[name="bar-mode"]:checked').value;
-  const municipios = Array.from(_relSelectedMuns).filter(m =>
-    _relFiltered.some(av => av.respondent.municipio === m)
-  ).sort();
-
-  if (municipios.length === 0) {
-    container.innerHTML = '<div style="text-align:center;color:var(--text-sec);padding:40px;">Nenhum município selecionado</div>';
-    return;
-  }
-
+  const municipios = Array.from(_relSelectedMuns).filter(m => _relFiltered.some(av => av.respondent.municipio === m)).sort();
+  if (municipios.length === 0) { container.innerHTML = '<div style="text-align:center;color:var(--text-sec);padding:40px;">Nenhum município selecionado</div>'; return; }
   const grouped = groupByMunicipio(_relFiltered, true);
   const datasets = municipios.map((mun, i) => {
     const av = grouped.find(a => a.respondent.municipio === mun);
-    return {
-      label: mun,
-      data: DIMS.map(d => av ? av.dimScores[d] : 0),
-      backgroundColor: CHART_PALETTE[i % CHART_PALETTE.length] + 'cc',
-      borderColor: CHART_PALETTE[i % CHART_PALETTE.length],
-      borderWidth: 1.5,
-      borderRadius: 4,
-    };
+    return { label: mun, data: DIMS.map(d => av ? av.dimScores[d] : 0), backgroundColor: CHART_PALETTE[i % CHART_PALETTE.length] + 'cc', borderColor: CHART_PALETTE[i % CHART_PALETTE.length], borderWidth: 1.5, borderRadius: 4 };
   });
-
   if (_relChartBar) _relChartBar.destroy();
   _relChartBar = new Chart(document.getElementById('rel-chart-bar'), {
     type: 'bar',
-    data: {
-      labels: DIMS.map(d => DIM_NAMES[d]),
-      datasets: datasets,
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      indexAxis: 'x',
-      scales: {
-        y: { min: 0, max: 5, ticks: { stepSize: 1 } },
-        x: { stacked: barMode === 'stacked' },
-      },
-      plugins: { legend: { position: 'top' } },
-    },
+    data: { labels: DIMS.map(d => DIM_NAMES[d]), datasets },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 5, ticks: { stepSize: 1 } }, x: { stacked: barMode === 'stacked' } }, plugins: { legend: { position: 'top' } } },
   });
 }
 
@@ -1046,71 +967,29 @@ function renderTrendChart() {
   const dimVal = document.getElementById('rel-trend-dim').value;
   const grouped = groupByMunicipio(_avaliacoes, false);
   const multiMuns = Object.entries(grouped).filter(([m, avs]) => avs && avs.length > 1);
-
   const chartWrap = document.getElementById('rel-trend-wrap');
   const emptyDiv = document.getElementById('rel-trend-empty');
-
   const showEmpty = (msg) => {
     if (_relChartTrend) { _relChartTrend.destroy(); _relChartTrend = null; }
-    chartWrap.style.display = 'none';
-    emptyDiv.style.display = 'block';
-    emptyDiv.textContent = msg;
+    chartWrap.style.display = 'none'; emptyDiv.style.display = 'block'; emptyDiv.textContent = msg;
   };
-
-  if (multiMuns.length === 0) {
-    showEmpty('Nenhum município possui 2+ avaliações em datas diferentes. Adicione mais avaliações ao longo do tempo para visualizar tendências.');
-    return;
-  }
-
-  const filteredDatasets = multiMuns
-    .filter(([m]) => _relSelectedMuns.size === 0 || _relSelectedMuns.has(m))
-    .map(([mun, avs], i) => {
-      const sorted = avs.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
-      const data = sorted.map(av => ({
-        x: av.timestamp.split('T')[0],
-        y: dimVal === 'indice' ? parseFloat(av.indice) : (av.dimScores && av.dimScores[dimVal] ? av.dimScores[dimVal] : 0),
-      }));
-      return {
-        label: mun,
-        data: data,
-        borderColor: CHART_PALETTE[i % CHART_PALETTE.length],
-        backgroundColor: CHART_PALETTE[i % CHART_PALETTE.length] + '22',
-        borderWidth: 2,
-        pointRadius: 5,
-        pointHoverRadius: 7,
-        tension: 0.3,
-        fill: false,
-        spanGaps: true,
-      };
-    });
-
-  if (filteredDatasets.length === 0) {
-    showEmpty('Nenhum município selecionado tem dados suficientes de tendência.');
-    return;
-  }
-
-  chartWrap.style.display = '';
-  emptyDiv.style.display = 'none';
-
-  const allDates = new Set();
-  filteredDatasets.forEach(ds => ds.data.forEach(p => allDates.add(p.x)));
+  if (multiMuns.length === 0) { showEmpty('Nenhum município possui 2+ avaliações em datas diferentes.'); return; }
+  const filteredDatasets = multiMuns.filter(([m]) => _relSelectedMuns.size === 0 || _relSelectedMuns.has(m)).map(([mun, avs], i) => {
+    const sorted = avs.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+    return { label: mun, data: sorted.map(av => ({ x: av.timestamp.split('T')[0], y: dimVal === 'indice' ? parseFloat(av.indice) : (av.dimScores && av.dimScores[dimVal] ? av.dimScores[dimVal] : 0) })), borderColor: CHART_PALETTE[i % CHART_PALETTE.length], backgroundColor: CHART_PALETTE[i % CHART_PALETTE.length] + '22', borderWidth: 2, pointRadius: 5, tension: 0.3, fill: false, spanGaps: true };
+  });
+  if (filteredDatasets.length === 0) { showEmpty('Nenhum município selecionado tem dados suficientes de tendência.'); return; }
+  chartWrap.style.display = ''; emptyDiv.style.display = 'none';
+  const allDates = new Set(); filteredDatasets.forEach(ds => ds.data.forEach(p => allDates.add(p.x)));
   const sortedDates = Array.from(allDates).sort();
-
   if (_relChartTrend) _relChartTrend.destroy();
   _relChartTrend = new Chart(document.getElementById('rel-chart-trend'), {
-    type: 'line',
-    data: { labels: sortedDates, datasets: filteredDatasets },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: { y: { min: 0, max: 5 }, x: {} },
-      plugins: { legend: { position: 'top' } },
-    },
+    type: 'line', data: { labels: sortedDates, datasets: filteredDatasets },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 5 } }, plugins: { legend: { position: 'top' } } },
   });
 }
 
 function resetRelatoriosFilters() {
-  document.getElementById('filtro-estado').selectedIndex = -1;
   Array.from(document.getElementById('filtro-estado').options).forEach(o => o.selected = true);
   document.querySelectorAll('#filtro-nivel-group input').forEach(i => i.checked = true);
   document.querySelectorAll('#filtro-formacao-group input').forEach(i => i.checked = true);
@@ -1120,31 +999,16 @@ function resetRelatoriosFilters() {
 }
 
 function exportFilteredCSV() {
-  const headers = ['Município', 'Estado', 'Avaliador', 'Formação', 'Data', 'Índice', 'Nível', 'P', 'E', 'S', 'T', 'A', 'L'];
-  const rows = _relFiltered.map(av => [
-    av.respondent.municipio,
-    av.respondent.estado,
-    av.respondent.name,
-    av.respondent.formacao || '',
-    new Date(av.timestamp).toLocaleDateString('pt-BR'),
-    av.indice,
-    av.level,
-    av.dimScores.P, av.dimScores.E, av.dimScores.S, av.dimScores.T, av.dimScores.A, av.dimScores.L,
-  ]);
-  const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
+  const headers = ['Município','Estado','Avaliador','Formação','Data','Índice','Nível','P','E','S','T','A','L'];
+  const rows = _relFiltered.map(av => [av.respondent.municipio, av.respondent.estado, av.respondent.name, av.respondent.formacao||'', new Date(av.timestamp).toLocaleDateString('pt-BR'), av.indice, av.level, av.dimScores.P, av.dimScores.E, av.dimScores.S, av.dimScores.T, av.dimScores.A, av.dimScores.L]);
+  const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
   const a = document.createElement('a');
-  a.href = url;
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
   a.download = `matrizahp_filtrado_${new Date().toISOString().split('T')[0]}.csv`;
   a.click();
-  URL.revokeObjectURL(url);
 }
 
-function filtrarAvaliacoes() {
-  applyRelatoriosFilters();
-}
-
+// ===== GERENCIAR PESOS (DASH 01) =====
 async function loadPesosTab() {
   const [calibrations, active] = await Promise.all([api.get('calibrations'), api.get('active-weights')]);
   const activeIds = active ? active.calibrationsIncluded : [];
@@ -1159,14 +1023,12 @@ async function loadPesosTab() {
   }
 
   selectAllRow.style.display = 'flex';
-
   calibrations.forEach(cal => {
     const date = new Date(cal.timestamp);
     const isActive = activeIds.includes(cal.id);
     const item = document.createElement('div');
     item.className = 'calib-item' + (isActive ? ' checked' : '');
     item.dataset.id = cal.id;
-    item.dataset.weights = JSON.stringify(cal.weights).replace(/"/g, '&quot;');
     item.innerHTML = `
       <div class="calib-check"><span class="calib-check-mark">&#10003;</span></div>
       <div class="calib-label">
@@ -1174,13 +1036,9 @@ async function loadPesosTab() {
         <div class="calib-label-meta">${cal.respondent.institution || cal.respondent.formacao || '—'} &bull; ${date.toLocaleDateString('pt-BR')}</div>
       </div>
       <button class="btn-trash" title="Excluir calibração" onclick="excluirCalibracao('${cal.id}', event)"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='16' height='16' fill='none' style='pointer-events:none;display:block;'><rect x='3' y='5' width='18' height='3' rx='1.5' fill='#c0c0c0' stroke='#222' stroke-width='1.5'/><circle cx='12' cy='3.2' r='1.1' fill='#aaa' stroke='#333' stroke-width='1.2'/><path d='M5 8l1.1 13a1 1 0 001 .9h9.8a1 1 0 001-.9L19 8z' fill='#cacaca' stroke='#222' stroke-width='1.5' stroke-linejoin='round'/><line x1='9' y1='11' x2='8.7' y2='18.5' stroke='#444' stroke-width='1.4' stroke-linecap='round'/><line x1='12' y1='11' x2='12' y2='18.5' stroke='#444' stroke-width='1.4' stroke-linecap='round'/><line x1='15' y1='11' x2='15.3' y2='18.5' stroke='#444' stroke-width='1.4' stroke-linecap='round'/></svg></button>`;
-    item.addEventListener('click', () => {
-      item.classList.toggle('checked');
-      updateSelectAllState();
-    });
+    item.addEventListener('click', () => { item.classList.toggle('checked'); updateSelectAllState(); });
     list.appendChild(item);
   });
-
   updateSelectAllState();
 }
 
@@ -1191,25 +1049,15 @@ function updateSelectAllState() {
   const check = document.getElementById('select-all-check');
   const mark = document.getElementById('select-all-mark');
   const label = document.getElementById('select-all-label');
-  if (allChecked) {
-    check.style.background = 'var(--primary)'; check.style.borderColor = 'var(--primary)';
-    mark.style.display = 'block';
-    label.textContent = 'Desmarcar todos';
-  } else {
-    check.style.background = 'var(--white)'; check.style.borderColor = 'var(--border)';
-    mark.style.display = 'none';
-    label.textContent = checked.length > 0 ? 'Selecionar todos (' + checked.length + ' selecionado' + (checked.length > 1 ? 's' : '') + ')' : 'Selecionar todos';
-  }
+  if (allChecked) { check.style.background='var(--primary)'; check.style.borderColor='var(--primary)'; mark.style.display='block'; label.textContent='Desmarcar todos'; }
+  else { check.style.background='var(--white)'; check.style.borderColor='var(--border)'; mark.style.display='none'; label.textContent=checked.length>0?'Selecionar todos ('+checked.length+' selecionado'+(checked.length>1?'s':'')+')':'Selecionar todos'; }
 }
 
 function toggleSelectAll() {
   const all = document.querySelectorAll('#calibracoes-list .calib-item');
   const checked = document.querySelectorAll('#calibracoes-list .calib-item.checked');
   const shouldCheck = checked.length < all.length;
-  all.forEach(item => {
-    if (shouldCheck) item.classList.add('checked');
-    else item.classList.remove('checked');
-  });
+  all.forEach(item => shouldCheck ? item.classList.add('checked') : item.classList.remove('checked'));
   updateSelectAllState();
 }
 
@@ -1219,37 +1067,19 @@ async function applySelectedWeights() {
     const checked = document.querySelectorAll('#calibracoes-list .calib-item.checked');
     if (checked.length === 0) { alert('Selecione pelo menos uma calibração.'); return; }
     const selectedIds = Array.from(checked).map(el => el.dataset.id);
-
     if (btn) { btn.disabled = true; btn.textContent = 'Aplicando...'; }
 
     const calibrations = await api.get('calibrations');
     const selectedCals = calibrations.filter(c => selectedIds.includes(c.id));
-
     if (selectedCals.length === 0) throw new Error('Nenhuma calibração encontrada com os IDs selecionados.');
-
-    const DIM_NAMES = { P: 'Política', E: 'Econômica', S: 'Social', T: 'Tecnológica', A: 'Ambiental', L: 'Legal' };
-    const DIM_INDICATORS = {
-      P: ['P1','P2','P3','P4'], E: ['E1','E2','E3','E4'], S: ['S1','S2','S3','S4'],
-      T: ['T1','T2','T3','T4'], A: ['A1','A2','A3','A4'], L: ['L1','L2','L3','L4']
-    };
-    const DIMS = ['P','E','S','T','A','L'];
 
     const avgWeights = {};
     DIMS.forEach(dim => {
       const dimWeights = selectedCals.map(c => (c.weights && c.weights[dim] && c.weights[dim].weight) || 0);
       avgWeights[dim] = {
         name: (selectedCals[0].weights && selectedCals[0].weights[dim] && selectedCals[0].weights[dim].name) || DIM_NAMES[dim],
-        weight: dimWeights.reduce((a, b) => a + b, 0) / selectedCals.length,
-        indicators: {}
+        weight: dimWeights.reduce((a, b) => a + b, 0) / selectedCals.length
       };
-      DIM_INDICATORS[dim].forEach(indId => {
-        const indWeights = selectedCals.map(c => (c.weights && c.weights[dim] && c.weights[dim].indicators && c.weights[dim].indicators[indId] && c.weights[dim].indicators[indId].weight) || 0);
-        const firstName = selectedCals[0].weights && selectedCals[0].weights[dim] && selectedCals[0].weights[dim].indicators && selectedCals[0].weights[dim].indicators[indId] && selectedCals[0].weights[dim].indicators[indId].name;
-        avgWeights[dim].indicators[indId] = {
-          name: firstName || indId,
-          weight: indWeights.reduce((a, b) => a + b, 0) / selectedCals.length
-        };
-      });
     });
 
     const activeVersion = {
@@ -1292,6 +1122,194 @@ async function excluirCalibracao(id, event) {
   loadPesosTab();
 }
 
+// ===== RELATÓRIOS DASH 01 =====
+async function loadRelatoriosD01Tab() {
+  _d01Calibrations = await api.get('calibrations');
+  renderD01Stats();
+  renderD01DimBars();
+  renderD01CurrentView();
+}
+
+function renderD01Stats() {
+  const cals = _d01Calibrations;
+  const statsEl = document.getElementById('d01-stats');
+  if (!cals.length) {
+    statsEl.innerHTML = '<div class="rel-stat-card"><div class="rel-stat-label">Calibrações</div><div class="rel-stat-value">0</div></div>';
+    return;
+  }
+
+  const avgByDim = {};
+  DIMS.forEach(d => {
+    const ws = cals.map(c => (c.weights && c.weights[d] && c.weights[d].weight) || 0);
+    avgByDim[d] = ws.reduce((a,b) => a+b, 0) / ws.length;
+  });
+
+  const topDim = DIMS.reduce((a,b) => avgByDim[a] > avgByDim[b] ? a : b);
+  const botDim = DIMS.reduce((a,b) => avgByDim[a] < avgByDim[b] ? a : b);
+
+  const cvs = DIMS.map(d => {
+    const ws = cals.map(c => (c.weights && c.weights[d] && c.weights[d].weight) || 0);
+    const mean = ws.reduce((a,b) => a+b, 0) / ws.length;
+    if (mean === 0) return 0;
+    const variance = ws.reduce((acc,v) => acc + Math.pow(v-mean, 2), 0) / ws.length;
+    return Math.sqrt(variance) / mean;
+  });
+  const avgCV = cvs.reduce((a,b) => a+b, 0) / cvs.length;
+  const formacoes = [...new Set(cals.map(c => c.respondent.formacao || '').filter(f => f))];
+
+  const stats = [
+    { label: 'Calibrações', value: cals.length, sub: '' },
+    { label: 'Dimensão Mais Valorizada', value: DIM_NAMES[topDim], sub: (avgByDim[topDim]*100).toFixed(1)+'%' },
+    { label: 'Dimensão Menos Valorizada', value: DIM_NAMES[botDim], sub: (avgByDim[botDim]*100).toFixed(1)+'%' },
+    { label: 'Áreas de Formação', value: formacoes.length || '—', sub: '' },
+    { label: 'Variação Média (CV)', value: (avgCV*100).toFixed(1)+'%', sub: 'Consistência entre respondentes' },
+  ];
+
+  statsEl.innerHTML = stats.map(s => `<div class="rel-stat-card">
+    <div class="rel-stat-label">${s.label}</div>
+    <div class="rel-stat-value" style="font-size:${String(s.value).length > 9 ? '16px' : '22px'};">${s.value}</div>
+    ${s.sub ? `<div class="rel-stat-sub">${s.sub}</div>` : ''}
+  </div>`).join('');
+}
+
+function renderD01DimBars() {
+  const cals = _d01Calibrations;
+  const container = document.getElementById('d01-dim-bars');
+  if (!cals.length) { container.innerHTML = '<p style="color:var(--text-sec);">Nenhuma calibração disponível.</p>'; return; }
+  container.innerHTML = DIMS.map(d => {
+    const ws = cals.map(c => (c.weights && c.weights[d] && c.weights[d].weight) || 0);
+    const avg = ws.reduce((a,b) => a+b, 0) / ws.length;
+    const min = Math.min(...ws);
+    const max = Math.max(...ws);
+    return `<div class="rel-dim-bar-row">
+      <div class="rel-dim-bar-label">${DIM_NAMES[d]}</div>
+      <div class="rel-dim-bar-track"><div class="rel-dim-bar-fill" style="width:${avg*100}%"></div></div>
+      <div class="rel-dim-bar-val">${(avg*100).toFixed(1)}%</div>
+      <div class="rel-dim-bar-range">${(min*100).toFixed(1)}–${(max*100).toFixed(1)}%</div>
+    </div>`;
+  }).join('');
+}
+
+function switchD01View(view, btn) {
+  _d01CurrentView = view;
+  document.querySelectorAll('#tab-relatorios-d01 .rel-chart-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#tab-relatorios-d01 .rel-chart-view').forEach(v => v.classList.remove('active'));
+  document.getElementById('d01-view-' + view).classList.add('active');
+  renderD01CurrentView();
+}
+
+function renderD01CurrentView() {
+  if (_d01CurrentView === 'bars') renderD01BarsChart();
+  else if (_d01CurrentView === 'formacao') renderD01FormacaoChart();
+  else if (_d01CurrentView === 'tabela') renderD01Table();
+}
+
+function renderD01BarsChart() {
+  const cals = _d01Calibrations;
+  if (!cals.length) return;
+  const avgData = DIMS.map(d => {
+    const ws = cals.map(c => (c.weights && c.weights[d] && c.weights[d].weight) || 0);
+    return +(ws.reduce((a,b) => a+b, 0) / ws.length * 100).toFixed(1);
+  });
+  const datasets = [
+    { label: 'Média Geral', data: avgData, backgroundColor: '#2563ebcc', borderColor: '#1d4ed8', borderWidth: 2, borderRadius: 4 },
+    ...cals.map((cal, i) => ({
+      label: cal.respondent.name.split(' ')[0] + (cal.respondent.formacao ? ' (' + cal.respondent.formacao.split(' ')[0] + ')' : ''),
+      data: DIMS.map(d => +((cal.weights && cal.weights[d] && cal.weights[d].weight || 0) * 100).toFixed(1)),
+      backgroundColor: CHART_PALETTE[(i+1) % CHART_PALETTE.length] + '55',
+      borderColor: CHART_PALETTE[(i+1) % CHART_PALETTE.length],
+      borderWidth: 1.5, borderRadius: 2,
+    }))
+  ];
+  if (_d01ChartBars) _d01ChartBars.destroy();
+  _d01ChartBars = new Chart(document.getElementById('d01-chart-bars'), {
+    type: 'bar',
+    data: { labels: DIMS.map(d => DIM_NAMES[d]), datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: { y: { min: 0, max: 60, ticks: { callback: v => v + '%' } } },
+      plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + '%' } } }
+    }
+  });
+}
+
+function renderD01FormacaoChart() {
+  const cals = _d01Calibrations;
+  if (!cals.length) return;
+  const formacoes = [...new Set(cals.map(c => c.respondent.formacao || 'Não informado'))];
+  const note = document.getElementById('d01-formacao-note');
+
+  if (formacoes.length <= 1) {
+    note.textContent = formacoes.length === 0
+      ? 'Nenhuma formação registrada nas calibrações.'
+      : 'Apenas uma área de formação nas calibrações (' + formacoes[0] + '). Adicione respondentes de outras áreas para habilitar a comparação.';
+    document.getElementById('d01-chart-formacao').style.display = 'none';
+    return;
+  }
+  note.textContent = '';
+  document.getElementById('d01-chart-formacao').style.display = '';
+
+  const datasets = formacoes.map((formacao, i) => {
+    const group = cals.filter(c => (c.respondent.formacao || 'Não informado') === formacao);
+    return {
+      label: formacao + ' (n=' + group.length + ')',
+      data: DIMS.map(d => { const ws = group.map(c => (c.weights && c.weights[d] && c.weights[d].weight) || 0); return +(ws.reduce((a,b)=>a+b,0)/ws.length*100).toFixed(1); }),
+      backgroundColor: CHART_PALETTE[i % CHART_PALETTE.length] + '99',
+      borderColor: CHART_PALETTE[i % CHART_PALETTE.length],
+      borderWidth: 1.5, borderRadius: 3,
+    };
+  });
+
+  if (_d01ChartFormacao) _d01ChartFormacao.destroy();
+  _d01ChartFormacao = new Chart(document.getElementById('d01-chart-formacao'), {
+    type: 'bar',
+    data: { labels: DIMS.map(d => DIM_NAMES[d]), datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: { y: { min: 0, max: 60, ticks: { callback: v => v + '%' } } },
+      plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + '%' } } }
+    }
+  });
+}
+
+function renderD01Table() {
+  const cals = _d01Calibrations;
+  const tbody = document.getElementById('d01-tbody');
+  if (!cals.length) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--text-sec);">Nenhuma calibração disponível.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = cals.map(cal => {
+    const date = new Date(cal.timestamp);
+    const cells = DIMS.map(d => { const w = cal.weights && cal.weights[d] && cal.weights[d].weight; return `<td style="font-weight:700;text-align:center;">${w !== undefined ? (w*100).toFixed(1)+'%' : '—'}</td>`; }).join('');
+    return `<tr>
+      <td>${date.toLocaleDateString('pt-BR')}</td>
+      <td>${cal.respondent.name}</td>
+      <td>${cal.respondent.formacao || '—'}</td>
+      ${cells}
+    </tr>`;
+  }).join('');
+}
+
+function exportD01CSV() {
+  const cals = _d01Calibrations;
+  const headers = ['Data', 'Respondente', 'Formação', ...DIMS.map(d => DIM_NAMES[d])];
+  const rows = cals.map(cal => [
+    new Date(cal.timestamp).toLocaleDateString('pt-BR'),
+    cal.respondent.name,
+    cal.respondent.formacao || '',
+    ...DIMS.map(d => { const w = cal.weights && cal.weights[d] && cal.weights[d].weight; return w !== undefined ? (w*100).toFixed(2)+'%' : ''; })
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = `d01_calibracoes_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// ===== GERENCIAR AVALIAÇÕES (DASH 02) =====
 async function loadGerenciarAvaliacoesTab() {
   const avaliacoes = await api.get('avaliacoes');
   const list = document.getElementById('avaliacoes-gerenciar-list');
@@ -1305,8 +1323,7 @@ async function loadGerenciarAvaliacoesTab() {
   }
 
   selectAllRow.style.display = 'flex';
-  const levelColors = {Avançado:'#15803d','Em Desenvolvimento':'#2563eb',Emergente:'#d97706',Incipiente:'#dc2626'};
-
+  const levelColors = { Avançado:'#15803d','Em Desenvolvimento':'#2563eb',Emergente:'#d97706',Incipiente:'#dc2626' };
   avaliacoes.forEach(av => {
     const date = new Date(av.timestamp);
     const c = levelColors[av.level] || '#6b7280';
@@ -1333,7 +1350,6 @@ async function loadGerenciarAvaliacoesTab() {
     });
     list.appendChild(item);
   });
-
   updateSelectAllAvaliacoesState();
 }
 
@@ -1344,14 +1360,8 @@ function updateSelectAllAvaliacoesState() {
   const check = document.getElementById('ga-select-all-check');
   const mark = document.getElementById('ga-select-all-mark');
   const label = document.getElementById('ga-select-all-label');
-  if (allChecked) {
-    check.style.background = 'var(--primary)'; check.style.borderColor = 'var(--primary)';
-    mark.style.display = 'block'; label.textContent = 'Desmarcar todas';
-  } else {
-    check.style.background = 'var(--white)'; check.style.borderColor = 'var(--border)';
-    mark.style.display = 'none';
-    label.textContent = checked.length > 0 ? 'Selecionar todas (' + checked.length + ' selecionada' + (checked.length > 1 ? 's' : '') + ')' : 'Selecionar todas';
-  }
+  if (allChecked) { check.style.background='var(--primary)'; check.style.borderColor='var(--primary)'; mark.style.display='block'; label.textContent='Desmarcar todas'; }
+  else { check.style.background='var(--white)'; check.style.borderColor='var(--border)'; mark.style.display='none'; label.textContent=checked.length>0?'Selecionar todas ('+checked.length+' selecionada'+(checked.length>1?'s':'')+')':'Selecionar todas'; }
 }
 
 function toggleSelectAllAvaliacoes() {
@@ -1383,19 +1393,16 @@ async function excluirAvaliacoesSelecionadas() {
   loadGerenciarAvaliacoesTab();
 }
 
+// ===== CALIBRAÇÃO DETAIL =====
 async function viewCalibration(id) {
   const rowId = 'detail-calib-' + id;
   const existing = document.getElementById(rowId);
-  if (existing) {
-    existing.classList.toggle('open');
-    return;
-  }
+  if (existing) { existing.classList.toggle('open'); return; }
   const calibrations = await api.get('calibrations');
   const cal = calibrations.find(c => c.id === id);
   if (!cal) return;
 
-  const dimKeys = ['P','E','S','T','A','L'];
-  const pills = dimKeys.map(k => {
+  const pills = DIMS.map(k => {
     const w = cal.weights[k];
     return `<span class="dim-pill">${w ? w.name : k}: ${w ? (w.weight*100).toFixed(1)+'%' : '—'}</span>`;
   }).join('');
@@ -1417,25 +1424,14 @@ async function viewCalibration(id) {
   mainRow.insertAdjacentElement('afterend', tr);
 }
 
+// ===== AVALIAÇÃO DETAIL (DASH 02) =====
 const DIMENSIONS_ADMIN = [
-  { key:'P', name:'Política', indicators:[
-    {id:'P1',name:'Governança institucional'},{id:'P2',name:'Articulação interinstitucional'},{id:'P3',name:'Integração ao planejamento urbano'},{id:'P4',name:'Capacidade técnica institucional'}
-  ]},
-  { key:'E', name:'Econômica', indicators:[
-    {id:'E1',name:'Demanda funcional potencial'},{id:'E2',name:'Atratividade para investimentos'},{id:'E3',name:'Capacidade de financiamento'},{id:'E4',name:'Aderência a casos de uso'}
-  ]},
-  { key:'S', name:'Social', indicators:[
-    {id:'S1',name:'Aceitação pública'},{id:'S2',name:'Percepção de segurança'},{id:'S3',name:'Externalidades sociais'},{id:'S4',name:'Equidade e acessibilidade'}
-  ]},
-  { key:'T', name:'Tecnológica', indicators:[
-    {id:'T1',name:'Gestão do espaço aéreo'},{id:'T2',name:'Comunicação, navegação e vigilância'},{id:'T3',name:'Infraestrutura energética'},{id:'T4',name:'Aptidão para vertiportos'}
-  ]},
-  { key:'A', name:'Ambiental', indicators:[
-    {id:'A1',name:'Eficiência energética e emissões'},{id:'A2',name:'Poluição sonora'},{id:'A3',name:'Uso do solo'},{id:'A4',name:'Resiliência ambiental'}
-  ]},
-  { key:'L', name:'Legal', indicators:[
-    {id:'L1',name:'Legislação urbanística'},{id:'L2',name:'Regulação aeronáutica'},{id:'L3',name:'Licenciamento ambiental'},{id:'L4',name:'Responsabilidade civil'}
-  ]}
+  { key:'P', name:'Política', indicators:[{id:'P1',name:'Governança institucional'},{id:'P2',name:'Articulação interinstitucional'},{id:'P3',name:'Integração ao planejamento urbano'},{id:'P4',name:'Capacidade técnica institucional'}]},
+  { key:'E', name:'Econômica', indicators:[{id:'E1',name:'Demanda funcional potencial'},{id:'E2',name:'Atratividade para investimentos'},{id:'E3',name:'Capacidade de financiamento'},{id:'E4',name:'Aderência a casos de uso'}]},
+  { key:'S', name:'Social', indicators:[{id:'S1',name:'Aceitação pública'},{id:'S2',name:'Percepção de segurança'},{id:'S3',name:'Externalidades sociais'},{id:'S4',name:'Equidade e acessibilidade'}]},
+  { key:'T', name:'Tecnológica', indicators:[{id:'T1',name:'Gestão do espaço aéreo'},{id:'T2',name:'Comunicação, navegação e vigilância'},{id:'T3',name:'Infraestrutura energética'},{id:'T4',name:'Aptidão para vertiportos'}]},
+  { key:'A', name:'Ambiental', indicators:[{id:'A1',name:'Eficiência energética e emissões'},{id:'A2',name:'Poluição sonora'},{id:'A3',name:'Uso do solo'},{id:'A4',name:'Resiliência ambiental'}]},
+  { key:'L', name:'Legal', indicators:[{id:'L1',name:'Legislação urbanística'},{id:'L2',name:'Regulação aeronáutica'},{id:'L3',name:'Licenciamento ambiental'},{id:'L4',name:'Responsabilidade civil'}]}
 ];
 
 function computeAvaliacaoFields(av, activeWeights) {
@@ -1467,9 +1463,7 @@ function computeAvaliacaoFields(av, activeWeights) {
 function enrichAvaliacoes(avaliacoes, activeWeights) {
   avaliacoes.forEach(av => {
     const c = computeAvaliacaoFields(av, activeWeights);
-    av.indice = c.indice;
-    av.level = c.level;
-    av.dimScores = c.dimScores;
+    av.indice = c.indice; av.level = c.level; av.dimScores = c.dimScores;
   });
   return avaliacoes;
 }
@@ -1477,24 +1471,19 @@ function enrichAvaliacoes(avaliacoes, activeWeights) {
 async function viewAvaliacao(id) {
   const rowId = 'detail-aval-' + id;
   const existing = document.getElementById(rowId);
-  if (existing) {
-    existing.classList.toggle('open');
-    return;
-  }
+  if (existing) { existing.classList.toggle('open'); return; }
   const [avaliacoes, activeWeights] = await Promise.all([api.get('avaliacoes'), api.get('active-weights')]);
   const av = avaliacoes.find(a => a.id === id);
   if (!av) return;
   enrichAvaliacoes([av], activeWeights);
 
-  const dimKeys = ['P','E','S','T','A','L'];
-  const pills = dimKeys.map(k => {
+  const pills = DIMS.map(k => {
     const s = av.dimScores && av.dimScores[k];
     const dim = DIMENSIONS_ADMIN.find(d => d.key === k);
     return `<span class="dim-pill">${dim.name}: ${s !== null && s !== undefined ? Number(s).toFixed(2) : 'N/A'}</span>`;
   }).join('');
 
   const levelColor = av.level==='Avançado'?'#15803d':av.level==='Em Desenvolvimento'?'#2563eb':av.level==='Emergente'?'#d97706':'#dc2626';
-
   const tr = document.createElement('tr');
   tr.id = rowId;
   tr.className = 'detail-row open';
@@ -1517,16 +1506,8 @@ async function viewAvaliacao(id) {
 
 function toggleNotasTable(containerId, avId, btn) {
   const container = document.getElementById(containerId);
-  if (container.style.display !== 'none') {
-    container.style.display = 'none';
-    btn.textContent = 'Ver todas as notas';
-    return;
-  }
-  if (container.dataset.rendered) {
-    container.style.display = '';
-    btn.textContent = 'Ocultar notas';
-    return;
-  }
+  if (container.style.display !== 'none') { container.style.display = 'none'; btn.textContent = 'Ver todas as notas'; return; }
+  if (container.dataset.rendered) { container.style.display = ''; btn.textContent = 'Ocultar notas'; return; }
 
   const detailRow = document.getElementById('detail-aval-' + avId);
   const av = detailRow._avData;
@@ -1537,20 +1518,14 @@ function toggleNotasTable(containerId, avId, btn) {
   DIMENSIONS_ADMIN.forEach(dim => {
     const dimWeightData = activeWeights && activeWeights.weights && activeWeights.weights[dim.key];
     const dimWeight = dimWeightData ? dimWeightData.weight : null;
-
     rows += `<tr class="dim-header"><td colspan="5">${dim.name}${dimWeight !== null ? ` — peso da dimensão: ${(dimWeight*100).toFixed(1)}%` : ''}</td></tr>`;
-
     dim.indicators.forEach(ind => {
       const rawVal = answers[ind.id];
       const indWeightData = dimWeightData && dimWeightData.indicators && dimWeightData.indicators[ind.id];
       const indWeight = indWeightData ? indWeightData.weight : null;
-
       const notaBruta = rawVal === undefined ? '—' : rawVal === 'NA' ? 'N/A' : rawVal;
       const notaBrutaClass = rawVal === undefined || rawVal === 'NA' ? 'nota-na' : 'nota-bruta';
-      const notaPond = (rawVal !== undefined && rawVal !== 'NA' && indWeight !== null)
-        ? (rawVal * indWeight).toFixed(3)
-        : '—';
-
+      const notaPond = (rawVal !== undefined && rawVal !== 'NA' && indWeight !== null) ? (rawVal * indWeight).toFixed(3) : '—';
       rows += `<tr>
         <td style="color:var(--text-sec);font-size:11px;">${ind.id}</td>
         <td>${ind.name}</td>
@@ -1561,33 +1536,22 @@ function toggleNotasTable(containerId, avId, btn) {
     });
   });
 
-  container.innerHTML = `<div class="notas-table-wrap">
-    <table class="notas-table">
-      <thead><tr>
-        <th>ID</th><th>Indicador</th><th>Nota Bruta</th><th>Peso Ind.</th><th>Nota Ponderada</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
-  </div>`;
+  container.innerHTML = `<div class="notas-table-wrap"><table class="notas-table"><thead><tr><th>ID</th><th>Indicador</th><th>Nota Bruta</th><th>Peso Ind.</th><th>Nota Ponderada</th></tr></thead><tbody>${rows}</tbody></table></div>`;
   container.dataset.rendered = '1';
   container.style.display = '';
   btn.textContent = 'Ocultar notas';
 }
 
 async function exportAllData() {
-  const [calibracoes, avaliacoes, pesoAtivo] = await Promise.all([
-    api.get('calibrations'), api.get('avaliacoes'), api.get('active-weights')
-  ]);
+  const [calibracoes, avaliacoes, pesoAtivo] = await Promise.all([api.get('calibrations'), api.get('avaliacoes'), api.get('active-weights')]);
   const data = { calibracoes, avaliacoes, pesoAtivo, exportDate: new Date().toISOString() };
-
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
   a.download = 'matrizahp_dados_completos_' + new Date().toISOString().slice(0, 10) + '.json';
   a.click();
 }
 
-// Init
+// ===== INIT =====
 loadPesosTab();
 showActiveVersion();
 loadRelatoriosTab();

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Comparação de Relevâncias</title>
+<title>Comparação de Relevâncias (Dash01)</title>
 <link rel="icon" type="image/png" href="../assets/logo.png"/>
 <style>
 :root {
@@ -182,6 +182,52 @@ body {
   font-size: 12px;
   color: var(--text-sec);
   line-height: 1.5;
+}
+.ref-box-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  gap: 8px;
+}
+.ref-box-names {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+.ref-box-name-tag {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary);
+}
+.ref-box-vs {
+  font-size: 11px;
+  color: var(--text-sec);
+  flex-shrink: 0;
+}
+.ref-box-expand {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--primary);
+  background: none;
+  border: 1px solid var(--primary-ring);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 2px 8px;
+  font-family: inherit;
+  flex-shrink: 0;
+  white-space: nowrap;
+  transition: background .15s;
+}
+.ref-box-expand:hover { background: rgba(37,99,235,.1); }
+.ref-box-details {
+  margin-top: 10px;
+  display: none;
 }
 
 .q-block-tag {
@@ -436,7 +482,7 @@ body {
   <div class="header-left">
     <img src="../assets/logo.png" alt="Logo" style="width:44px;height:44px;flex-shrink:0;"/>
     <div class="header-text">
-      <div class="header-title">Comparação de Relevâncias</div>
+      <div class="header-title">Comparação de Relevâncias (Dash01)</div>
       <div class="header-sub">Índice de Maturidade Municipal UAM</div>
     </div>
   </div>
@@ -462,7 +508,7 @@ body {
       <span class="intro-badge">Comparação de Relevâncias</span>
       <h1 class="intro-title">Comparação de Relevâncias para o Índice UAM</h1>
       <p class="intro-desc">
-        Esta ferramenta captura a importância relativa das <strong>6 dimensões PESTEL</strong> e dos <strong>24 indicadores</strong> que compõem o Índice de Maturidade Municipal para Mobilidade Aérea Urbana.
+        Esta ferramenta captura a importância relativa das <strong>dimensões PESTEL</strong> que compõem o Índice de Maturidade Municipal para Mobilidade Aérea Urbana.
       </p>
       <div class="intro-fields">
         <div class="field-group">
@@ -518,42 +564,12 @@ body {
 
 <script>
 const DIMENSIONS = [
-  { key: 'P', name: 'Política', indicators: [
-    { id: 'P1', name: 'Governança institucional', desc: 'Estrutura administrativa e liderança para condução do tema UAM no município.' },
-    { id: 'P2', name: 'Articulação interinstitucional', desc: 'Capacidade de articulação com ANAC, DECEA e outros órgãos reguladores.' },
-    { id: 'P3', name: 'Integração ao planejamento urbano', desc: 'Inserção da UAM em planos diretores, PDMobs e instrumentos urbanísticos.' },
-    { id: 'P4', name: 'Capacidade técnica institucional', desc: 'Corpo técnico qualificado, capacitação continuada e gestão do conhecimento para condução de projetos UAM.' }
-  ]},
-  { key: 'E', name: 'Econômica', indicators: [
-    { id: 'E1', name: 'Demanda funcional potencial', desc: 'Fluxos de deslocamento e acessibilidade compatíveis com UAM.' },
-    { id: 'E2', name: 'Atratividade para investimentos', desc: 'Capacidade de atrair capital privado, operadores e fabricantes.' },
-    { id: 'E3', name: 'Capacidade de financiamento', desc: 'Disponibilidade de recursos públicos e instrumentos financeiros.' },
-    { id: 'E4', name: 'Aderência a casos de uso', desc: 'Alinhamento com casos validados de UAM (saúde, logística, transporte).' }
-  ]},
-  { key: 'S', name: 'Social', indicators: [
-    { id: 'S1', name: 'Aceitação pública', desc: 'Receptividade da população local a operações de UAM.' },
-    { id: 'S2', name: 'Percepção de segurança', desc: 'Confiança na segurança operacional e percepção de risco.' },
-    { id: 'S3', name: 'Externalidades sociais', desc: 'Impactos sociais percebidos: emprego, ruído, privacidade.' },
-    { id: 'S4', name: 'Equidade e acessibilidade', desc: 'Distribuição dos benefícios e inclusão social.' }
-  ]},
-  { key: 'T', name: 'Tecnológica', indicators: [
-    { id: 'T1', name: 'Gestão do espaço aéreo', desc: 'Integração com controle de tráfego aéreo e UTM.' },
-    { id: 'T2', name: 'Comunicação, navegação e vigilância', desc: 'Infraestrutura CNS adequada a operações urbanas.' },
-    { id: 'T3', name: 'Infraestrutura energética', desc: 'Capacidade da rede elétrica para recarga de eVTOL.' },
-    { id: 'T4', name: 'Aptidão para vertiportos', desc: 'Viabilidade física e integração urbana de vertiportos.' }
-  ]},
-  { key: 'A', name: 'Ambiental', indicators: [
-    { id: 'A1', name: 'Eficiência energética e emissões', desc: 'Consumo e emissões comparados aos modos substituídos.' },
-    { id: 'A2', name: 'Poluição sonora', desc: 'Impacto do ruído de operações no ambiente urbano.' },
-    { id: 'A3', name: 'Uso do solo', desc: 'Compatibilidade territorial e impactos ambientais locais.' },
-    { id: 'A4', name: 'Resiliência ambiental', desc: 'Operação sob condições climáticas adversas.' }
-  ]},
-  { key: 'L', name: 'Legal', indicators: [
-    { id: 'L1', name: 'Legislação urbanística', desc: 'Adequação às normas de uso do solo e zoneamento.' },
-    { id: 'L2', name: 'Regulação aeronáutica', desc: 'Compatibilidade com normativas ANAC e DECEA.' },
-    { id: 'L3', name: 'Licenciamento ambiental', desc: 'Processos de aprovação e controle ambiental.' },
-    { id: 'L4', name: 'Responsabilidade civil', desc: 'Existência de arcabouço jurídico de riscos e responsabilidades.' }
-  ]}
+  { key: 'P', name: 'Política',    desc: 'Reflete a capacidade institucional do município de estruturar e coordenar a mobilidade aérea urbana como política pública. A governança e a articulação institucional são determinantes para a viabilização de sistemas complexos de mobilidade.' },
+  { key: 'E', name: 'Econômica',   desc: 'Avalia a viabilidade financeira da UAM, considerando demanda e capacidade de investimento. A adoção depende de casos de uso específicos e economicamente justificáveis.' },
+  { key: 'S', name: 'Social',      desc: 'Trata da aceitação pública e dos impactos percebidos. Segurança e ruído são fatores críticos para a adoção da mobilidade aérea urbana.' },
+  { key: 'T', name: 'Tecnológica', desc: 'Envolve os requisitos operacionais e infraestruturais da UAM, com destaque para a integração entre sistemas aeronáuticos e urbanos.' },
+  { key: 'A', name: 'Ambiental',   desc: 'Trata dos impactos e da sustentabilidade da UAM. Os efeitos são multidimensionais e interdependentes, abrangendo emissões, ruído e uso do solo.' },
+  { key: 'L', name: 'Legal',       desc: 'Refere-se ao conjunto normativo que viabiliza a operação da UAM. A clareza regulatória é essencial para atração de investimentos e segurança operacional.' }
 ];
 
 const COMPARISON_OPTIONS = [
@@ -571,8 +587,7 @@ const state = {
   screens: [],
   idx: -1,
   answers: {
-    dimensions: { reference: null, comparisons: {} },
-    indicators: {}
+    dimensions: { reference: null, comparisons: {} }
   },
   history: [],
   lastReferences: {},
@@ -583,9 +598,6 @@ const state = {
 function buildFlow() {
   const screens = [];
   screens.push({ type: 'pick', block: 'dimensions' });
-  DIMENSIONS.forEach(d => {
-    screens.push({ type: 'pick', block: d.key });
-  });
   return screens;
 }
 
@@ -635,72 +647,58 @@ function showScreen() {
 
 function renderQuestion(cur) {
   const content = document.getElementById('question-content');
-  const blockName = cur.block === 'dimensions' ? 'Dimensões PESTEL' : 'Indicadores da ' + DIMENSIONS.find(d => d.key === cur.block).name;
-
   let html = '';
+
   if (cur.type === 'pick') {
-    const items = cur.block === 'dimensions' ? DIMENSIONS : DIMENSIONS.find(d => d.key === cur.block).indicators;
-    const blockTag = cur.block === 'dimensions' ? 'Bloco 1 de 7' : 'Bloco ' + (DIMENSIONS.findIndex(d => d.key === cur.block) + 2) + ' de 7';
     const preselected = state.lastReferences[cur.block] || null;
-
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:14px;">';
-    html += '<span class="q-block-tag" style="margin-bottom:0;">' + blockTag + ' — ' + blockName + '</span>';
-    if (cur.block !== 'dimensions') {
-      const dim = DIMENSIONS.find(d => d.key === cur.block);
-      html += '<div class="q-context" style="margin-bottom:0;"><span class="q-context-dot"></span>Dimensão ' + dim.name + '</div>';
-    }
-    html += '</div>';
-    html += '<div class="q-number">Passo 1 — Escolha o mais importante</div>';
-    html += '<div class="q-title">' + (cur.block === 'dimensions'
-      ? 'Qual destas dimensões é a mais importante para a maturidade UAM do município?'
-      : 'Dentro da dimensão ' + DIMENSIONS.find(d => d.key === cur.block).name + ', qual indicador é o mais importante?') + '</div>';
-    html += '<div class="q-hint">' + (cur.block === 'dimensions'
-      ? 'Escolha a dimensão que você considera mais determinante. Ela será a base de comparação com todas as outras.'
-      : 'Selecione o indicador mais determinante dentro desta dimensão.') + '</div>';
-
+    html += '<div class="q-number">Passo 1 — Escolha a mais importante</div>';
+    html += '<div class="q-title">Qual destas dimensões é a mais importante para a maturidade UAM do município?</div>';
+    html += '<div class="q-hint">Escolha a dimensão que você considera mais determinante. Ela será a base de comparação com todas as outras.</div>';
     html += '<div class="opt-list">';
-    items.forEach((it, i) => {
-      const id = cur.block === 'dimensions' ? it.key : it.id;
-      const label = it.name;
-      const sub = it.desc || '';
-      const selected = preselected === id ? ' selected' : '';
-      html += '<button class="opt-btn' + selected + '" onclick="selectReference(\'' + id + '\',this)">' +
+    DIMENSIONS.forEach((d, i) => {
+      const selected = preselected === d.key ? ' selected' : '';
+      html += '<button class="opt-btn' + selected + '" onclick="selectReference(\'' + d.key + '\',this)">' +
               '<div class="opt-marker">' + (i + 1) + '</div>' +
-              '<div class="opt-label"><strong>' + label + '</strong>' + (sub ? '<span class="opt-sub">' + sub + '</span>' : '') + '</div>' +
+              '<div class="opt-label"><strong>' + d.name + '</strong><span class="opt-sub">' + d.desc + '</span></div>' +
               '</button>';
     });
     html += '</div>';
+
   } else if (cur.type === 'compare') {
-    const items = cur.block === 'dimensions' ? DIMENSIONS : DIMENSIONS.find(d => d.key === cur.block).indicators;
-    const refId = cur.block === 'dimensions' ? state.answers.dimensions.reference : state.answers.indicators[cur.block].reference;
-    const refItem = items.find(i => (cur.block === 'dimensions' ? i.key : i.id) === refId);
-    const compItem = items.find(i => (cur.block === 'dimensions' ? i.key : i.id) === cur.item);
-
-    const blockScreens = state.screens.filter(s => s.block === cur.block);
-    const compScreens = blockScreens.filter(s => s.type === 'compare');
+    const refId   = state.answers.dimensions.reference;
+    const refItem  = DIMENSIONS.find(d => d.key === refId);
+    const compItem = DIMENSIONS.find(d => d.key === cur.item);
+    const compScreens = state.screens.filter(s => s.block === 'dimensions' && s.type === 'compare');
     const curCompIndex = compScreens.findIndex(s => s.item === cur.item);
-    const blockTag = cur.block === 'dimensions' ? 'Bloco 1 de 7' : 'Bloco ' + (DIMENSIONS.findIndex(d => d.key === cur.block) + 2) + ' de 7';
 
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:14px;">';
-    html += '<span class="q-block-tag" style="margin-bottom:0;">' + blockTag + ' — ' + blockName + '</span>';
-    if (cur.block !== 'dimensions') {
-      const dim = DIMENSIONS.find(d => d.key === cur.block);
-      html += '<div class="q-context" style="margin-bottom:0;"><span class="q-context-dot"></span>Dimensão ' + dim.name + '</div>';
-    }
-    html += '</div>';
     html += '<div class="q-number">Comparação ' + (curCompIndex + 1) + ' de ' + compScreens.length + '</div>';
-    html += '<div class="q-title">Comparada com <span style="color:var(--primary)">' + refItem.name + '</span>, como você avalia <span style="color:var(--primary)">' + compItem.name + '</span>?</div>';
-    html += '<div class="q-hint"><strong>' + refItem.name + '</strong> foi escolhido como o mais importante. Indique o quão menos importante é <strong>' + compItem.name + '</strong> em relação a ele.</div>';
+    html += '<div class="q-title">Comparada com a dimensão <span style="color:var(--primary)">' + refItem.name +
+            '</span>, como você avalia a dimensão <span style="color:var(--primary)">' + compItem.name +
+            '</span> para a maturidade da UAM no município?</div>';
+    html += '<div class="q-hint"><strong>' + refItem.name + '</strong> foi escolhida como a mais importante. Indique o quão menos importante é <strong>' + compItem.name + '</strong> em relação a ela.</div>';
 
-    if (refItem) {
-      html += '<div class="ref-box">' +
-              '<div class="ref-box-title">' + refItem.name + '</div>' +
-              '<div class="ref-box-desc">' + (refItem.desc || refItem.hint || '') + '</div>' +
-              '</div>';
-    }
+    html += '<div class="ref-box">' +
+              '<div class="ref-box-toggle-row" onclick="toggleRefBox(this)">' +
+                '<div class="ref-box-names">' +
+                  '<span class="ref-box-name-tag">' + refItem.name + '</span>' +
+                  '<span class="ref-box-vs">vs</span>' +
+                  '<span class="ref-box-name-tag">' + compItem.name + '</span>' +
+                '</div>' +
+                '<button class="ref-box-expand" type="button">▾ Ver definições</button>' +
+              '</div>' +
+              '<div class="ref-box-details">' +
+                '<div style="border-top:1px solid var(--primary-ring);margin:8px 0;"></div>' +
+                '<div class="ref-box-label">Dimensão de referência</div>' +
+                '<div class="ref-box-title">' + refItem.name + '</div>' +
+                '<div class="ref-box-desc">' + refItem.desc + '</div>' +
+                '<hr style="border:none;border-top:1px solid var(--primary-ring);margin:10px 0;"/>' +
+                '<div class="ref-box-label">Dimensão comparada</div>' +
+                '<div class="ref-box-title">' + compItem.name + '</div>' +
+                '<div class="ref-box-desc">' + compItem.desc + '</div>' +
+              '</div>' +
+            '</div>';
 
     const curChoice = state.lastComparisons[cur.block] && state.lastComparisons[cur.block][cur.item];
-
     html += '<div class="opt-list">';
     COMPARISON_OPTIONS.forEach((opt, i) => {
       const selected = curChoice === opt.id ? ' selected' : '';
@@ -729,19 +727,10 @@ function selectReference(id, btnEl) {
     pushHistory();
     const cur = state.screens[state.idx];
     state.lastReferences[cur.block] = id;
-    if (cur.block === 'dimensions') {
-      state.answers.dimensions.reference = id;
-      const others = DIMENSIONS.filter(d => d.key !== id).map(d => d.key);
-      const compareScreens = others.map(k => ({ type: 'compare', block: 'dimensions', item: k }));
-      state.screens.splice(state.idx + 1, 0, ...compareScreens);
-    } else {
-      const dim = DIMENSIONS.find(d => d.key === cur.block);
-      state.answers.indicators[cur.block] = state.answers.indicators[cur.block] || { reference: null, comparisons: {} };
-      state.answers.indicators[cur.block].reference = id;
-      const others = dim.indicators.filter(ind => ind.id !== id).map(ind => ind.id);
-      const compareScreens = others.map(ind => ({ type: 'compare', block: cur.block, item: ind }));
-      state.screens.splice(state.idx + 1, 0, ...compareScreens);
-    }
+    state.answers.dimensions.reference = id;
+    const others = DIMENSIONS.filter(d => d.key !== id).map(d => d.key);
+    const compareScreens = others.map(k => ({ type: 'compare', block: 'dimensions', item: k }));
+    state.screens.splice(state.idx + 1, 0, ...compareScreens);
     advance();
   };
   animateTransition(doWork);
@@ -761,12 +750,7 @@ function selectComparison(optionId, btnEl) {
     const cur = state.screens[state.idx];
     state.lastComparisons[cur.block] = state.lastComparisons[cur.block] || {};
     state.lastComparisons[cur.block][cur.item] = optionId;
-    if (cur.block === 'dimensions') {
-      state.answers.dimensions.comparisons[cur.item] = optionId;
-    } else {
-      state.answers.indicators[cur.block] = state.answers.indicators[cur.block] || { reference: null, comparisons: {} };
-      state.answers.indicators[cur.block].comparisons[cur.item] = optionId;
-    }
+    state.answers.dimensions.comparisons[cur.item] = optionId;
     advance();
   };
   animateTransition(doWork);
@@ -825,19 +809,13 @@ function updateProgress() {
     document.getElementById('progressFill').style.width = '100%';
     return;
   }
-  const cur = state.screens[state.idx];
-  const blockName = cur.block === 'dimensions' ? 'Dimensões PESTEL' : 'Indicadores da ' + DIMENSIONS.find(d => d.key === cur.block).name;
-  document.getElementById('blockLabel').textContent = blockName;
-
+  document.getElementById('blockLabel').textContent = 'Dimensões PESTEL';
   const totalScreens = state.screens.length;
   const pct = (state.idx / totalScreens) * 100;
   state.maxProgress = Math.max(state.maxProgress, pct);
   document.getElementById('progressFill').style.width = state.maxProgress + '%';
   document.getElementById('stepCounter').textContent = 'Pergunta ' + (state.idx + 1) + ' de ' + totalScreens;
-
-  const blockScreens = state.screens.filter(s => s.block === cur.block);
-  const posInBlock = blockScreens.indexOf(cur) + 1;
-  document.getElementById('blockCounter').textContent = posInBlock + '/' + blockScreens.length;
+  document.getElementById('blockCounter').textContent = '';
 }
 
 function computeWeights(referenceId, items, comparisons, idKey) {
@@ -882,31 +860,12 @@ function saveCalibration() {
     'key'
   );
 
-  const indResults = {};
-  DIMENSIONS.forEach(d => {
-    const ans = state.answers.indicators[d.key];
-    if (!ans || !ans.reference) return;
-    indResults[d.key] = {
-      weights: computeWeights(ans.reference, d.indicators, ans.comparisons, 'id'),
-      cr: computeCR(ans.reference, d.indicators, ans.comparisons, 'id')
-    };
-  });
-
   const dims = {};
   DIMENSIONS.forEach(d => {
-    const ind = indResults[d.key];
     dims[d.key] = {
       name: d.name,
-      weight: +((dimResult.normalized[d.key] || 0).toFixed(4)),
-      indicators: {}
+      weight: +((dimResult.normalized[d.key] || 0).toFixed(4))
     };
-    d.indicators.forEach(i => {
-      dims[d.key].indicators[i.id] = {
-        name: i.name,
-        weight: +(((ind && ind.weights.normalized[i.id]) || 0).toFixed(4)),
-        effective: +((((dimResult.normalized[d.key] || 0) * ((ind && ind.weights.normalized[i.id]) || 0))).toFixed(4))
-      };
-    });
   });
 
   const calibrationData = {
@@ -937,7 +896,7 @@ function resetAll() {
   state.finishedAt = null;
   state.screens = [];
   state.idx = -1;
-  state.answers = { dimensions: { reference: null, comparisons: {} }, indicators: {} };
+  state.answers = { dimensions: { reference: null, comparisons: {} } };
   state.history = [];
   state.lastReferences = {};
   state.lastComparisons = {};
@@ -949,7 +908,7 @@ function resetAll() {
 function goBackToIntro() {
   state.screens = [];
   state.idx = -1;
-  state.answers = { dimensions: { reference: null, comparisons: {} }, indicators: {} };
+  state.answers = { dimensions: { reference: null, comparisons: {} } };
   state.history = [];
   state.lastReferences = {};
   state.lastComparisons = {};
@@ -959,6 +918,14 @@ function goBackToIntro() {
   document.getElementById('f-formacao').value = state.respondent.formacao;
   document.getElementById('f-municipio').value = state.respondent.municipio;
   showScreen();
+}
+
+function toggleRefBox(rowEl) {
+  const details = rowEl.parentElement.querySelector('.ref-box-details');
+  const btn = rowEl.querySelector('.ref-box-expand');
+  const isOpen = details.style.display === 'block';
+  details.style.display = isOpen ? 'none' : 'block';
+  btn.textContent = isOpen ? '▾ Ver definições' : '▴ Ocultar';
 }
 
 updateProgress();
