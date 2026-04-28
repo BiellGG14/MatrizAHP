@@ -470,7 +470,7 @@ body {
       </div>
 
       <!-- CONTROLE DE SÉRIES -->
-      <div style="margin-top:16px;">
+      <div id="filter-series-wrap" style="margin-top:16px;">
         <div style="font-size:11px;font-weight:700;color:var(--text-sec);margin-bottom:6px;">
           SÉRIES DO GRÁFICO
         </div>
@@ -538,40 +538,9 @@ body {
             <tbody id="d01-tbody"></tbody>
           </table>
         </div>
-</div>
-    <!-- <div class="card">
-      <div class="rel-chart-tabs">
-        <button class="rel-chart-tab active" onclick="switchD01View('bars', this)">Comparação entre Calibrações</button>
-        <button class="rel-chart-tab" onclick="switchD01View('formacao', this)">Por Formação</button>
-        <button class="rel-chart-tab" onclick="switchD01View('tabela', this)">Tabela Detalhada</button>
       </div>
 
-      <div id="d01-view-bars" class="rel-chart-view active">
-        <div class="rel-section-title">Pesos por Dimensão — Média e Calibrações Individuais</div>
-        <div class="rel-canvas-wrap"><canvas id="d01-chart-bars"></canvas></div>
-      </div>
-
-      <div id="d01-view-formacao" class="rel-chart-view">
-        <div class="rel-section-title">Pesos Médios por Área de Formação dos Respondentes</div>
-        <div id="d01-formacao-note" style="font-size:12px;color:var(--text-sec);margin-bottom:12px;"></div>
-        <div class="rel-canvas-wrap"><canvas id="d01-chart-formacao"></canvas></div>
-      </div>
-
-      <div id="d01-view-tabela" class="rel-chart-view">
-        <div class="rel-section-title">Detalhamento por Calibração</div>
-        <div style="overflow-x:auto;">
-          <table class="table" id="d01-table">
-            <thead><tr>
-              <th>Data</th><th>Respondente</th><th>Formação</th>
-              <th>P</th><th>E</th><th>S</th><th>T</th><th>A</th><th>L</th>
-            </tr></thead>
-            <tbody id="d01-tbody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div> -->
-
-    <div style="display:flex;gap:10px;">
+    <div style="display:flex;gap:10px;margin-top:4px;">
       <button class="btn btn-ghost" onclick="exportD01CSV()">Exportar CSV</button>
     </div>
   </div>
@@ -1261,15 +1230,93 @@ async function excluirCalibracao(id, event) {
 }
 
 // ===== RELATÓRIOS DASH 01 =====
+let _d01ActiveSeries = new Set(['media']);
+
 async function loadRelatoriosD01Tab() {
   _d01Calibrations = await api.get('calibrations');
+  _d01ActiveSeries = new Set(['media']); // apenas Média Geral ativa por padrão
+  renderD01Stats();
+  renderD01DimBars();
+  buildD01Filters();
+  renderD01CurrentView();
+  renderD01Table();
+}
+
+// Retorna apenas as calibrações que passam pelos filtros de Formação e Instituição
+function getD01FilteredCals() {
+  const checkedFormacoes = Array.from(document.querySelectorAll('#filter-formacao input:checked')).map(i => i.value);
+  const checkedInst = Array.from(document.querySelectorAll('#filter-instituicao input:checked')).map(i => i.value);
+  if (!checkedFormacoes.length && !checkedInst.length) return _d01Calibrations;
+  return _d01Calibrations.filter(c => {
+    const f = c.respondent.formacao || 'Não informado';
+    const inst = c.respondent.institution || 'Não informado';
+    const passF = !checkedFormacoes.length || checkedFormacoes.includes(f);
+    const passI = !checkedInst.length || checkedInst.includes(inst);
+    return passF && passI;
+  });
+}
+
+function buildD01Filters() {
+  const cals = _d01Calibrations;
+
+  // Formação
+  const formacoes = [...new Set(cals.map(c => c.respondent.formacao || 'Não informado'))].sort();
+  document.getElementById('filter-formacao').innerHTML = formacoes.length
+    ? formacoes.map(f => `<label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:4px;cursor:pointer;"><input type="checkbox" value="${f}" checked onchange="applyD01Filters()"> ${f}</label>`).join('')
+    : '<span style="font-size:12px;color:var(--text-sec);">Nenhuma formação registrada.</span>';
+
+  // Instituição
+  const insts = [...new Set(cals.map(c => c.respondent.institution || '').filter(Boolean))].sort();
+  document.getElementById('filter-instituicao').innerHTML = insts.length
+    ? insts.map(i => `<label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:4px;cursor:pointer;"><input type="checkbox" value="${i}" checked onchange="applyD01Filters()"> ${i}</label>`).join('')
+    : '<span style="font-size:12px;color:var(--text-sec);">Nenhuma instituição registrada.</span>';
+
+  buildD01SeriesChips();
+}
+
+function buildD01SeriesChips() {
+  const cals = getD01FilteredCals();
+  const container = document.getElementById('filter-series');
+  container.innerHTML = '';
+
+  // Chip: Média Geral (sempre presente)
+  const mediaActive = _d01ActiveSeries.has('media');
+  const mediaChip = document.createElement('div');
+  mediaChip.style.cssText = `display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;border:1.5px solid #2563eb;${mediaActive ? 'background:#2563eb;color:#fff;' : 'background:#eff6ff;color:#2563eb;'}`;
+  mediaChip.textContent = 'Média Geral';
+  mediaChip.onclick = () => toggleD01Series('media');
+  container.appendChild(mediaChip);
+
+  // Chips por calibração
+  cals.forEach((cal, i) => {
+    const color = CHART_PALETTE[(i + 1) % CHART_PALETTE.length];
+    const isActive = _d01ActiveSeries.has(cal.id);
+    const chip = document.createElement('div');
+    chip.style.cssText = `display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;border:1.5px solid ${color};${isActive ? `background:${color};color:#fff;` : `background:${color}22;color:${color};`}`;
+    chip.textContent = cal.respondent.name.split(' ')[0] + (cal.respondent.formacao ? ' (' + cal.respondent.formacao.split(' ')[0] + ')' : '');
+    chip.onclick = () => toggleD01Series(cal.id);
+    container.appendChild(chip);
+  });
+}
+
+function toggleD01Series(seriesId) {
+  if (_d01ActiveSeries.has(seriesId)) _d01ActiveSeries.delete(seriesId);
+  else _d01ActiveSeries.add(seriesId);
+  buildD01SeriesChips();
+  if (_d01CurrentView === 'bars') renderD01BarsChart();
+}
+
+function applyD01Filters() {
+  _d01ActiveSeries = new Set(['media']); // reseta séries ao filtrar
+  buildD01SeriesChips();
   renderD01Stats();
   renderD01DimBars();
   renderD01CurrentView();
+  renderD01Table();
 }
 
 function renderD01Stats() {
-  const cals = _d01Calibrations;
+  const cals = getD01FilteredCals();
   const statsEl = document.getElementById('d01-stats');
   if (!cals.length) {
     statsEl.innerHTML = '<div class="rel-stat-card"><div class="rel-stat-label">Calibrações</div><div class="rel-stat-value">0</div></div>';
@@ -1311,7 +1358,7 @@ function renderD01Stats() {
 }
 
 function renderD01DimBars() {
-  const cals = _d01Calibrations;
+  const cals = getD01FilteredCals();
   const container = document.getElementById('d01-dim-bars');
   if (!cals.length) { container.innerHTML = '<p style="color:var(--text-sec);">Nenhuma calibração disponível.</p>'; return; }
   container.innerHTML = DIMS.map(d => {
@@ -1334,32 +1381,46 @@ function switchD01View(view, btn) {
   btn.classList.add('active');
   document.querySelectorAll('#tab-relatorios-d01 .rel-chart-view').forEach(v => v.classList.remove('active'));
   document.getElementById('d01-view-' + view).classList.add('active');
+  // "Séries do Gráfico" só faz sentido na aba Comparação
+  document.getElementById('filter-series-wrap').style.display = view === 'bars' ? '' : 'none';
   renderD01CurrentView();
 }
 
 function renderD01CurrentView() {
   if (_d01CurrentView === 'bars') renderD01BarsChart();
   else if (_d01CurrentView === 'formacao') renderD01FormacaoChart();
-  else if (_d01CurrentView === 'tabela') renderD01Table();
 }
 
 function renderD01BarsChart() {
-  const cals = _d01Calibrations;
+  const cals = getD01FilteredCals();
   if (!cals.length) return;
+
   const avgData = DIMS.map(d => {
     const ws = cals.map(c => (c.weights && c.weights[d] && c.weights[d].weight) || 0);
     return +(ws.reduce((a,b) => a+b, 0) / ws.length * 100).toFixed(1);
   });
+
   const datasets = [
-    { label: 'Média Geral', data: avgData, backgroundColor: '#2563ebcc', borderColor: '#1d4ed8', borderWidth: 2, borderRadius: 4 },
+    {
+      label: 'Média Geral',
+      data: avgData,
+      backgroundColor: '#2563ebcc',
+      borderColor: '#1d4ed8',
+      borderWidth: 2,
+      borderRadius: 4,
+      hidden: !_d01ActiveSeries.has('media'),
+    },
     ...cals.map((cal, i) => ({
       label: cal.respondent.name.split(' ')[0] + (cal.respondent.formacao ? ' (' + cal.respondent.formacao.split(' ')[0] + ')' : ''),
       data: DIMS.map(d => +((cal.weights && cal.weights[d] && cal.weights[d].weight || 0) * 100).toFixed(1)),
       backgroundColor: CHART_PALETTE[(i+1) % CHART_PALETTE.length] + '55',
       borderColor: CHART_PALETTE[(i+1) % CHART_PALETTE.length],
-      borderWidth: 1.5, borderRadius: 2,
+      borderWidth: 1.5,
+      borderRadius: 2,
+      hidden: !_d01ActiveSeries.has(cal.id),
     }))
   ];
+
   if (_d01ChartBars) _d01ChartBars.destroy();
   _d01ChartBars = new Chart(document.getElementById('d01-chart-bars'), {
     type: 'bar',
@@ -1367,13 +1428,16 @@ function renderD01BarsChart() {
     options: {
       responsive: true, maintainAspectRatio: false,
       scales: { y: { min: 0, max: 60, ticks: { callback: v => v + '%' } } },
-      plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + '%' } } }
+      plugins: {
+        legend: { display: false }, // legenda controlada pelos chips
+        tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + '%' } }
+      }
     }
   });
 }
 
 function renderD01FormacaoChart() {
-  const cals = _d01Calibrations;
+  const cals = getD01FilteredCals();
   if (!cals.length) return;
   const formacoes = [...new Set(cals.map(c => c.respondent.formacao || 'Não informado'))];
   const note = document.getElementById('d01-formacao-note');
@@ -1381,7 +1445,7 @@ function renderD01FormacaoChart() {
   if (formacoes.length <= 1) {
     note.textContent = formacoes.length === 0
       ? 'Nenhuma formação registrada nas calibrações.'
-      : 'Apenas uma área de formação nas calibrações (' + formacoes[0] + '). Adicione respondentes de outras áreas para habilitar a comparação.';
+      : 'Apenas uma área de formação (' + formacoes[0] + '). Adicione respondentes de outras áreas para comparação.';
     document.getElementById('d01-chart-formacao').style.display = 'none';
     return;
   }
@@ -1412,7 +1476,7 @@ function renderD01FormacaoChart() {
 }
 
 function renderD01Table() {
-  const cals = _d01Calibrations;
+  const cals = getD01FilteredCals();
   const tbody = document.getElementById('d01-tbody');
   if (!cals.length) {
     tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--text-sec);">Nenhuma calibração disponível.</td></tr>';
