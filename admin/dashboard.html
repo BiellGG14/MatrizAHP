@@ -469,9 +469,9 @@ body {
 
       </div>
 
-      <!-- CONTROLE DE SÉRIES -->
+      <!-- CONTROLE DE SÉRIES / FORMAÇÕES -->
       <div id="filter-series-wrap" style="margin-top:16px;">
-        <div style="font-size:11px;font-weight:700;color:var(--text-sec);margin-bottom:6px;">
+        <div id="filter-series-label" style="font-size:11px;font-weight:700;color:var(--text-sec);margin-bottom:6px;">
           SÉRIES DO GRÁFICO
         </div>
 
@@ -1231,6 +1231,7 @@ async function excluirCalibracao(id, event) {
 
 // ===== RELATÓRIOS DASH 01 =====
 let _d01ActiveSeries = new Set(['media']);
+let _d01ActiveFormacoes = new Set();
 
 async function loadRelatoriosD01Tab() {
   _d01Calibrations = await api.get('calibrations');
@@ -1261,14 +1262,15 @@ function buildD01Filters() {
 
   // Formação
   const formacoes = [...new Set(cals.map(c => c.respondent.formacao || 'Não informado'))].sort();
+  _d01ActiveFormacoes = new Set(formacoes);
   document.getElementById('filter-formacao').innerHTML = formacoes.length
-    ? formacoes.map(f => `<label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:4px;cursor:pointer;"><input type="checkbox" value="${f}" checked onchange="applyD01Filters()"> ${f}</label>`).join('')
+    ? '<div class="rel-checkbox-group">' + formacoes.map(f => `<label><input type="checkbox" value="${f}" checked onchange="applyD01Filters()"> ${f}</label>`).join('') + '</div>'
     : '<span style="font-size:12px;color:var(--text-sec);">Nenhuma formação registrada.</span>';
 
   // Instituição
   const insts = [...new Set(cals.map(c => c.respondent.institution || '').filter(Boolean))].sort();
   document.getElementById('filter-instituicao').innerHTML = insts.length
-    ? insts.map(i => `<label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:4px;cursor:pointer;"><input type="checkbox" value="${i}" checked onchange="applyD01Filters()"> ${i}</label>`).join('')
+    ? '<div class="rel-checkbox-group">' + insts.map(i => `<label><input type="checkbox" value="${i}" checked onchange="applyD01Filters()"> ${i}</label>`).join('') + '</div>'
     : '<span style="font-size:12px;color:var(--text-sec);">Nenhuma instituição registrada.</span>';
 
   buildD01SeriesChips();
@@ -1306,9 +1308,38 @@ function toggleD01Series(seriesId) {
   if (_d01CurrentView === 'bars') renderD01BarsChart();
 }
 
+function buildD01FormacaoChips() {
+  const cals = getD01FilteredCals();
+  const container = document.getElementById('filter-series');
+  container.innerHTML = '';
+  const formacoes = [...new Set(cals.map(c => c.respondent.formacao || 'Não informado'))].sort();
+  formacoes.forEach((f, i) => {
+    const color = CHART_PALETTE[i % CHART_PALETTE.length];
+    const isActive = _d01ActiveFormacoes.has(f);
+    const chip = document.createElement('div');
+    chip.style.cssText = `display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;border:1.5px solid ${color};${isActive ? `background:${color};color:#fff;` : `background:${color}22;color:${color};`}`;
+    chip.textContent = f;
+    chip.onclick = () => toggleD01Formacao(f);
+    container.appendChild(chip);
+  });
+}
+
+function toggleD01Formacao(f) {
+  if (_d01ActiveFormacoes.has(f)) {
+    if (_d01ActiveFormacoes.size > 1) _d01ActiveFormacoes.delete(f);
+  } else {
+    _d01ActiveFormacoes.add(f);
+  }
+  buildD01FormacaoChips();
+  renderD01FormacaoChart();
+}
+
 function applyD01Filters() {
   _d01ActiveSeries = new Set(['media']); // reseta séries ao filtrar
-  buildD01SeriesChips();
+  const filteredCals = getD01FilteredCals();
+  _d01ActiveFormacoes = new Set(filteredCals.map(c => c.respondent.formacao || 'Não informado'));
+  if (_d01CurrentView === 'bars') buildD01SeriesChips();
+  else buildD01FormacaoChips();
   renderD01Stats();
   renderD01DimBars();
   renderD01CurrentView();
@@ -1381,8 +1412,13 @@ function switchD01View(view, btn) {
   btn.classList.add('active');
   document.querySelectorAll('#tab-relatorios-d01 .rel-chart-view').forEach(v => v.classList.remove('active'));
   document.getElementById('d01-view-' + view).classList.add('active');
-  // "Séries do Gráfico" só faz sentido na aba Comparação
-  document.getElementById('filter-series-wrap').style.display = view === 'bars' ? '' : 'none';
+  if (view === 'bars') {
+    document.getElementById('filter-series-label').textContent = 'SÉRIES DO GRÁFICO';
+    buildD01SeriesChips();
+  } else {
+    document.getElementById('filter-series-label').textContent = 'FORMAÇÕES DO GRÁFICO';
+    buildD01FormacaoChips();
+  }
   renderD01CurrentView();
 }
 
@@ -1452,13 +1488,16 @@ function renderD01FormacaoChart() {
   note.textContent = '';
   document.getElementById('d01-chart-formacao').style.display = '';
 
-  const datasets = formacoes.map((formacao, i) => {
+  const activeFormacoes = formacoes.filter(f => _d01ActiveFormacoes.has(f));
+  if (!activeFormacoes.length) return;
+  const datasets = activeFormacoes.map((formacao, i) => {
+    const fi = formacoes.indexOf(formacao);
     const group = cals.filter(c => (c.respondent.formacao || 'Não informado') === formacao);
     return {
       label: formacao + ' (n=' + group.length + ')',
       data: DIMS.map(d => { const ws = group.map(c => (c.weights && c.weights[d] && c.weights[d].weight) || 0); return +(ws.reduce((a,b)=>a+b,0)/ws.length*100).toFixed(1); }),
-      backgroundColor: CHART_PALETTE[i % CHART_PALETTE.length] + '99',
-      borderColor: CHART_PALETTE[i % CHART_PALETTE.length],
+      backgroundColor: CHART_PALETTE[fi % CHART_PALETTE.length] + '99',
+      borderColor: CHART_PALETTE[fi % CHART_PALETTE.length],
       borderWidth: 1.5, borderRadius: 3,
     };
   });
@@ -1475,6 +1514,14 @@ function renderD01FormacaoChart() {
   });
 }
 
+function dimHeatClass(w) {
+  if (w === undefined || w === null) return '';
+  if (w < 0.08) return 'heat-low';
+  if (w < 0.17) return 'heat-mid';
+  if (w < 0.25) return 'heat-high';
+  return 'heat-very-high';
+}
+
 function renderD01Table() {
   const cals = getD01FilteredCals();
   const tbody = document.getElementById('d01-tbody');
@@ -1484,7 +1531,11 @@ function renderD01Table() {
   }
   tbody.innerHTML = cals.map(cal => {
     const date = new Date(cal.timestamp);
-    const cells = DIMS.map(d => { const w = cal.weights && cal.weights[d] && cal.weights[d].weight; return `<td style="font-weight:700;text-align:center;">${w !== undefined ? (w*100).toFixed(1)+'%' : '—'}</td>`; }).join('');
+    const cells = DIMS.map(d => {
+      const w = cal.weights && cal.weights[d] && cal.weights[d].weight;
+      const cls = dimHeatClass(w);
+      return `<td class="${cls}" style="font-weight:700;text-align:center;">${w !== undefined ? (w*100).toFixed(1)+'%' : '—'}</td>`;
+    }).join('');
     return `<tr>
       <td>${date.toLocaleDateString('pt-BR')}</td>
       <td>${cal.respondent.name}</td>
