@@ -493,7 +493,7 @@ body {
 
 <header class="site-header">
   <div class="header-left">
-    <img src="../assets/civil.gif" alt="Engenharia Civil" style="width:44px;height:44px;flex-shrink:0;"/>
+    <img src="../assets/civil.gif" alt="Engenharia Civil" style="width:44px;height:40px;flex-shrink:0;"/>
     <div class="header-text">
       <div class="header-title">Comparação de Relevâncias (Dash01)</div>
       <div class="header-sub">Índice de Maturidade Municipal UAM</div>
@@ -583,15 +583,18 @@ body {
   </div>
 
   <div class="screen" id="screen-result">
-    <div class="result-card">
+    <div class="result-card" id="result-card">
       <div class="result-header">
-        <div class="result-check">&#10003;</div>
-        <div class="result-title">Seus resultados foram registrados com sucesso</div>
+        <div class="result-check" id="result-icon">…</div>
+        <div class="result-title" id="result-title">Salvando seus resultados…</div>
       </div>
 
-      <p class="result-sub" style="margin-bottom: 28px;">Obrigado pela sua participação.</p>
+      <p class="result-sub" id="result-sub" style="margin-bottom: 28px;">Aguarde um instante.</p>
+
+      <div id="result-error" style="display:none;background:#fee2e2;border:1px solid #fca5a5;border-radius:6px;padding:12px 14px;margin-bottom:20px;font-size:12px;color:#991b1b;line-height:1.5;"></div>
 
       <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="btn btn-primary" id="result-retry" onclick="retrySave()" style="flex: 1; justify-content: center; display:none;">Tentar novamente</button>
         <button class="btn btn-primary" onclick="resetAll()" style="flex: 1; justify-content: center;">Fechar</button>
       </div>
     </div>
@@ -602,11 +605,11 @@ body {
 <script>
 const DIMENSIONS = [
   { key: 'P', name: 'Política',    desc: 'Reflete a capacidade institucional do município de estruturar e coordenar a mobilidade aérea urbana como política pública. A governança e a articulação institucional são determinantes para a viabilização de sistemas complexos de mobilidade.' },
-  { key: 'E', name: 'Econômica',   desc: 'Examina se o município tem condições financeiras de receber e sustentar a mobilidade aérea urbana. Considera se existe demanda real de deslocamento na cidade que justifique o serviço, se o território atrai investimentos privados, se há recursos públicos ou parcerias para implantar vertiportos e infraestrutura de apoio, e se aplicações concretas — como transporte de pacientes, entregas urgentes ou conexões intermunicipais — fazem sentido econômico para a realidade local.' },
+  { key: 'E', name: 'Econômica',   desc: 'Avalia se o município tem condições financeiras de receber e sustentar a mobilidade aérea urbana. Considera se existe demanda real de deslocamento na cidade que justifique o serviço, se o território atrai investimentos privados, se há recursos públicos ou parcerias para implantar vertiportos e infraestrutura de apoio, e se aplicações concretas, como transporte de pacientes, entregas urgentes ou conexões intermunicipais, fazem sentido econômico para a realidade local.' },
   { key: 'S', name: 'Social',      desc: 'Captura como a população do município receberá a mobilidade aérea urbana no dia a dia. Envolve a disposição dos moradores em aceitar a operação dessas aeronaves no céu da cidade, a confiança na segurança do serviço, os incômodos urbanos percebidos (como ruído de sobrevoo e questões de privacidade) e se os benefícios chegarão a diferentes regiões e classes sociais, garantindo que a tecnologia não fique restrita a poucos.' },
   { key: 'T', name: 'Tecnológica', desc: 'Considera se o município possui a base técnica e a infraestrutura necessárias para suportar a mobilidade aérea urbana. Engloba a capacidade de integrar o tráfego dessas aeronaves ao espaço aéreo da cidade, a existência de sistemas urbanos de comunicação e monitoramento adequados, a robustez da rede elétrica para abastecer pontos de recarga, e a aptidão do território para receber vertiportos bem localizados e integrados ao transporte urbano existente.' },
   { key: 'A', name: 'Ambiental',   desc: 'Trata dos impactos ambientais que a mobilidade aérea urbana trará ao município. Compreende o consumo de energia e as emissões geradas pela operação na cidade, o ruído produzido sobre bairros e áreas sensíveis, a compatibilidade com áreas verdes, zonas de proteção e o uso do solo urbano, e a capacidade do sistema de operar com segurança em condições climáticas típicas da região (chuvas intensas, ventos, calor).' },
-  { key: 'L', name: 'Legal',       desc: 'Analisa o quanto o ambiente jurídico do município está preparado para receber a mobilidade aérea urbana. Inclui a compatibilidade da operação com o plano diretor e leis de uso do solo da cidade, o alinhamento com a regulação aeronáutica federal, os processos locais de licenciamento e controle ambiental, e a clareza sobre responsabilidades em caso de incidentes — o que dá segurança jurídica para operadores, gestores e cidadãos.' }
+  { key: 'L', name: 'Legal',       desc: 'Analisa o quanto o ambiente jurídico do município está preparado para receber a mobilidade aérea urbana. Inclui a compatibilidade da operação com o plano diretor e leis de uso do solo da cidade, o alinhamento com a regulação aeronáutica federal, os processos locais de licenciamento e controle ambiental, e a clareza sobre responsabilidades em caso de incidentes, o que dá segurança jurídica para operadores, gestores e cidadãos.' }
 ];
 
 const COMPARISON_OPTIONS = [
@@ -706,10 +709,12 @@ function showScreen() {
 
   if (state.idx >= state.screens.length) {
     state.finishedAt = new Date().toISOString();
-    saveCalibration();
-    renderResult();
     document.getElementById('screen-result').classList.add('active');
+    renderResult({ saving: true });
     updateProgress();
+    saveCalibration().then(res => {
+      renderResult(res && res.ok ? { ok: true } : { ok: false, error: (res && res.error) || 'Falha desconhecida' });
+    });
     return;
   }
 
@@ -926,7 +931,7 @@ function computeCR(referenceId, items, comparisons, idKey) {
   return mean > 0 ? stdev / mean : 0;
 }
 
-function saveCalibration() {
+async function saveCalibration() {
   const dimResult = computeWeights(
     state.answers.dimensions.reference,
     DIMENSIONS,
@@ -953,16 +958,71 @@ function saveCalibration() {
     rawAnswers: state.answers
   };
 
-  fetch('/api/calibrations', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(calibrationData)
-  }).catch(err => console.error('Erro ao salvar:', err));
-
   state.calibrationId = calibrationData.id;
+
+  try {
+    const response = await fetch('/api/calibrations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(calibrationData)
+    });
+    if (!response.ok) {
+      const errBody = await response.text();
+      console.error('Erro do servidor:', response.status, errBody);
+      throw new Error('Servidor retornou ' + response.status + ': ' + errBody);
+    }
+    return { ok: true };
+  } catch (err) {
+    console.error('Erro ao salvar calibração:', err);
+    return { ok: false, error: err.message || String(err) };
+  }
 }
 
-function renderResult() {}
+function renderResult(status) {
+  const icon = document.getElementById('result-icon');
+  const title = document.getElementById('result-title');
+  const sub = document.getElementById('result-sub');
+  const errBox = document.getElementById('result-error');
+  const retryBtn = document.getElementById('result-retry');
+  if (!icon) return;
+
+  if (status && status.saving) {
+    icon.textContent = '…';
+    icon.style.background = 'var(--primary-light)';
+    icon.style.color = 'var(--primary)';
+    title.textContent = 'Salvando seus resultados…';
+    sub.textContent = 'Aguarde um instante.';
+    errBox.style.display = 'none';
+    retryBtn.style.display = 'none';
+    return;
+  }
+
+  if (status && status.ok) {
+    icon.textContent = '✓';
+    icon.style.background = 'var(--success-lt)';
+    icon.style.color = 'var(--success)';
+    title.textContent = 'Seus resultados foram registrados com sucesso';
+    sub.textContent = 'Obrigado pela sua participação.';
+    errBox.style.display = 'none';
+    retryBtn.style.display = 'none';
+    return;
+  }
+
+  icon.textContent = '!';
+  icon.style.background = '#fee2e2';
+  icon.style.color = '#991b1b';
+  title.textContent = 'Não foi possível salvar seus resultados';
+  sub.textContent = 'Verifique sua conexão e tente novamente. Se o problema persistir, contate o administrador.';
+  errBox.style.display = 'block';
+  errBox.textContent = 'Detalhe técnico: ' + ((status && status.error) || 'erro desconhecido');
+  retryBtn.style.display = 'inline-flex';
+}
+
+async function retrySave() {
+  renderResult({ saving: true });
+  const res = await saveCalibration();
+  renderResult(res && res.ok ? { ok: true } : { ok: false, error: (res && res.error) || 'Falha desconhecida' });
+}
 
 function resetAll() {
   state.respondent = { name: '', institution: '', formacao: '', municipio: '', setor: '', cargo: '' };

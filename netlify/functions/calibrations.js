@@ -24,7 +24,21 @@ async function ensureTable(db) {
     raw_answers TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
-  try { await db.execute(`ALTER TABLE calibrations ADD COLUMN respondent_setor TEXT`); } catch (e) {}
+  // Migração: adiciona colunas que possam estar faltando em tabelas antigas
+  const requiredCols = [
+    'respondent_setor',
+    'respondent_cargo',
+    'respondent_formacao',
+    'respondent_municipio',
+    'respondent_institution',
+  ];
+  for (const col of requiredCols) {
+    try {
+      await db.execute(`ALTER TABLE calibrations ADD COLUMN ${col} TEXT`);
+    } catch (e) {
+      // ignora se a coluna já existir (SQLite/libsql lança erro nesse caso)
+    }
+  }
 }
 
 exports.handler = async (event) => {
