@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Comparação de Relevâncias (Dash01)</title>
-<link rel="icon" type="image/png" href="../assets/logo.png"/>
+<link rel="icon" type="image/png" href="../assets/civil.gif"/>
 <style>
 :root {
   --primary:       #2563eb;
@@ -128,7 +128,8 @@ body {
   color: var(--text);
   margin-bottom: 5px;
 }
-.field-group input {
+.field-group input,
+.field-group select {
   width: 100%;
   padding: 10px 12px;
   border: 1px solid var(--border);
@@ -140,7 +141,19 @@ body {
   font-family: inherit;
   transition: border-color .15s, box-shadow .15s;
 }
-.field-group input:focus {
+.field-group select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='%236b7280' d='M8 11L3 6h10z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 14px;
+  padding-right: 32px;
+  cursor: pointer;
+}
+.field-group input:focus,
+.field-group select:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 3px var(--primary-ring);
 }
@@ -480,7 +493,7 @@ body {
 
 <header class="site-header">
   <div class="header-left">
-    <img src="../assets/logo.png" alt="Logo" style="width:44px;height:44px;flex-shrink:0;"/>
+    <img src="../assets/civil.gif" alt="Engenharia Civil" style="width:44px;height:44px;flex-shrink:0;"/>
     <div class="header-text">
       <div class="header-title">Comparação de Relevâncias (Dash01)</div>
       <div class="header-sub">Índice de Maturidade Municipal UAM</div>
@@ -488,6 +501,7 @@ body {
   </div>
   <div class="header-right">
     <span class="step-counter" id="stepCounter">Inicio</span>
+    <img src="../assets/ita.png" alt="ITA" style="width:96px;height:40px;flex-shrink:0;"/>
   </div>
 </header>
 
@@ -517,17 +531,40 @@ body {
         </div>
         <div class="fields-row">
           <div class="field-group">
-            <label for="f-inst">Instituição</label>
-            <input type="text" id="f-inst" placeholder="Ex.: Prefeitura de Jacareí"/>
+            <label for="f-formacao">Formação</label>
+            <input type="text" id="f-formacao" placeholder="Ex.: Engenharia Civil"/>
           </div>
           <div class="field-group">
             <label for="f-municipio">Município</label>
             <input type="text" id="f-municipio" placeholder="Ex.: Jacareí"/>
           </div>
         </div>
+        <div class="fields-row">
+          <div class="field-group">
+            <label for="f-setor">Setor de Atuação</label>
+            <select id="f-setor" onchange="onSetorChange()">
+              <option value="">Selecione...</option>
+              <option value="Academia">Academia</option>
+              <option value="Administração Pública">Administração Pública</option>
+              <option value="Indústria">Indústria</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="f-instituicao">Instituição/Órgão</label>
+            <input type="text" id="f-instituicao" placeholder="Ex.: ITA, Embraer"/>
+            <select id="f-instituicao-select" style="display:none;" onchange="onInstituicaoSelectChange()">
+              <option value="">Selecione...</option>
+              <option value="Prefeitura/Administração Municipal">Prefeitura/Administração Municipal</option>
+              <option value="ANAC">ANAC</option>
+              <option value="DECEA">DECEA</option>
+              <option value="SAC">SAC</option>
+              <option value="Outro órgão público">Outro órgão público</option>
+            </select>
+          </div>
+        </div>
         <div class="field-group">
-          <label for="f-formacao">Formação</label>
-          <input type="text" id="f-formacao" placeholder="Ex.: Engenharia Civil"/>
+          <label for="f-cargo">Cargo/Função</label>
+          <input type="text" id="f-cargo" placeholder="Ex.: Gerente de Engenharia, Pesquisador, Coordenador"/>
         </div>
       </div>
       <div class="intro-note">
@@ -565,11 +602,11 @@ body {
 <script>
 const DIMENSIONS = [
   { key: 'P', name: 'Política',    desc: 'Reflete a capacidade institucional do município de estruturar e coordenar a mobilidade aérea urbana como política pública. A governança e a articulação institucional são determinantes para a viabilização de sistemas complexos de mobilidade.' },
-  { key: 'E', name: 'Econômica',   desc: 'Avalia a viabilidade financeira da UAM, considerando demanda e capacidade de investimento. A adoção depende de casos de uso específicos e economicamente justificáveis.' },
-  { key: 'S', name: 'Social',      desc: 'Trata da aceitação pública e dos impactos percebidos. Segurança e ruído são fatores críticos para a adoção da mobilidade aérea urbana.' },
-  { key: 'T', name: 'Tecnológica', desc: 'Envolve os requisitos operacionais e infraestruturais da UAM, com destaque para a integração entre sistemas aeronáuticos e urbanos.' },
-  { key: 'A', name: 'Ambiental',   desc: 'Trata dos impactos e da sustentabilidade da UAM. Os efeitos são multidimensionais e interdependentes, abrangendo emissões, ruído e uso do solo.' },
-  { key: 'L', name: 'Legal',       desc: 'Refere-se ao conjunto normativo que viabiliza a operação da UAM. A clareza regulatória é essencial para atração de investimentos e segurança operacional.' }
+  { key: 'E', name: 'Econômica',   desc: 'Examina se o município tem condições financeiras de receber e sustentar a mobilidade aérea urbana. Considera se existe demanda real de deslocamento na cidade que justifique o serviço, se o território atrai investimentos privados, se há recursos públicos ou parcerias para implantar vertiportos e infraestrutura de apoio, e se aplicações concretas — como transporte de pacientes, entregas urgentes ou conexões intermunicipais — fazem sentido econômico para a realidade local.' },
+  { key: 'S', name: 'Social',      desc: 'Captura como a população do município receberá a mobilidade aérea urbana no dia a dia. Envolve a disposição dos moradores em aceitar a operação dessas aeronaves no céu da cidade, a confiança na segurança do serviço, os incômodos urbanos percebidos (como ruído de sobrevoo e questões de privacidade) e se os benefícios chegarão a diferentes regiões e classes sociais, garantindo que a tecnologia não fique restrita a poucos.' },
+  { key: 'T', name: 'Tecnológica', desc: 'Considera se o município possui a base técnica e a infraestrutura necessárias para suportar a mobilidade aérea urbana. Engloba a capacidade de integrar o tráfego dessas aeronaves ao espaço aéreo da cidade, a existência de sistemas urbanos de comunicação e monitoramento adequados, a robustez da rede elétrica para abastecer pontos de recarga, e a aptidão do território para receber vertiportos bem localizados e integrados ao transporte urbano existente.' },
+  { key: 'A', name: 'Ambiental',   desc: 'Trata dos impactos ambientais que a mobilidade aérea urbana trará ao município. Compreende o consumo de energia e as emissões geradas pela operação na cidade, o ruído produzido sobre bairros e áreas sensíveis, a compatibilidade com áreas verdes, zonas de proteção e o uso do solo urbano, e a capacidade do sistema de operar com segurança em condições climáticas típicas da região (chuvas intensas, ventos, calor).' },
+  { key: 'L', name: 'Legal',       desc: 'Analisa o quanto o ambiente jurídico do município está preparado para receber a mobilidade aérea urbana. Inclui a compatibilidade da operação com o plano diretor e leis de uso do solo da cidade, o alinhamento com a regulação aeronáutica federal, os processos locais de licenciamento e controle ambiental, e a clareza sobre responsabilidades em caso de incidentes — o que dá segurança jurídica para operadores, gestores e cidadãos.' }
 ];
 
 const COMPARISON_OPTIONS = [
@@ -601,19 +638,56 @@ function buildFlow() {
   return screens;
 }
 
+function onSetorChange() {
+  const setor = document.getElementById('f-setor').value;
+  const inputInst = document.getElementById('f-instituicao');
+  const selectInst = document.getElementById('f-instituicao-select');
+  if (setor === 'Administração Pública') {
+    inputInst.style.display = 'none';
+    inputInst.value = '';
+    selectInst.style.display = 'block';
+  } else {
+    selectInst.style.display = 'none';
+    selectInst.value = '';
+    inputInst.style.display = 'block';
+    if (setor === 'Academia') {
+      inputInst.placeholder = 'Ex.: ITA, Unicamp, USP';
+    } else if (setor === 'Indústria') {
+      inputInst.placeholder = 'Ex.: Embraer, EVE Air Mobility';
+    } else {
+      inputInst.placeholder = 'Ex.: ITA, Embraer';
+    }
+  }
+}
+
+function onInstituicaoSelectChange() {
+}
+
+function getInstituicaoValue() {
+  const setor = document.getElementById('f-setor').value;
+  if (setor === 'Administração Pública') {
+    return document.getElementById('f-instituicao-select').value.trim();
+  }
+  return document.getElementById('f-instituicao').value.trim();
+}
+
 function startCalibration() {
   const nome = document.getElementById('f-nome').value.trim();
-  const inst = document.getElementById('f-inst').value.trim();
   const formacao = document.getElementById('f-formacao').value.trim();
   const municipio = document.getElementById('f-municipio').value.trim();
-  if (!nome || !inst || !formacao || !municipio) {
+  const setor = document.getElementById('f-setor').value;
+  const instituicao = getInstituicaoValue();
+  const cargo = document.getElementById('f-cargo').value.trim();
+  if (!nome || !formacao || !municipio || !setor || !instituicao || !cargo) {
     alert('Preencha todos os campos para iniciar.');
     return;
   }
   state.respondent.name = nome;
-  state.respondent.institution = inst;
   state.respondent.formacao = formacao;
   state.respondent.municipio = municipio;
+  state.respondent.setor = setor;
+  state.respondent.institution = instituicao;
+  state.respondent.cargo = cargo;
   state.startedAt = new Date().toISOString();
   state.screens = buildFlow();
   state.idx = 0;
@@ -891,7 +965,7 @@ function saveCalibration() {
 function renderResult() {}
 
 function resetAll() {
-  state.respondent = { name: '', institution: '', formacao: '', municipio: '' };
+  state.respondent = { name: '', institution: '', formacao: '', municipio: '', setor: '', cargo: '' };
   state.startedAt = null;
   state.finishedAt = null;
   state.screens = [];
@@ -901,7 +975,10 @@ function resetAll() {
   state.lastReferences = {};
   state.lastComparisons = {};
   state.maxProgress = 0;
-  ['f-nome', 'f-inst', 'f-formacao', 'f-municipio'].forEach(id => document.getElementById(id).value = '');
+  ['f-nome', 'f-formacao', 'f-municipio', 'f-instituicao', 'f-cargo'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-setor').value = '';
+  document.getElementById('f-instituicao-select').value = '';
+  onSetorChange();
   showScreen();
 }
 
@@ -914,9 +991,16 @@ function goBackToIntro() {
   state.lastComparisons = {};
   state.maxProgress = 0;
   document.getElementById('f-nome').value = state.respondent.name;
-  document.getElementById('f-inst').value = state.respondent.institution;
   document.getElementById('f-formacao').value = state.respondent.formacao;
   document.getElementById('f-municipio').value = state.respondent.municipio;
+  document.getElementById('f-setor').value = state.respondent.setor || '';
+  document.getElementById('f-cargo').value = state.respondent.cargo;
+  onSetorChange();
+  if (state.respondent.setor === 'Administração Pública') {
+    document.getElementById('f-instituicao-select').value = state.respondent.institution || '';
+  } else {
+    document.getElementById('f-instituicao').value = state.respondent.institution || '';
+  }
   showScreen();
 }
 

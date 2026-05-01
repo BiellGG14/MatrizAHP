@@ -1,0 +1,124 @@
+1.  Estrutura da ferramenta digital de coleta e calibração dos pesos
+
+A presente proposta contempla o desenvolvimento de uma ferramenta digital destinada à coleta estruturada da percepção de gestores públicos e especialistas quanto à relevância dos fatores que condicionam a implementação da mobilidade aérea urbana. A literatura científica indica que, em modelos multicritério aplicados à mobilidade, a qualidade dos resultados depende diretamente da clareza do instrumento de coleta e da capacidade de reduzir a complexidade cognitiva do respondente, garantindo consistência nos julgamentos (DI LORENZO et al., 2025).
+A ferramenta será estruturada em dois momentos metodológicos complementares. No primeiro momento, será desenvolvido o dashboard de calibração, cujo objetivo é permitir a atribuição de pesos percentuais aos subcritérios das seis dimensões do modelo. Essa etapa transforma conhecimento técnico em parâmetros quantitativos, sendo essencial para a construção do índice de maturidade. O sistema deverá apresentar navegação intuitiva, organização sequencial das dimensões e feedback automático da soma dos pesos, assegurando que o total atinja cem por cento.
+No segundo momento, será desenvolvida a ferramenta final de aplicação do índice. Nessa etapa, os pesos previamente calibrados serão incorporados ao sistema, permitindo a avaliação dos municípios e a geração de um indicador sintético de maturidade. Esse indicador terá função diagnóstica, ao orientar políticas públicas, e função estratégica, ao sinalizar ao mercado os territórios mais aptos à implantação da mobilidade aérea urbana. A literatura reforça que a previsibilidade e a transparência são fatores determinantes para atração de investimentos em setores inovadores (ANAC, 2023; SPÜHLER et al., 2025).
+A ferramenta também permitirá a consolidação de uma base de dados regional, possibilitando análises comparativas entre municípios e contribuindo para o planejamento integrado da mobilidade aérea urbana. Dessa forma, sua construção não se limita a uma etapa operacional, mas integra o próprio método científico, sendo essencial para assegurar validade, confiabilidade e aplicabilidade do modelo.
+
+2. Fundamentação do índice de maturidade municipal em mobilidade aérea urbana
+
+A mobilidade aérea urbana deve ser compreendida como um sistema sociotécnico complexo, cuja viabilidade depende da interação entre fatores institucionais, econômicos, sociais, tecnológicos, ambientais e legais. A literatura demonstra que a adoção dessa tecnologia varia entre cidades em função de suas características estruturais e capacidade institucional, exigindo modelos analíticos adaptáveis ao contexto local (SPÜHLER et al., 2025; MAHMASSANI et al., 2024).
+A utilização do framework PESTEL como base para construção do índice justifica-se pela necessidade de representar essa complexidade de forma integrada. Estudos indicam que a mobilidade aérea urbana depende simultaneamente de governança pública, viabilidade econômica, aceitação social, infraestrutura tecnológica, sustentabilidade ambiental e segurança jurídica, não podendo ser analisada sob uma única dimensão (ANAC, 2023; DYER et al., 2024).
+
+2.1 Dimensão política
+
+A dimensão política reflete a capacidade institucional do município de estruturar e coordenar a mobilidade aérea urbana como política pública. A literatura aponta que a governança e a articulação institucional são determinantes para viabilização de sistemas complexos de mobilidade (ANAC, 2023; SIGMACITY, 2025).
+
+a) Governança institucional da mobilidade aérea urbana
+Refere-se à existência de estrutura administrativa e liderança para condução do tema. Indica capacidade organizacional do município.
+
+b) Articulação interinstitucional com órgãos reguladores
+Avalia a interação com ANAC, DECEA e demais atores. Reflete coordenação entre níveis de governo.
+
+c) Integração da mobilidade aérea urbana ao planejamento urbano municipal
+Refere-se à inserção da UAM em planos urbanos. Indica alinhamento com o ordenamento territorial.
+
+2.2 Dimensão econômica
+
+A dimensão econômica avalia a viabilidade financeira da UAM, considerando demanda e capacidade de investimento. Estudos indicam que sua adoção depende de casos de uso específicos e economicamente justificáveis (LONGO et al., 2023; MAHMASSANI et al., 2024).
+
+a) Demanda funcional potencial
+Avalia a existência de fluxos de deslocamento compatíveis. Considera tempo, distância e congestionamento.
+
+b) Atratividade para investimentos
+Refere-se à capacidade de atrair capital e parcerias. Considera ambiente institucional e econômico.
+
+c) Capacidade de financiamento da infraestrutura
+Avalia a viabilidade de implantação de vertiportos e sistemas. Considera recursos e modelos financeiros.
+
+d) Aderência a casos de uso economicamente viáveis
+Refere-se à compatibilidade com aplicações reais. Considera transporte, saúde e logística.
+
+2.3 Dimensão social
+
+A dimensão social trata da aceitação pública e dos impactos percebidos. A literatura indica que segurança e ruído são fatores críticos para adoção (EASA, 2021; MAHMASSANI et al., 2024).
+a) Aceitação pública
+Refere-se à disposição da população em aceitar a UAM. Envolve legitimidade social.
+
+b) Percepção de segurança e risco
+Avalia a confiança na segurança operacional. Inclui percepção de acidentes.
+
+c) Externalidades sociais percebidas
+Refere-se aos impactos como ruído e privacidade. Avalia incômodos urbanos.
+
+d) Equidade e acessibilidade
+Analisa a distribuição dos benefícios. Considera inclusão social.
+
+2.4 Dimensão tecnológica
+
+A dimensão tecnológica envolve os requisitos operacionais e infraestruturais da UAM. A literatura destaca a necessidade de integração entre sistemas aeronáuticos e urbanos (ANAC, 2023; EASA, 2021; MAHMASSANI et al., 2024).
+
+a) Gestão do espaço aéreo e integração operacional
+Refere-se à integração com controle de tráfego aéreo. Inclui coordenação operacional.
+
+b) Sistemas de comunicação, navegação e vigilância
+Avalia infraestrutura digital e monitoramento. Inclui redes e dados.
+
+c) Infraestrutura energética
+Refere-se à capacidade da rede elétrica. Considera recarga e confiabilidade.
+
+d) Aptidão técnica para implantação de vertiportos
+Avalia capacidade de implantação física. Inclui localização e integração urbana.
+
+2.5 Dimensão ambiental
+
+A dimensão ambiental trata dos impactos e da sustentabilidade da UAM. Estudos indicam que os efeitos são multidimensionais e interdependentes (DYER et al., 2024; DI LORENZO et al., 2025).
+
+a) Eficiência energética e emissões
+Refere-se ao consumo energético e emissões. Considera o ciclo operacional.
+
+b) Poluição sonora
+Avalia impacto do ruído no ambiente urbano.
+
+c) Uso do solo e sensibilidade ambiental
+Refere-se à compatibilidade territorial. Avalia impactos ambientais.
+
+d) Resiliência ambiental
+Analisa operação sob condições climáticas adversas.
+2.6 Dimensão legal
+
+A dimensão legal refere-se ao conjunto normativo que viabiliza a operação da UAM. A literatura aponta que a clareza regulatória é essencial (ANAC, 2023; SPÜHLER et al., 2025).
+
+a) Compatibilidade com legislação urbanística.
+Refere-se à adequação às normas de uso do solo.
+
+b) Integração com regulação aeronáutica.
+Avalia compatibilidade com normas federais.
+
+c) Licenciamento e controle ambiental.
+Refere-se aos processos de aprovação.
+
+d) Responsabilidade civil e segurança jurídica.
+Avalia definição de riscos e responsabilidades.
+
+3 Considerações finais
+
+A separação entre a estrutura da ferramenta e a fundamentação do índice permite maior clareza metodológica e facilita a implementação do modelo. A ferramenta digital será responsável pela coleta e calibração dos dados, enquanto o índice estruturado pelo PESTEL garantirá a consistência analítica. A integração entre esses elementos permitirá a construção de um indicador robusto de maturidade municipal, capaz de orientar decisões públicas e apoiar o desenvolvimento da mobilidade aérea urbana em escala regional.
+
+Referências
+
+AGÊNCIA NACIONAL DE AVIAÇÃO CIVIL. Advanced Air Mobility: panorama e perspectivas. Brasília, 2023.
+
+DI LORENZO, S.; PEREIRA, S. B.; SANTOS, J. B.; LIMA, J. P. Eficiência energética na mobilidade urbana. Energy Efficiency, 2025.
+
+DYER, G. M. C. et al. Urban form, transport, environment and health. Environmental Research, 2024.
+
+EASA. Estudo sobre a aceitação social da mobilidade aérea urbana na Europa. 2021.
+
+LONGO, Q.; MA, J.; JIANG, F.; WEBSTER, C. J. Urban Air Mobility demand analysis. Journal of Air Transport Management, 2023.
+
+MAHMASSANI, H. S. et al. Advancing Air Mobility. 2024.
+
+SPÜHLER, F. et al. Framework for ranking cities for emerging mobility technologies. Journal of Urban Mobility, 2025.
+
+SIGMACITY. Relatório técnico de mobilidade aérea urbana. ITA, 2025.

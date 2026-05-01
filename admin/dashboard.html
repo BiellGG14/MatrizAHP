@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Admin Dashboard</title>
-<link rel="icon" type="image/png" href="../assets/logo.png"/>
+<link rel="icon" type="image/png" href="../assets/civil.png"/>
 <style>
 :root {
   --primary:       #2563eb;
@@ -341,19 +341,22 @@ body {
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
 
 <div class="header">
   <div class="header-left">
-    <img src="../assets/logo.png" alt="Logo" style="width:44px;height:44px;flex-shrink:0;"/>
+    <img src="../assets/civil.png" alt="Engenharia Civil" style="width:44px;height:44px;flex-shrink:0;"/>
     <div class="header-text">
       <div class="header-title">Admin Dashboard (Dash 03)</div>
       <div class="header-sub">Gerenciamento Dash 01 (Pesos PESTEL) · Dash 02 (Avaliações Municipais)</div>
     </div>
   </div>
-  <div class="header-right">
+  <div class="header-right" style="display:flex;align-items:center;gap:14px;">
     <div class="badge">Sistema Integrado</div>
+    <img src="../assets/ita.png" alt="ITA" style="width:44px;height:44px;flex-shrink:0;"/>
   </div>
 </div>
 
@@ -428,7 +431,9 @@ body {
           <tr>
             <th>Data</th>
             <th>Respondente</th>
+            <th>Setor</th>
             <th>Instituição</th>
+            <th>Cargo</th>
             <th>Ação</th>
           </tr>
         </thead>
@@ -445,7 +450,17 @@ body {
     <div class="card" style="margin-bottom:16px;">
       <div class="rel-section-title">Filtros de Visualização</div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;">
+
+        <!-- SETOR -->
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--text-sec);margin-bottom:6px;">
+            SETOR DE ATUAÇÃO
+          </div>
+          <div id="filter-setor" style="max-height:120px;overflow:auto;border:1px solid var(--border);border-radius:6px;padding:8px;">
+            <!-- preenchido via JS -->
+          </div>
+        </div>
 
         <!-- FORMAÇÃO -->
         <div>
@@ -493,6 +508,9 @@ body {
           <button class="rel-chart-tab active" onclick="switchD01View('bars', this)">
             Comparação entre Calibrações
           </button>
+          <button class="rel-chart-tab" onclick="switchD01View('setor', this)">
+            Por Setor
+          </button>
           <button class="rel-chart-tab" onclick="switchD01View('formacao', this)">
             Por Formação
           </button>
@@ -504,6 +522,16 @@ body {
           </div>
           <div class="rel-canvas-wrap">
             <canvas id="d01-chart-bars"></canvas>
+          </div>
+        </div>
+
+        <div id="d01-view-setor" class="rel-chart-view">
+          <div class="rel-section-title">
+            Pesos Médios por Setor de Atuação (Academia · Adm. Pública · Indústria)
+          </div>
+          <div id="d01-setor-note" style="font-size:12px;color:var(--text-sec);margin-bottom:12px;"></div>
+          <div class="rel-canvas-wrap">
+            <canvas id="d01-chart-setor"></canvas>
           </div>
         </div>
 
@@ -526,7 +554,9 @@ body {
               <tr>
                 <th>Data</th>
                 <th>Respondente</th>
+                <th>Setor</th>
                 <th>Formação</th>
+                <th>Cargo</th>
                 <th>P</th>
                 <th>E</th>
                 <th>S</th>
@@ -542,6 +572,7 @@ body {
 
     <div style="display:flex;gap:10px;margin-top:4px;">
       <button class="btn btn-ghost" onclick="exportD01CSV()">Exportar CSV</button>
+      <button class="btn btn-primary" onclick="exportD01PDF()">Gerar Relatório PDF (ABNT)</button>
     </div>
   </div>
 
@@ -762,6 +793,7 @@ let _relCurrentView = 'bar';
 let _d01Calibrations = [];
 let _d01ChartBars = null;
 let _d01ChartFormacao = null;
+let _d01ChartSetor = null;
 let _d01CurrentView = 'bars';
 
 // ===== TAB SWITCHING =====
@@ -781,7 +813,7 @@ function switchTab(tabName) {
 // ===== CALIBRAÇÕES TAB (DASH 01) =====
 async function loadCalibracoesTab() {
   const tbody = document.getElementById('calibracoes-tbody');
-  tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-sec);">Carregando...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-sec);">Carregando...</td></tr>';
   const calibrations = await api.get('calibrations');
   tbody.innerHTML = '';
   calibrations.forEach(cal => {
@@ -789,12 +821,14 @@ async function loadCalibracoesTab() {
     tbody.innerHTML += `<tr>
       <td>${date.toLocaleDateString('pt-BR')}</td>
       <td>${cal.respondent.name}</td>
+      <td>${cal.respondent.setor || '—'}</td>
       <td>${cal.respondent.institution || '—'}</td>
+      <td>${cal.respondent.cargo || '—'}</td>
       <td><button class="btn btn-ghost" onclick="viewCalibration('${cal.id}')">Ver detalhes</button></td>
     </tr>`;
   });
   if (calibrations.length === 0)
-    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-sec);">Nenhuma calibração registrada ainda.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-sec);">Nenhuma calibração registrada ainda.</td></tr>';
 }
 
 // ===== AVALIAÇÕES TAB (DASH 02) =====
@@ -1243,22 +1277,31 @@ async function loadRelatoriosD01Tab() {
   renderD01Table();
 }
 
-// Retorna apenas as calibrações que passam pelos filtros de Formação e Instituição
+// Retorna apenas as calibrações que passam pelos filtros de Setor, Formação e Instituição
 function getD01FilteredCals() {
+  const checkedSetores = Array.from(document.querySelectorAll('#filter-setor input:checked')).map(i => i.value);
   const checkedFormacoes = Array.from(document.querySelectorAll('#filter-formacao input:checked')).map(i => i.value);
   const checkedInst = Array.from(document.querySelectorAll('#filter-instituicao input:checked')).map(i => i.value);
-  if (!checkedFormacoes.length && !checkedInst.length) return _d01Calibrations;
+  if (!checkedSetores.length && !checkedFormacoes.length && !checkedInst.length) return _d01Calibrations;
   return _d01Calibrations.filter(c => {
+    const s = c.respondent.setor || 'Não informado';
     const f = c.respondent.formacao || 'Não informado';
     const inst = c.respondent.institution || 'Não informado';
+    const passS = !checkedSetores.length || checkedSetores.includes(s);
     const passF = !checkedFormacoes.length || checkedFormacoes.includes(f);
     const passI = !checkedInst.length || checkedInst.includes(inst);
-    return passF && passI;
+    return passS && passF && passI;
   });
 }
 
 function buildD01Filters() {
   const cals = _d01Calibrations;
+
+  // Setor
+  const setores = [...new Set(cals.map(c => c.respondent.setor || 'Não informado'))].sort();
+  document.getElementById('filter-setor').innerHTML = setores.length
+    ? '<div class="rel-checkbox-group">' + setores.map(s => `<label><input type="checkbox" value="${s}" checked onchange="applyD01Filters()"> ${s}</label>`).join('') + '</div>'
+    : '<span style="font-size:12px;color:var(--text-sec);">Nenhum setor registrado.</span>';
 
   // Formação
   const formacoes = [...new Set(cals.map(c => c.respondent.formacao || 'Não informado'))].sort();
@@ -1371,13 +1414,13 @@ function renderD01Stats() {
     return Math.sqrt(variance) / mean;
   });
   const avgCV = cvs.reduce((a,b) => a+b, 0) / cvs.length;
-  const formacoes = [...new Set(cals.map(c => c.respondent.formacao || '').filter(f => f))];
+  const setores = [...new Set(cals.map(c => c.respondent.setor || '').filter(s => s))];
 
   const stats = [
     { label: 'Calibrações', value: cals.length, sub: '' },
     { label: 'Dimensão Mais Valorizada', value: DIM_NAMES[topDim], sub: (avgByDim[topDim]*100).toFixed(1)+'%' },
     { label: 'Dimensão Menos Valorizada', value: DIM_NAMES[botDim], sub: (avgByDim[botDim]*100).toFixed(1)+'%' },
-    { label: 'Áreas de Formação', value: formacoes.length || '—', sub: '' },
+    { label: 'Setores Representados', value: setores.length || '—', sub: setores.join(' · ') },
     { label: 'Variação Média (CV)', value: (avgCV*100).toFixed(1)+'%', sub: 'Consistência entre respondentes' },
   ];
 
@@ -1415,6 +1458,9 @@ function switchD01View(view, btn) {
   if (view === 'bars') {
     document.getElementById('filter-series-label').textContent = 'SÉRIES DO GRÁFICO';
     buildD01SeriesChips();
+  } else if (view === 'setor') {
+    document.getElementById('filter-series-label').textContent = 'SETORES DO GRÁFICO';
+    document.getElementById('filter-series').innerHTML = '<span style="font-size:12px;color:var(--text-sec);">Use os filtros de Setor de Atuação acima para selecionar quais aparecem no gráfico.</span>';
   } else {
     document.getElementById('filter-series-label').textContent = 'FORMAÇÕES DO GRÁFICO';
     buildD01FormacaoChips();
@@ -1424,6 +1470,7 @@ function switchD01View(view, btn) {
 
 function renderD01CurrentView() {
   if (_d01CurrentView === 'bars') renderD01BarsChart();
+  else if (_d01CurrentView === 'setor') renderD01SetorChart();
   else if (_d01CurrentView === 'formacao') renderD01FormacaoChart();
 }
 
@@ -1514,6 +1561,53 @@ function renderD01FormacaoChart() {
   });
 }
 
+function renderD01SetorChart() {
+  const cals = getD01FilteredCals();
+  const note = document.getElementById('d01-setor-note');
+  if (!cals.length) {
+    note.textContent = 'Nenhuma calibração disponível com os filtros atuais.';
+    if (_d01ChartSetor) { _d01ChartSetor.destroy(); _d01ChartSetor = null; }
+    return;
+  }
+
+  const setores = [...new Set(cals.map(c => c.respondent.setor || 'Não informado'))].sort();
+  if (setores.length <= 1) {
+    note.textContent = setores.length === 0
+      ? 'Nenhum setor registrado nas calibrações.'
+      : 'Apenas um setor representado (' + setores[0] + '). Inclua respondentes de outros setores para comparação.';
+  } else {
+    note.textContent = 'Comparação das médias por setor: ' + setores.map(s => {
+      const n = cals.filter(c => (c.respondent.setor || 'Não informado') === s).length;
+      return s + ' (n=' + n + ')';
+    }).join(' · ');
+  }
+
+  const datasets = setores.map((setor, i) => {
+    const group = cals.filter(c => (c.respondent.setor || 'Não informado') === setor);
+    return {
+      label: setor + ' (n=' + group.length + ')',
+      data: DIMS.map(d => {
+        const ws = group.map(c => (c.weights && c.weights[d] && c.weights[d].weight) || 0);
+        return +(ws.reduce((a,b)=>a+b,0)/ws.length*100).toFixed(1);
+      }),
+      backgroundColor: CHART_PALETTE[i % CHART_PALETTE.length] + '99',
+      borderColor: CHART_PALETTE[i % CHART_PALETTE.length],
+      borderWidth: 1.5, borderRadius: 3,
+    };
+  });
+
+  if (_d01ChartSetor) _d01ChartSetor.destroy();
+  _d01ChartSetor = new Chart(document.getElementById('d01-chart-setor'), {
+    type: 'bar',
+    data: { labels: DIMS.map(d => DIM_NAMES[d]), datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: { y: { min: 0, max: 60, ticks: { callback: v => v + '%' } } },
+      plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + '%' } } }
+    }
+  });
+}
+
 function dimHeatClass(w) {
   if (w === undefined || w === null) return '';
   if (w < 0.08) return 'heat-low';
@@ -1526,7 +1620,7 @@ function renderD01Table() {
   const cals = getD01FilteredCals();
   const tbody = document.getElementById('d01-tbody');
   if (!cals.length) {
-    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--text-sec);">Nenhuma calibração disponível.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:var(--text-sec);">Nenhuma calibração disponível.</td></tr>';
     return;
   }
   tbody.innerHTML = cals.map(cal => {
@@ -1539,7 +1633,9 @@ function renderD01Table() {
     return `<tr>
       <td>${date.toLocaleDateString('pt-BR')}</td>
       <td>${cal.respondent.name}</td>
+      <td>${cal.respondent.setor || '—'}</td>
       <td>${cal.respondent.formacao || '—'}</td>
+      <td>${cal.respondent.cargo || '—'}</td>
       ${cells}
     </tr>`;
   }).join('');
@@ -1547,11 +1643,15 @@ function renderD01Table() {
 
 function exportD01CSV() {
   const cals = _d01Calibrations;
-  const headers = ['Data', 'Respondente', 'Formação', ...DIMS.map(d => DIM_NAMES[d])];
+  const headers = ['Data', 'Respondente', 'Setor', 'Instituição', 'Formação', 'Cargo', 'Município', ...DIMS.map(d => DIM_NAMES[d])];
   const rows = cals.map(cal => [
     new Date(cal.timestamp).toLocaleDateString('pt-BR'),
     cal.respondent.name,
+    cal.respondent.setor || '',
+    cal.respondent.institution || '',
     cal.respondent.formacao || '',
+    cal.respondent.cargo || '',
+    cal.respondent.municipio || '',
     ...DIMS.map(d => { const w = cal.weights && cal.weights[d] && cal.weights[d].weight; return w !== undefined ? (w*100).toFixed(2)+'%' : ''; })
   ]);
   const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
@@ -1560,6 +1660,245 @@ function exportD01CSV() {
   a.download = `d01_calibracoes_${new Date().toISOString().split('T')[0]}.csv`;
   a.click();
   URL.revokeObjectURL(a.href);
+}
+
+// ===== RELATÓRIO PDF — FORMATO ABNT =====
+async function exportD01PDF() {
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    alert('Biblioteca jsPDF não carregada. Verifique a conexão.');
+    return;
+  }
+  const { jsPDF } = window.jspdf;
+  const cals = getD01FilteredCals();
+  if (!cals.length) {
+    alert('Nenhuma calibração disponível para gerar o relatório.');
+    return;
+  }
+
+  // ABNT: A4, margens 3cm/2cm/3cm/2cm (esq/dir/sup/inf), Times 12pt, espaçamento 1,5
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const pageW = 210, pageH = 297;
+  const ML = 30, MR = 20, MT = 30, MB = 20;
+  const contentW = pageW - ML - MR;
+
+  doc.setFont('times', 'normal');
+  doc.setFontSize(12);
+  const lh = 6.5; // line height aprox. 1,5 para 12pt
+
+  // Cálculos
+  const avgByDim = {};
+  DIMS.forEach(d => {
+    const ws = cals.map(c => (c.weights && c.weights[d] && c.weights[d].weight) || 0);
+    avgByDim[d] = ws.reduce((a,b) => a+b, 0) / ws.length;
+  });
+  const cvByDim = {};
+  DIMS.forEach(d => {
+    const ws = cals.map(c => (c.weights && c.weights[d] && c.weights[d].weight) || 0);
+    const mean = avgByDim[d];
+    if (mean === 0) { cvByDim[d] = 0; return; }
+    const variance = ws.reduce((acc,v) => acc + Math.pow(v-mean, 2), 0) / ws.length;
+    cvByDim[d] = Math.sqrt(variance) / mean;
+  });
+  const setores = [...new Set(cals.map(c => c.respondent.setor || 'Não informado'))].sort();
+  const setorStats = setores.map(s => {
+    const group = cals.filter(c => (c.respondent.setor || 'Não informado') === s);
+    const data = {};
+    DIMS.forEach(d => {
+      const ws = group.map(c => (c.weights && c.weights[d] && c.weights[d].weight) || 0);
+      data[d] = ws.reduce((a,b)=>a+b,0) / ws.length;
+    });
+    return { setor: s, n: group.length, weights: data };
+  });
+
+  let figCounter = 0, tabCounter = 0;
+  const today = new Date().toLocaleDateString('pt-BR');
+
+  // ===== CAPA =====
+  doc.setFontSize(14).setFont('times', 'bold');
+  doc.text('INSTITUTO TECNOLÓGICO DE AERONÁUTICA', pageW/2, 50, { align: 'center' });
+  doc.text('DIVISÃO DE ENGENHARIA CIVIL', pageW/2, 58, { align: 'center' });
+
+  doc.setFontSize(16);
+  doc.text('RELATÓRIO DE CALIBRAÇÃO DE PESOS', pageW/2, 130, { align: 'center' });
+  doc.text('Índice de Maturidade Municipal para Mobilidade Aérea Urbana', pageW/2, 140, { align: 'center', maxWidth: contentW });
+
+  doc.setFontSize(12).setFont('times', 'normal');
+  doc.text('Método: AHP-Express (Saaty, 2016)', pageW/2, 160, { align: 'center' });
+  doc.text(`Total de respondentes: ${cals.length}`, pageW/2, 168, { align: 'center' });
+
+  doc.setFontSize(11);
+  doc.text('São José dos Campos – SP', pageW/2, 270, { align: 'center' });
+  doc.text(today, pageW/2, 278, { align: 'center' });
+
+  // ===== PÁGINA 2: INTRODUÇÃO =====
+  doc.addPage();
+  let y = MT;
+  doc.setFontSize(12).setFont('times', 'bold');
+  doc.text('1 INTRODUÇÃO', ML, y); y += lh*1.5;
+  doc.setFont('times', 'normal');
+  const intro = 'Este relatório apresenta os resultados da calibração dos pesos das seis dimensões PESTEL ' +
+    '(Política, Econômica, Social, Tecnológica, Ambiental e Legal) que compõem o Índice de Maturidade ' +
+    'Municipal para Mobilidade Aérea Urbana (UAM). A calibração foi realizada por meio de consulta ' +
+    `estruturada a ${cals.length} especialistas, agrupados em três categorias de atuação: Academia, ` +
+    'Administração Pública e Indústria. O método empregado foi o AHP-Express, que reduz a carga cognitiva ' +
+    'do respondente ao requerer apenas comparações em relação a um critério de referência, mantendo a ' +
+    'consistência metodológica do AHP clássico.';
+  const introLines = doc.splitTextToSize(intro, contentW);
+  introLines.forEach(line => { doc.text(line, ML, y); y += lh; });
+  y += lh;
+
+  doc.setFont('times', 'bold').text('2 METODOLOGIA', ML, y); y += lh*1.5;
+  doc.setFont('times', 'normal');
+  const metodo = 'O método AHP-Express, proposto por Saaty (2016) como simplificação do AHP tradicional, ' +
+    'solicita ao respondente que (i) escolha a dimensão considerada mais relevante e (ii) compare cada ' +
+    'uma das demais com essa dimensão de referência, em uma escala de 1 a 9. Os pesos finais são obtidos ' +
+    'pela normalização dos inversos dos julgamentos. A média aritmética dos pesos individuais resultou ' +
+    'no peso final consolidado de cada dimensão.';
+  const metLines = doc.splitTextToSize(metodo, contentW);
+  metLines.forEach(line => { doc.text(line, ML, y); y += lh; });
+
+  // ===== PÁGINA 3: RESULTADOS =====
+  doc.addPage();
+  y = MT;
+  doc.setFont('times', 'bold').setFontSize(12).text('3 RESULTADOS', ML, y); y += lh*1.5;
+  doc.setFont('times', 'normal');
+  doc.text(`Os pesos finais consolidados, calculados a partir da média aritmética dos ${cals.length} ` +
+           'respondentes, são apresentados a seguir.', ML, y, { maxWidth: contentW }); y += lh*2;
+
+  // Tabela 1: Pesos médios consolidados
+  tabCounter++;
+  doc.setFontSize(10).setFont('times', 'bold');
+  doc.text(`Tabela ${tabCounter} – Pesos médios consolidados das dimensões PESTEL`, ML, y); y += lh;
+  doc.autoTable({
+    startY: y,
+    margin: { left: ML, right: MR },
+    head: [['Dimensão', 'Peso Médio (%)', 'Coef. Variação (%)']],
+    body: DIMS.map(d => [DIM_NAMES[d], (avgByDim[d]*100).toFixed(2), (cvByDim[d]*100).toFixed(1)]),
+    theme: 'grid',
+    styles: { font: 'times', fontSize: 10, halign: 'center' },
+    headStyles: { fillColor: [240,240,240], textColor: 0, fontStyle: 'bold' },
+    columnStyles: { 0: { halign: 'left' } }
+  });
+  y = doc.lastAutoTable.finalY + lh;
+  doc.setFont('times', 'normal').setFontSize(10);
+  doc.text('Fonte: elaboração própria.', ML, y); y += lh*1.5;
+
+  // Figura 1: Gráfico de barras médio
+  doc.setFontSize(12);
+  let chartImg = null;
+  try {
+    if (_d01ChartBars) chartImg = _d01ChartBars.toBase64Image('image/png', 1.0);
+  } catch(e){}
+  if (chartImg) {
+    figCounter++;
+    if (y > pageH - MB - 90) { doc.addPage(); y = MT; }
+    const imgW = contentW;
+    const imgH = imgW * 0.5;
+    doc.addImage(chartImg, 'PNG', ML, y, imgW, imgH);
+    y += imgH + lh;
+    doc.setFontSize(10).setFont('times', 'bold');
+    doc.text(`Figura ${figCounter} – Pesos médios e calibrações individuais por dimensão`, ML, y, { maxWidth: contentW }); y += lh;
+    doc.setFont('times', 'normal');
+    doc.text('Fonte: elaboração própria.', ML, y); y += lh*1.5;
+  }
+
+  // Figura 2: Por Setor
+  let chartSetorImg = null;
+  try {
+    if (_d01ChartSetor) chartSetorImg = _d01ChartSetor.toBase64Image('image/png', 1.0);
+  } catch(e){}
+  if (!chartSetorImg && setores.length > 1) {
+    // Renderiza temporariamente se necessário
+    const prev = _d01CurrentView;
+    _d01CurrentView = 'setor';
+    document.getElementById('d01-view-setor').classList.add('active');
+    renderD01SetorChart();
+    await new Promise(r => setTimeout(r, 300));
+    try { chartSetorImg = _d01ChartSetor.toBase64Image('image/png', 1.0); } catch(e){}
+    _d01CurrentView = prev;
+  }
+  if (chartSetorImg) {
+    if (y > pageH - MB - 90) { doc.addPage(); y = MT; }
+    figCounter++;
+    const imgW = contentW;
+    const imgH = imgW * 0.5;
+    doc.addImage(chartSetorImg, 'PNG', ML, y, imgW, imgH);
+    y += imgH + lh;
+    doc.setFontSize(10).setFont('times', 'bold');
+    doc.text(`Figura ${figCounter} – Pesos médios por setor de atuação dos respondentes`, ML, y, { maxWidth: contentW }); y += lh;
+    doc.setFont('times', 'normal');
+    doc.text('Fonte: elaboração própria.', ML, y); y += lh*1.5;
+  }
+
+  // Tabela 2: Distribuição por setor
+  if (setorStats.length) {
+    if (y > pageH - MB - 60) { doc.addPage(); y = MT; }
+    tabCounter++;
+    doc.setFontSize(10).setFont('times', 'bold');
+    doc.text(`Tabela ${tabCounter} – Pesos médios por setor de atuação (%)`, ML, y); y += lh;
+    doc.autoTable({
+      startY: y,
+      margin: { left: ML, right: MR },
+      head: [['Setor', 'n', ...DIMS.map(d => DIM_NAMES[d])]],
+      body: setorStats.map(s => [s.setor, s.n, ...DIMS.map(d => (s.weights[d]*100).toFixed(2))]),
+      theme: 'grid',
+      styles: { font: 'times', fontSize: 9, halign: 'center' },
+      headStyles: { fillColor: [240,240,240], textColor: 0, fontStyle: 'bold' },
+      columnStyles: { 0: { halign: 'left' } }
+    });
+    y = doc.lastAutoTable.finalY + lh;
+    doc.setFont('times', 'normal').setFontSize(10);
+    doc.text('Fonte: elaboração própria.', ML, y); y += lh*1.5;
+  }
+
+  // Tabela 3: Lista de respondentes
+  doc.addPage();
+  y = MT;
+  tabCounter++;
+  doc.setFontSize(10).setFont('times', 'bold');
+  doc.text(`Tabela ${tabCounter} – Perfil dos respondentes`, ML, y); y += lh;
+  doc.autoTable({
+    startY: y,
+    margin: { left: ML, right: MR },
+    head: [['Nome', 'Setor', 'Instituição', 'Formação', 'Cargo']],
+    body: cals.map(c => [
+      c.respondent.name || '—',
+      c.respondent.setor || '—',
+      c.respondent.institution || '—',
+      c.respondent.formacao || '—',
+      c.respondent.cargo || '—'
+    ]),
+    theme: 'grid',
+    styles: { font: 'times', fontSize: 9, cellPadding: 1.5 },
+    headStyles: { fillColor: [240,240,240], textColor: 0, fontStyle: 'bold' }
+  });
+  y = doc.lastAutoTable.finalY + lh;
+  doc.setFont('times', 'normal').setFontSize(10);
+  doc.text('Fonte: elaboração própria.', ML, y); y += lh*2;
+
+  // Considerações finais
+  if (y > pageH - MB - 40) { doc.addPage(); y = MT; }
+  doc.setFontSize(12).setFont('times', 'bold').text('4 CONSIDERAÇÕES FINAIS', ML, y); y += lh*1.5;
+  doc.setFont('times', 'normal');
+  const topDim = DIMS.reduce((a,b) => avgByDim[a] > avgByDim[b] ? a : b);
+  const botDim = DIMS.reduce((a,b) => avgByDim[a] < avgByDim[b] ? a : b);
+  const conc = `Os resultados indicam que a dimensão ${DIM_NAMES[topDim]} obteve o maior peso médio ` +
+    `(${(avgByDim[topDim]*100).toFixed(2)}%), enquanto a dimensão ${DIM_NAMES[botDim]} apresentou o menor ` +
+    `peso (${(avgByDim[botDim]*100).toFixed(2)}%). Esses pesos serão incorporados ao cálculo do Índice ` +
+    'de Maturidade Municipal para Mobilidade Aérea Urbana, permitindo a avaliação comparativa ' +
+    'entre municípios e subsidiando o planejamento de políticas públicas para o setor.';
+  const concLines = doc.splitTextToSize(conc, contentW);
+  concLines.forEach(line => { doc.text(line, ML, y); y += lh; });
+
+  // Numeração de páginas (rodapé direito)
+  const total = doc.getNumberOfPages();
+  for (let i = 1; i <= total; i++) {
+    doc.setPage(i);
+    doc.setFontSize(10).setFont('times', 'normal');
+    if (i > 1) doc.text(String(i), pageW - MR, MT - 10, { align: 'right' });
+  }
+
+  doc.save(`relatorio_calibracao_pesos_${new Date().toISOString().split('T')[0]}.pdf`);
 }
 
 // ===== GERENCIAR AVALIAÇÕES (DASH 02) =====
@@ -1803,12 +2142,14 @@ async function viewCalibration(id) {
   const tr = document.createElement('tr');
   tr.id = rowId;
   tr.className = 'detail-row open';
-  tr.innerHTML = `<td colspan="4">
+  tr.innerHTML = `<td colspan="6">
     <div class="detail-grid">
       <div><div class="detail-item-label">Respondente</div><div class="detail-item-value">${cal.respondent.name}</div></div>
+      <div><div class="detail-item-label">Setor</div><div class="detail-item-value">${cal.respondent.setor || '—'}</div></div>
       <div><div class="detail-item-label">Instituição</div><div class="detail-item-value">${cal.respondent.institution || '—'}</div></div>
       <div><div class="detail-item-label">Formação</div><div class="detail-item-value">${cal.respondent.formacao || '—'}</div></div>
       <div><div class="detail-item-label">Município</div><div class="detail-item-value">${cal.respondent.municipio || '—'}</div></div>
+      <div><div class="detail-item-label">Cargo</div><div class="detail-item-value">${cal.respondent.cargo || '—'}</div></div>
     </div>
     <div class="dim-pills">${pills}</div>
   </td>`;

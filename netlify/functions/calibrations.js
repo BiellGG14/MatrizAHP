@@ -18,10 +18,13 @@ async function ensureTable(db) {
     respondent_institution TEXT,
     respondent_formacao TEXT,
     respondent_municipio TEXT,
+    respondent_setor TEXT,
+    respondent_cargo TEXT,
     weights TEXT,
     raw_answers TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
+  try { await db.execute(`ALTER TABLE calibrations ADD COLUMN respondent_setor TEXT`); } catch (e) {}
 }
 
 exports.handler = async (event) => {
@@ -42,6 +45,8 @@ exports.handler = async (event) => {
           institution: r.respondent_institution,
           formacao: r.respondent_formacao,
           municipio: r.respondent_municipio,
+          setor: r.respondent_setor,
+          cargo: r.respondent_cargo,
         },
         weights: JSON.parse(r.weights || '{}'),
         rawAnswers: JSON.parse(r.raw_answers || '{}'),
@@ -53,9 +58,9 @@ exports.handler = async (event) => {
       const body = JSON.parse(event.body);
       const { id, timestamp, respondent, weights, rawAnswers } = body;
       await db.execute({
-        sql: `INSERT INTO calibrations (id, timestamp, respondent_name, respondent_institution, respondent_formacao, respondent_municipio, weights, raw_answers)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        args: [id, timestamp, respondent.name, respondent.institution || '', respondent.formacao || '', respondent.municipio || '', JSON.stringify(weights), JSON.stringify(rawAnswers)],
+        sql: `INSERT INTO calibrations (id, timestamp, respondent_name, respondent_institution, respondent_formacao, respondent_municipio, respondent_setor, respondent_cargo, weights, raw_answers)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        args: [id, timestamp, respondent.name, respondent.institution || '', respondent.formacao || '', respondent.municipio || '', respondent.setor || '', respondent.cargo || '', JSON.stringify(weights), JSON.stringify(rawAnswers)],
       });
       return { statusCode: 200, headers: { ...cors, 'Content-Type': 'application/json' }, body: JSON.stringify({ success: true }) };
     }
