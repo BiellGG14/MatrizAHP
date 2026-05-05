@@ -355,8 +355,8 @@ body {
       <span class="intro-badge">Avaliação Municipal</span>
       <h1 class="intro-title">Avaliação de Prontidão para UAM</h1>
       <p class="intro-desc">
-        Avalie um município nos <strong>24 indicadores</strong> do Índice de Maturidade para Mobilidade Aérea Urbana.
-        Para cada indicador, atribua uma nota de <strong>1 a 5</strong>.
+        Avalie um município nos <strong>24 critérios</strong> do Índice de Maturidade para Mobilidade Aérea Urbana.
+        Para cada critério, atribua uma nota de <strong>1 a 5</strong>.
       </p>
 
       <div class="intro-fields">
@@ -411,8 +411,8 @@ body {
 
       <div class="intro-note">
         <strong>Como funciona:</strong> uma pergunta por vez, cliques simples.
-        Para cada indicador, escolha a nota que melhor descreve a situação atual do município.
-        Use <strong>N/A</strong> quando o indicador não se aplicar.
+        Para cada critério, escolha a nota que melhor descreve a situação atual do município.
+        Use <strong>N/A</strong> quando o critério não se aplicar.
       </div>
       <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="startAssessment()">Iniciar avaliação</button>
     </div>
@@ -443,13 +443,13 @@ body {
 
 <script>
 const DIMENSIONS = [
-  { key:'P', name:'Política', indicators:[
+  { key:'P', name:'Político', indicators:[
     {id:'P1',name:'Governança institucional',hint:'Existência de estrutura administrativa e liderança para coordenar políticas de UAM no município.'},
     {id:'P2',name:'Articulação interinstitucional',hint:'Capacidade de articulação com ANAC, DECEA e outros órgãos reguladores e parceiros.'},
     {id:'P3',name:'Integração ao planejamento urbano',hint:'Inserção da UAM em planos diretores, PDMobs e instrumentos urbanísticos municipais.'},
     {id:'P4',name:'Capacidade técnica institucional',hint:'Disponibilidade de corpo técnico qualificado e mecanismos de gestão do conhecimento para projetos de UAM no município.'}
   ]},
-  { key:'E', name:'Econômica', indicators:[
+  { key:'E', name:'Econômico', indicators:[
     {id:'E1',name:'Demanda funcional potencial',hint:'Volume de fluxos de deslocamento e perfil de acessibilidade compatíveis com UAM.'},
     {id:'E2',name:'Atratividade para investimentos',hint:'Capacidade do município de atrair capital privado, operadores e fabricantes de eVTOL.'},
     {id:'E3',name:'Capacidade de financiamento',hint:'Disponibilidade de recursos públicos e acesso a instrumentos financeiros para infraestrutura UAM.'},
@@ -461,7 +461,7 @@ const DIMENSIONS = [
     {id:'S3',name:'Externalidades sociais',hint:'Impactos percebidos: geração de empregos, ruído, privacidade e incômodos urbanos.'},
     {id:'S4',name:'Equidade e acessibilidade',hint:'Potencial de distribuição dos benefícios e inclusão de diferentes grupos sociais.'}
   ]},
-  { key:'T', name:'Tecnológica', indicators:[
+  { key:'T', name:'Tecnológico', indicators:[
     {id:'T1',name:'Gestão do espaço aéreo',hint:'Existência ou viabilidade de sistemas UTM/U-space para operações de baixa altitude.'},
     {id:'T2',name:'Comunicação, navegação e vigilância',hint:'Disponibilidade de infraestrutura de comunicação, navegação e vigilância adequada para suporte a operações UAM seguras.'},
     {id:'T3',name:'Infraestrutura energética',hint:'Capacidade da rede elétrica para recarga de eVTOL em vertiportos.'},
@@ -567,8 +567,8 @@ function renderQuestion(cur){
   const dimIdx=DIMENSIONS.findIndex(d=>d.key===cur.block);
   const curVal=state.lastAnswers[cur.id]!==undefined?state.lastAnswers[cur.id]:state.answers[cur.id];
   let html='';
-  html+='<span class="q-block-tag">Dimensão '+(dimIdx+1)+' de 6 — '+dim.name+'</span>';
-  html+='<div class="q-number">Indicador '+(state.idx+1)+' de 24</div>';
+  html+='<span class="q-block-tag">Fator '+(dimIdx+1)+' de 6 — '+dim.name+'</span>';
+  html+='<div class="q-number">Critério '+(state.idx+1)+' de 24</div>';
   html+='<div class="q-title">'+ind.name+'</div>';
   html+='<div class="q-hint">'+ind.hint+'</div>';
   const s1=SCALE[0], s5=SCALE[4], middles=SCALE.slice(1,4);
@@ -595,7 +595,7 @@ function renderQuestion(cur){
   const selNA=curVal==='NA'?' selected':'';
   html+='<button class="rating-btn na-btn'+selNA+'" onclick="selectRating(\''+cur.id+'\',\'NA\',this)">' +
         '<div class="rating-num">N/A</div>' +
-        '<div class="rating-label"><strong>Não se aplica</strong><span class="rating-sub">Este indicador não é relevante para este município</span></div>' +
+        '<div class="rating-label"><strong>Não se aplica</strong><span class="rating-sub">Este critério não é relevante para este município</span></div>' +
         '</button>';
   html+='</div>';
   document.getElementById('question-content').innerHTML=html;
@@ -672,7 +672,7 @@ function updateProgress(){
   const dim=DIMENSIONS.find(d=>d.key===cur.block);
   const dimScreens=state.screens.filter(s=>s.block===cur.block);
   const posInDim=dimScreens.findIndex(s=>s.id===cur.id)+1;
-  document.getElementById('stepCounter').textContent='Indicador '+(state.idx+1)+' de 24';
+  document.getElementById('stepCounter').textContent='Critério '+(state.idx+1)+' de 24';
   document.getElementById('blockLabel').textContent=dim.name;
   document.getElementById('blockCounter').textContent=posInDim+'/'+dimScreens.length;
   document.getElementById('progressFill').style.width=((state.idx/24)*100)+'%';

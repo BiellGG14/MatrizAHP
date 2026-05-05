@@ -114,8 +114,8 @@ body {
   padding: 3px 10px;
   margin-bottom: 16px;
 }
-.intro-title { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
-.intro-desc  { font-size: 14px; color: var(--text-sec); line-height: 1.7; margin-bottom: 24px; }
+.intro-title { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 10px; text-align: justify; }
+.intro-desc  { font-size: 14px; color: var(--text-sec); line-height: 1.7; margin-bottom: 24px; text-align: justify; }
 .intro-desc strong { color: var(--text); }
 
 .intro-fields { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
@@ -167,6 +167,7 @@ body {
   border-radius: 6px;
   line-height: 1.65;
   margin-bottom: 24px;
+  text-align: justify;
 }
 .intro-note strong { color: var(--text); }
 
@@ -520,9 +521,13 @@ body {
   <div class="screen active" id="screen-intro">
     <div class="intro-card">
       <span class="intro-badge">Comparação de Relevâncias</span>
-      <h1 class="intro-title">Comparação de Relevâncias para o Índice UAM</h1>
+      <h1 class="intro-title">Comparação de fatores organizacionais do município para aferição da maturidade municipal na implantação da Mobilidade Aérea Urbana</h1>
       <p class="intro-desc">
-        Esta ferramenta captura a importância relativa das <strong>dimensões PESTEL</strong> que compõem o Índice de Maturidade Municipal para Mobilidade Aérea Urbana.
+        A <strong>Mobilidade Aérea Urbana</strong> envolve o uso de drones, aeronaves elétricas e eVTOLs para transporte de pessoas, cargas, serviços públicos e emergências dentro ou entre cidades.
+        <br/><br/>
+        Nesta etapa, você irá avaliar quais <strong>fatores organizacionais do município</strong> são mais importantes para que essa nova forma de mobilidade possa ser implantada com segurança, viabilidade e boa integração com a cidade.
+        <br/><br/>
+        O <strong>objetivo</strong> é identificar o nível de preparo do município para receber e estruturar esse novo sistema de transporte.
       </p>
       <div class="intro-fields">
         <div class="field-group">
@@ -568,7 +573,12 @@ body {
         </div>
       </div>
       <div class="intro-note">
-        <strong>Como funciona:</strong> responda blocos curtos, uma pergunta por vez. Primeiro escolhe o item mais importante; depois compara os outros com esse item escolhido.
+        <strong>Como responder:</strong>
+        <br/><br/>
+        Primeiro, escolha o fator que você considera mais importante. 
+        Em seguida, você irá comparar os demais fatores em relação a essa escolha, indicando o quanto são mais ou menos importantes.
+        <br/><br/>
+        <strong>Não há resposta certa ou errada</strong>. Utilize sua experiência profissional para avaliar a realidade do município.
       </div>
       <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="startCalibration()">Iniciar</button>
     </div>
@@ -604,12 +614,12 @@ body {
 
 <script>
 const DIMENSIONS = [
-  { key: 'P', name: 'Política',    desc: 'Reflete a capacidade institucional do município de estruturar e coordenar a mobilidade aérea urbana como política pública. A governança e a articulação institucional são determinantes para a viabilização de sistemas complexos de mobilidade.' },
-  { key: 'E', name: 'Econômica',   desc: 'Avalia se o município tem condições financeiras de receber e sustentar a mobilidade aérea urbana. Considera se existe demanda real de deslocamento na cidade que justifique o serviço, se o território atrai investimentos privados, se há recursos públicos ou parcerias para implantar vertiportos e infraestrutura de apoio, e se aplicações concretas, como transporte de pacientes, entregas urgentes ou conexões intermunicipais, fazem sentido econômico para a realidade local.' },
-  { key: 'S', name: 'Social',      desc: 'Captura como a população do município receberá a mobilidade aérea urbana no dia a dia. Envolve a disposição dos moradores em aceitar a operação dessas aeronaves no céu da cidade, a confiança na segurança do serviço, os incômodos urbanos percebidos (como ruído de sobrevoo e questões de privacidade) e se os benefícios chegarão a diferentes regiões e classes sociais, garantindo que a tecnologia não fique restrita a poucos.' },
-  { key: 'T', name: 'Tecnológica', desc: 'Considera se o município possui a base técnica e a infraestrutura necessárias para suportar a mobilidade aérea urbana. Engloba a capacidade de integrar o tráfego dessas aeronaves ao espaço aéreo da cidade, a existência de sistemas urbanos de comunicação e monitoramento adequados, a robustez da rede elétrica para abastecer pontos de recarga, e a aptidão do território para receber vertiportos bem localizados e integrados ao transporte urbano existente.' },
-  { key: 'A', name: 'Ambiental',   desc: 'Trata dos impactos ambientais que a mobilidade aérea urbana trará ao município. Compreende o consumo de energia e as emissões geradas pela operação na cidade, o ruído produzido sobre bairros e áreas sensíveis, a compatibilidade com áreas verdes, zonas de proteção e o uso do solo urbano, e a capacidade do sistema de operar com segurança em condições climáticas típicas da região (chuvas intensas, ventos, calor).' },
-  { key: 'L', name: 'Legal',       desc: 'Analisa o quanto o ambiente jurídico do município está preparado para receber a mobilidade aérea urbana. Inclui a compatibilidade da operação com o plano diretor e leis de uso do solo da cidade, o alinhamento com a regulação aeronáutica federal, os processos locais de licenciamento e controle ambiental, e a clareza sobre responsabilidades em caso de incidentes, o que dá segurança jurídica para operadores, gestores e cidadãos.' }
+  { key: 'P', name: 'Político',    desc: 'Avalia a capacidade institucional do município para planejar, coordenar e integrar a mobilidade aérea urbana às políticas públicas locais. Considera o reconhecimento do tema como prioridade estratégica na agenda governamental, evidenciado em planos e instrumentos de gestão, além da governança, articulação entre órgãos municipais e alinhamento com o planejamento urbano.' },
+  { key: 'E', name: 'Econômico',   desc: 'Avalia as condições econômicas do município para viabilizar e sustentar a mobilidade aérea urbana. Considera a capacidade de investimento público e de atração de capital privado, o potencial de demanda local, a sustentabilidade econômica dos serviços e a inserção do tema nas estratégias de desenvolvimento econômico municipal.' },
+  { key: 'S', name: 'Social',      desc: 'Avalia o grau de aceitação e percepção da população do município em relação à mobilidade aérea urbana. Considera aspectos como segurança, ruído, percepção de risco, benefícios sociais esperados e os impactos no cotidiano urbano, bem como a capacidade do poder público de dialogar e engajar a sociedade sobre o tema.' },
+  { key: 'T', name: 'Tecnológico', desc: 'Avalia a prontidão tecnológica do município para suportar a operação da mobilidade aérea urbana. Considera a disponibilidade e integração de infraestrutura digital, conectividade de internet, sistemas de monitoramento e gestão, capacidade de fornecimento de energia elétrica e infraestrutura para carregamento de baterias, além da inserção do tema nas estratégias de inovação e transformação digital do município.' },
+  { key: 'A', name: 'Ambiental',   desc: 'Avalia a compatibilidade da mobilidade aérea urbana com as condições e diretrizes ambientais do município. Considera impactos relacionados a ruído, emissões, uso do solo, áreas sensíveis e análise territorial georreferenciada de locais potenciais de pouso, decolagem e rotas urbanas, bem como o alinhamento com políticas ambientais locais e estratégias de sustentabilidade urbana.' },
+  { key: 'L', name: 'Legal',       desc: 'Avalia a capacidade normativa e regulatória do município para permitir, organizar e dar segurança jurídica à mobilidade aérea urbana. Considera a existência de instrumentos legais locais, regras de uso e ocupação do solo, processos de licenciamento e o alinhamento com a legislação nacional e normas do setor aeronáutico.' }
 ];
 
 const COMPARISON_OPTIONS = [
@@ -730,9 +740,9 @@ function renderQuestion(cur) {
 
   if (cur.type === 'pick') {
     const preselected = state.lastReferences[cur.block] || null;
-    html += '<div class="q-number">Passo 1 — Escolha a mais importante</div>';
-    html += '<div class="q-title">Qual destas dimensões é a mais importante para a maturidade UAM do município?</div>';
-    html += '<div class="q-hint">Escolha a dimensão que você considera mais determinante. Ela será a base de comparação com todas as outras.</div>';
+    html += '<div class="q-number">Passo 1 — Escolha o mais importante</div>';
+    html += '<div class="q-title">Qual destes fatores é o mais importante para a maturidade UAM do município?</div>';
+    html += '<div class="q-hint">Escolha o fator que você considera mais determinante. Ele será a base de comparação com todos os outros.</div>';
     html += '<div class="opt-list">';
     DIMENSIONS.forEach((d, i) => {
       const selected = preselected === d.key ? ' selected' : '';
@@ -751,10 +761,10 @@ function renderQuestion(cur) {
     const curCompIndex = compScreens.findIndex(s => s.item === cur.item);
 
     html += '<div class="q-number">Comparação ' + (curCompIndex + 1) + ' de ' + compScreens.length + '</div>';
-    html += '<div class="q-title">Comparada com a dimensão <span style="color:var(--primary)">' + refItem.name +
-            '</span>, como você avalia a dimensão <span style="color:var(--primary)">' + compItem.name +
+    html += '<div class="q-title">Comparado com o fator <span style="color:var(--primary)">' + refItem.name +
+            '</span>, como você avalia o fator <span style="color:var(--primary)">' + compItem.name +
             '</span> para a maturidade da UAM no município?</div>';
-    html += '<div class="q-hint"><strong>' + refItem.name + '</strong> foi escolhida como a mais importante. Indique o quão menos importante é <strong>' + compItem.name + '</strong> em relação a ela.</div>';
+    html += '<div class="q-hint"><strong>' + refItem.name + '</strong> foi escolhido como o mais importante. Indique o quão menos importante é <strong>' + compItem.name + '</strong> em relação a ele.</div>';
 
     html += '<div class="ref-box">' +
               '<div class="ref-box-toggle-row" onclick="toggleRefBox(this)">' +
@@ -767,11 +777,11 @@ function renderQuestion(cur) {
               '</div>' +
               '<div class="ref-box-details">' +
                 '<div style="border-top:1px solid var(--primary-ring);margin:8px 0;"></div>' +
-                '<div class="ref-box-label">Dimensão de referência</div>' +
+                '<div class="ref-box-label">Fator de referência</div>' +
                 '<div class="ref-box-title">' + refItem.name + '</div>' +
                 '<div class="ref-box-desc">' + refItem.desc + '</div>' +
                 '<hr style="border:none;border-top:1px solid var(--primary-ring);margin:10px 0;"/>' +
-                '<div class="ref-box-label">Dimensão comparada</div>' +
+                '<div class="ref-box-label">Fator comparado</div>' +
                 '<div class="ref-box-title">' + compItem.name + '</div>' +
                 '<div class="ref-box-desc">' + compItem.desc + '</div>' +
               '</div>' +
@@ -888,7 +898,7 @@ function updateProgress() {
     document.getElementById('progressFill').style.width = '100%';
     return;
   }
-  document.getElementById('blockLabel').textContent = 'Dimensões PESTEL';
+  document.getElementById('blockLabel').textContent = 'Fatores';
   const totalScreens = state.screens.length;
   const pct = (state.idx / totalScreens) * 100;
   state.maxProgress = Math.max(state.maxProgress, pct);

@@ -350,7 +350,7 @@ body {
     <img src="../assets/civil.png" alt="Engenharia Civil" style="width:44px;height:40px;flex-shrink:0;"/>
     <div class="header-text">
       <div class="header-title">Admin Dashboard (Dash 03)</div>
-      <div class="header-sub">Gerenciamento Dash 01 (Pesos PESTEL) · Dash 02 (Avaliações Municipais)</div>
+      <div class="header-sub">Gerenciamento Dash 01 (Pesos dos Fatores) · Dash 02 (Avaliações Municipais)</div>
     </div>
   </div>
   <div class="header-right" style="display:flex;align-items:center;gap:14px;">
@@ -387,7 +387,7 @@ body {
     <div class="card">
       <div class="card-title">Selecionar Calibrações para Aplicar</div>
       <p style="font-size: 13px; color: var(--text-sec); margin-bottom: 16px;">
-        Selecione uma ou mais calibrações abaixo para calcular a média ponderada dos pesos das dimensões PESTEL. Estes serão aplicados automaticamente.
+        Selecione uma ou mais calibrações abaixo para calcular a média ponderada dos pesos dos fatores. Estes serão aplicados automaticamente.
       </p>
 
       <div id="select-all-row" class="select-all-row" onclick="toggleSelectAll()" style="display:none;">
@@ -423,7 +423,7 @@ body {
     <div class="card">
       <div class="card-title">Histórico de Calibrações (Dash 01)</div>
       <p style="font-size: 13px; color: var(--text-sec); margin-bottom: 16px;">
-        Todas as calibrações de pesos PESTEL realizadas pelos especialistas.
+        Todas as calibrações de pesos dos fatores realizadas pelos especialistas.
       </p>
       <table class="table" id="calibracoes-table">
         <thead>
@@ -497,7 +497,7 @@ body {
 
     <!-- Dimension weight bars -->
     <div class="card">
-      <div class="card-title">Pesos Médios por Dimensão PESTEL</div>
+      <div class="card-title">Pesos Médios por Fator</div>
       <div id="d01-dim-bars" class="rel-dim-avg-bars"></div>
     </div>
 
@@ -517,7 +517,7 @@ body {
 
         <div id="d01-view-bars" class="rel-chart-view active">
           <div class="rel-section-title">
-            Pesos por Dimensão — Média e Calibrações Individuais
+            Pesos por Fator — Média e Calibrações Individuais
           </div>
           <div class="rel-canvas-wrap">
             <canvas id="d01-chart-bars"></canvas>
@@ -669,7 +669,7 @@ body {
       <div class="card-title">Estatísticas do Conjunto Filtrado</div>
       <div id="stats-grid" class="rel-stats-grid"></div>
       <div style="margin-top:20px;">
-        <div class="rel-section-title">Médias por Dimensão (conjunto filtrado)</div>
+        <div class="rel-section-title">Médias por Fator (conjunto filtrado)</div>
         <div id="rel-dim-avg-bars" class="rel-dim-avg-bars"></div>
       </div>
       <div style="margin-top:20px;">
@@ -692,12 +692,12 @@ body {
 
     <div class="card" id="rel-charts-section">
       <div class="rel-chart-tabs">
-        <button class="rel-chart-tab active" data-chart="bar" onclick="switchChartView('bar', this)">Barras por Dimensão</button>
+        <button class="rel-chart-tab active" data-chart="bar" onclick="switchChartView('bar', this)">Barras por Fator</button>
         <button class="rel-chart-tab" data-chart="trend" onclick="switchChartView('trend', this)">Tendência Temporal</button>
       </div>
 
       <div id="rel-view-bar" class="rel-chart-view active">
-        <div class="rel-section-title">Pontuação por Dimensão — Municípios Selecionados</div>
+        <div class="rel-section-title">Pontuação por Fator — Municípios Selecionados</div>
         <div class="rel-chart-options-row">
           <label><input type="radio" name="bar-mode" value="grouped" checked onchange="renderBarChart()"> Agrupado</label>
           <label><input type="radio" name="bar-mode" value="stacked" onchange="renderBarChart()"> Empilhado</label>
@@ -708,16 +708,16 @@ body {
       <div id="rel-view-trend" class="rel-chart-view">
         <div class="rel-section-title">Tendência Temporal por Município</div>
         <div style="font-size:12px;color:var(--text-sec);margin-bottom:12px;">
-          Mostra a evolução do índice ou dimensão ao longo do tempo. Requer municípios com 2+ avaliações em datas diferentes.
+          Mostra a evolução do índice ou fator ao longo do tempo. Requer municípios com 2+ avaliações em datas diferentes.
         </div>
         <div class="rel-chart-options-row">
-          <label class="rel-filter-label">Dimensão:</label>
+          <label class="rel-filter-label">Fator:</label>
           <select id="rel-trend-dim" onchange="renderTrendChart()">
             <option value="indice">Índice Geral</option>
-            <option value="P">Política (P)</option>
-            <option value="E">Econômica (E)</option>
+            <option value="P">Político (P)</option>
+            <option value="E">Econômico (E)</option>
             <option value="S">Social (S)</option>
-            <option value="T">Tecnológica (T)</option>
+            <option value="T">Tecnológico (T)</option>
             <option value="A">Ambiental (A)</option>
             <option value="L">Legal (L)</option>
           </select>
@@ -776,7 +776,7 @@ const api = {
 
 // ===== CONSTANTS =====
 const DIMS = ['P','E','S','T','A','L'];
-const DIM_NAMES = { P:'Política', E:'Econômica', S:'Social', T:'Tecnológica', A:'Ambiental', L:'Legal' };
+const DIM_NAMES = { P:'Político', E:'Econômico', S:'Social', T:'Tecnológico', A:'Ambiental', L:'Legal' };
 const LEVEL_COLORS = { 'Avançado':'#15803d', 'Em Desenvolvimento':'#2563eb', 'Emergente':'#d97706', 'Incipiente':'#dc2626' };
 const CHART_PALETTE = ['#2563eb','#16a34a','#d97706','#dc2626','#7c3aed','#0891b2','#be123c','#065f46'];
 
@@ -1417,8 +1417,8 @@ function renderD01Stats() {
 
   const stats = [
     { label: 'Calibrações', value: cals.length, sub: '' },
-    { label: 'Dimensão Mais Valorizada', value: DIM_NAMES[topDim], sub: (avgByDim[topDim]*100).toFixed(1)+'%' },
-    { label: 'Dimensão Menos Valorizada', value: DIM_NAMES[botDim], sub: (avgByDim[botDim]*100).toFixed(1)+'%' },
+    { label: 'Fator Mais Valorizado', value: DIM_NAMES[topDim], sub: (avgByDim[topDim]*100).toFixed(1)+'%' },
+    { label: 'Fator Menos Valorizado', value: DIM_NAMES[botDim], sub: (avgByDim[botDim]*100).toFixed(1)+'%' },
     { label: 'Setores Representados', value: setores.length || '—', sub: setores.join(' · ') },
     { label: 'Variação Média (CV)', value: (avgCV*100).toFixed(1)+'%', sub: 'Consistência entre respondentes' },
   ];
@@ -1922,8 +1922,8 @@ async function exportD01Imagens() {
   // --- Tabela 1: Pesos médios consolidados ---
   tabN++;
   const tab1 = _abntCanvasFromTable(
-    `Tabela ${tabN} – Pesos médios consolidados das dimensões PESTEL (n=${cals.length})`,
-    ['Dimensão', 'Peso Médio (%)', 'Mínimo (%)', 'Máximo (%)', 'Coef. Variação (%)'],
+    `Tabela ${tabN} – Pesos médios consolidados dos fatores (n=${cals.length})`,
+    ['Fator', 'Peso Médio (%)', 'Mínimo (%)', 'Máximo (%)', 'Coef. Variação (%)'],
     DIMS.map(d => [DIM_NAMES[d], fmt(avgByDim[d]), fmt(minMaxByDim[d].min), fmt(minMaxByDim[d].max), fmtCV(cvByDim[d])]),
     { colAligns: ['left', 'center', 'center', 'center', 'center'] }
   );
@@ -1975,7 +1975,7 @@ async function exportD01Imagens() {
   if (_d01ChartBars) {
     figN++;
     const fig1 = await _abntCanvasFromChart(_d01ChartBars,
-      `Figura ${figN} – Pesos médios e calibrações individuais por dimensão PESTEL`);
+      `Figura ${figN} – Pesos médios e calibrações individuais por fator`);
     if (fig1) zip.file(`figura_${String(figN).padStart(2,'0')}_comparacao_calibracoes.png`, _dataURLToBlob(fig1));
   }
 
@@ -2268,10 +2268,10 @@ async function viewCalibration(id) {
 
 // ===== AVALIAÇÃO DETAIL (DASH 02) =====
 const DIMENSIONS_ADMIN = [
-  { key:'P', name:'Política', indicators:[{id:'P1',name:'Governança institucional'},{id:'P2',name:'Articulação interinstitucional'},{id:'P3',name:'Integração ao planejamento urbano'},{id:'P4',name:'Capacidade técnica institucional'}]},
-  { key:'E', name:'Econômica', indicators:[{id:'E1',name:'Demanda funcional potencial'},{id:'E2',name:'Atratividade para investimentos'},{id:'E3',name:'Capacidade de financiamento'},{id:'E4',name:'Aderência a casos de uso'}]},
+  { key:'P', name:'Político', indicators:[{id:'P1',name:'Governança institucional'},{id:'P2',name:'Articulação interinstitucional'},{id:'P3',name:'Integração ao planejamento urbano'},{id:'P4',name:'Capacidade técnica institucional'}]},
+  { key:'E', name:'Econômico', indicators:[{id:'E1',name:'Demanda funcional potencial'},{id:'E2',name:'Atratividade para investimentos'},{id:'E3',name:'Capacidade de financiamento'},{id:'E4',name:'Aderência a casos de uso'}]},
   { key:'S', name:'Social', indicators:[{id:'S1',name:'Aceitação pública'},{id:'S2',name:'Percepção de segurança'},{id:'S3',name:'Externalidades sociais'},{id:'S4',name:'Equidade e acessibilidade'}]},
-  { key:'T', name:'Tecnológica', indicators:[{id:'T1',name:'Gestão do espaço aéreo'},{id:'T2',name:'Comunicação, navegação e vigilância'},{id:'T3',name:'Infraestrutura energética'},{id:'T4',name:'Aptidão para vertiportos'}]},
+  { key:'T', name:'Tecnológico', indicators:[{id:'T1',name:'Gestão do espaço aéreo'},{id:'T2',name:'Comunicação, navegação e vigilância'},{id:'T3',name:'Infraestrutura energética'},{id:'T4',name:'Aptidão para vertiportos'}]},
   { key:'A', name:'Ambiental', indicators:[{id:'A1',name:'Eficiência energética e emissões'},{id:'A2',name:'Poluição sonora'},{id:'A3',name:'Uso do solo'},{id:'A4',name:'Resiliência ambiental'}]},
   { key:'L', name:'Legal', indicators:[{id:'L1',name:'Legislação urbanística'},{id:'L2',name:'Regulação aeronáutica'},{id:'L3',name:'Licenciamento ambiental'},{id:'L4',name:'Responsabilidade civil'}]}
 ];
@@ -2360,7 +2360,7 @@ function toggleNotasTable(containerId, avId, btn) {
   DIMENSIONS_ADMIN.forEach(dim => {
     const dimWeightData = activeWeights && activeWeights.weights && activeWeights.weights[dim.key];
     const dimWeight = dimWeightData ? dimWeightData.weight : null;
-    rows += `<tr class="dim-header"><td colspan="5">${dim.name}${dimWeight !== null ? ` — peso da dimensão: ${(dimWeight*100).toFixed(1)}%` : ''}</td></tr>`;
+    rows += `<tr class="dim-header"><td colspan="5">${dim.name}${dimWeight !== null ? ` — peso do fator: ${(dimWeight*100).toFixed(1)}%` : ''}</td></tr>`;
     dim.indicators.forEach(ind => {
       const rawVal = answers[ind.id];
       const indWeightData = dimWeightData && dimWeightData.indicators && dimWeightData.indicators[ind.id];
@@ -2378,7 +2378,7 @@ function toggleNotasTable(containerId, avId, btn) {
     });
   });
 
-  container.innerHTML = `<div class="notas-table-wrap"><table class="notas-table"><thead><tr><th>ID</th><th>Indicador</th><th>Nota Bruta</th><th>Peso Ind.</th><th>Nota Ponderada</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  container.innerHTML = `<div class="notas-table-wrap"><table class="notas-table"><thead><tr><th>ID</th><th>Critério</th><th>Nota Bruta</th><th>Peso Crit.</th><th>Nota Ponderada</th></tr></thead><tbody>${rows}</tbody></table></div>`;
   container.dataset.rendered = '1';
   container.style.display = '';
   btn.textContent = 'Ocultar notas';
